@@ -18,7 +18,7 @@ try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
 
-    app = FastAPI(title="Tree-SOP Agent API", version="0.2.0")
+    app = FastAPI(title="Tree-SOP Agent API", version="Alpha 0.1")
 
     class ExecuteRequest(BaseModel):
         sop_definition: Dict[str, Any]

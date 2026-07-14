@@ -1,6 +1,6 @@
 # 管线看板
 
-> 最后更新：2026-07-14（第十三轮：新增 IDEA-022 Memory 重构） | 维护人：项目秘书
+> 最后更新：2026-07-15（第十四轮：Tauri 原生桌面 IDEA-018 交付） | 维护人：项目秘书
 > 数据来源：需求对话 + 调研报告 + Reasonix 源码分析 + DeepSeek API 文档
 
 ---
@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 4 项 | 0 项 | 0 项 | 0 项 | 5 项 | 1 项 |
+| 3 项 | 0 项 | 0 项 | 0 项 | 6 项 | 1 项 |
 
 ---
 
@@ -117,23 +117,8 @@
 - **状态**：✅ 已交付 v0.4.0（MCPClient + ToolGuard 三层约束）
 
 ### IDEA-018：真·Tauri 桌面应用（非 Webview 套壳）
-- **来源**：老板需求 — "桌面的应用程序，不是 web"
-- **技术背景**：
-  | 工具 | 技术栈 | exe 体积 | 典型用户 |
-  |------|--------|:-------:|---------|
-  | VS Code / Cursor / Windsurf | **Electron** (Chromium+Node) | 150MB+ | 主流，社区最大 |
-  | Zed / Sublime | **C++ / Rust 原生** | 5-20MB | 性能标杆，但开发成本极高 |
-  | **Tauri v2** | **Rust 壳 + 系统 Webview** | 15MB | 新兴，轻量，安全 |
-  | IntelliJ / JetBrains | Java Swing | 500MB+ | 重型 IDE |
-- **技术选型建议**：用 **Tauri v2**（Rust 壳）+ React 前端 + Monaco Editor + xterm.js，不套 Streamlit webview
-- **与 Streamlit 区别**：Streamlit 每次交互都刷新页面，Tauri 是原生窗口体验
-- **需要做的工作**：
-  1. 用 Vite + React + TypeScript 从零写前端（不再依赖 Streamlit）
-  2. Rust 端通过 sidecar 启动 Python Agent 引擎
-  3. 前后端 IPC 通信（Tauri invoke 命令）
-  4. `npm run tauri build` 产出真 .exe
 - **优先级**：P0
-- **状态**：等待 Spec
+- **状态**：✅ **已交付 vA.0.1**（Tauri v2 构建成功，8.4MB 原生 exe）
 
 ### IDEA-020：智能查询路由 — HyDE 改写 + 意图分解
 - **来源**：架构讨论 — Dispatcher 增强
@@ -162,7 +147,7 @@
 
 ## 📝 规划中
 
-> 当前待办：IDEA-018 (P0) Tauri桌面 / IDEA-022 (P0) Memory重构 / IDEA-020 (P1) HyDE路由 / IDEA-021 (P1) 熔断
+> 待排期：IDEA-022 (P0) Memory / IDEA-020 (P1) HyDE / IDEA-021 (P1) 熔断
 
 ---
 
@@ -210,6 +195,7 @@
 
 | 版本 | 日期 | 内容 |
 |------|------|------|
+| vA.0.1 | 2026-07-15 | IDEA-018 真·Tauri 原生桌面（Rust 8.4MB exe + React invoke IPC） |
 | Alpha 0.1 | 2026-07-14 | 首个公开发布 — Tauri桌面壳 + 11 Agent + 完整SOP管道，**想法池归零** |
 | v0.4.0 | 2026-07-14 | TASK-004 MCP工具集成 + DevOps Agent（2×P1交付） |
 | v0.3.0 | 2026-07-14 | TASK-003 Agent核心重构（body保留+双层prompt+Dispatcher+CR Agent，3×P0交付） |
