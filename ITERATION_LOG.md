@@ -99,3 +99,16 @@
 
 **迭代总结**：MemoryManager（SQLite 三表 + MemoryRouter 四通道 + Consolidator 合并/老化）交付。57/57 全绿。**想法池：8→7**。
 
+---
+
+## Alpha 0.2 (2026-07-15)
+
+| 阶段 | 状态 | 执行者 | 产出 | 缺陷数 | 门禁 |
+|------|:----:|--------|------|:------:|:----:|
+| 版本对齐 | ✅ | Secretary | README/CHANGELOG/server/白皮书 → Alpha 0.2 | — | PASS |
+| Skills 补齐 | ✅ | Secretary | skills/ 5→12 个 | — | PASS |
+| 集成测试 | ✅ | TDD | test_e2e_loop.py 5 tests | 0 | PASS |
+| 发布 | ✅ | Secretary | versions/Alpha-0.2/ + 看板 | — | PASS |
+
+**版本总结**：Alpha 0.2 发布。62/62 全绿。新想法池 5 项（Tauri增强/pip包/冒烟测试/用户指南/服务增强）。
+

@@ -8,7 +8,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek_V4-4B32C3)](https://deepseek.com)
 [![Tauri](https://img.shields.io/badge/Desktop-Tauri_v2-FFC131?logo=tauri)](https://tauri.app)
-[![Status](https://img.shields.io/badge/Status-Alpha_0.1-orange)](CHANGELOG.md)
+[![Status](https://img.shields.io/badge/Status-Alpha_0.2-orange)](CHANGELOG.md)
 
 </div>
 

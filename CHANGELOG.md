@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Alpha 0.2] - 2026-07-15
+
+> IDEA-028 ~ IDEA-030 批次交付 — 版本对齐 + Skills 补齐 + 端到端测试
+
+### Fixed
+- 版本一致性问题 — README / CHANGELOG / server / 白皮书统一为 Alpha 0.2
+
 ## [Alpha 0.1] - 2026-07-14
 
 > 首个公开发布版本。预置 11 个 Agent 角色，完整 SOS 管道，Tauri 桌面应用壳。

@@ -1,6 +1,6 @@
 # Tree-SOP Agent — Technical Whitepaper
 
-> **Version**: Alpha 0.1 | **Last Updated**: 2026-07-15
+> **Version**: Alpha 0.2 | **Last Updated**: 2026-07-15
 > **Status**: Architecture Design Document
 
 ---
