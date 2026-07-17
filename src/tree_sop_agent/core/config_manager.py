@@ -70,8 +70,9 @@ class ConfigManager:
                 risk_mode=data.get("risk_mode", False),
                 risk_mode_acknowledged_at=data.get("risk_mode_acknowledged_at"),
             )
-        except Exception:
-            pass
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning("读取配置文件失败: %s", e)
 
     def save(self) -> None:
         """保存配置到 JSON 文件。"""
