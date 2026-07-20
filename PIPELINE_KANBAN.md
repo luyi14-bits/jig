@@ -1,7 +1,7 @@
 # 管线看板
 
-> 最后更新：2026-07-15（第十八轮：Alpha 0.2 版本对齐发布） | 维护人：项目秘书
-> 数据来源：需求对话 + 调研报告 + Reasonix 源码分析 + DeepSeek API 文档
+> 最后更新：2026-07-20（第二十轮：桌面归档 + 框架化战略转向） | 维护人：项目秘书
+> 数据来源：需求对话 + 调研报告 + Reasonix 源码分析 + DeepSeek API 文档 + 2026 框架技术路线调研
 
 ---
 
@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 5 项 | 0 项 | 0 项 | 0 项 | 12 项 | 1 项 |
+| 11 项 | 0 项 | 0 项 | 0 项 | 12 项 | 3 项 |
 
 ---
 
@@ -152,11 +152,9 @@
 - **优先级**：P1
 - **状态**：✅ **已交付**（ConfigManager.enable_risk_mode / risk_mode_acknowledged_at）
 
-### IDEA-031：Tauri 桌面应用增强
-- **来源**：Alpha 0.2 规划
-- **描述**：Agent 实时状态面板、管道可视化、设置页面对接 ConfigManager
+### IDEA-031：Tauri 桌面应用增强（已废弃）
 - **优先级**：P1
-- **状态**：等待 Spec
+- **状态**：已废弃（战略调整：专注框架核心）
 
 ### IDEA-032：pip 包发布
 - **来源**：Alpha 0.2 规划
@@ -182,9 +180,128 @@
 - **优先级**：P2
 - **状态**：等待 Spec
 
+---
+
+> ⚡ **战略转向（2026-07-20）**：以下 IDEA-036~048 基于框架技术路线深度调研，将 Tree-SOP 从"Agent 应用"升级为"Agent 框架"。
+> 调研报告：`docs/framework-tech-routes-2026.html`
+> 核心壁垒：Harness 硬约束 + 四层记忆 + DeepSeek 缓存优化 + Skill→Agent 映射
+
+### IDEA-036：公开 SDK API 设计
+- **来源**：2026 框架技术路线调研 — 对标 PydanticAI
+- **描述**：设计面向外部开发者的公开 API（Agent / Tool / Harness / Memory 四层接口），让其他开发者能基于 Tree-SOP 构建自己的 Agent
+- **对标**：PydanticAI 的 `Agent / Tool / Dependencies` 三层抽象
+- **核心技术点**：
+  - Agent 定义接口：role + goal + tools + model + harness_config
+  - Tool 注册接口：类型安全的函数注册 + 白名单/黑名单
+  - Harness 配置接口：ToolGuard 级别 + LOOP SOP 门禁级别
+  - Memory 配置接口：四层记忆可独立开关 + 后端选择
+- **优先级**：P0（框架化基石）
+- **状态**：等待 Spec
+
+### IDEA-037：LLM Provider 抽象层
+- **来源**：2026 框架技术路线调研 — 对标 Spring AI ChatClient
+- **描述**：抽象 LLM 调用层，从 DeepSeek 专用扩展为多模型适配（DeepSeek / OpenAI / Anthropic / Ollama），同时保留 DeepSeek 缓存优化作为差异化特性
+- **对标**：Spring AI 的统一 ChatClient 接口 + PydanticAI 的模型无关设计
+- **核心技术点**：
+  - LLMProvider 抽象基类：chat / chat_stream / embed / function_call
+  - DeepSeekProvider：保留前缀 hash 缓存优化 + reasoning_content 处理
+  - OpenAIProvider / AnthropicProvider：标准适配
+  - 模型分配策略：per-agent model binding（Pro/Flash 混用）
+- **优先级**：P0（框架化基石）
+- **状态**：等待 Spec
+
+### IDEA-038：OpenTelemetry 可观测性接入
+- **来源**：12-Factor Agents #11 + 对标 MS Agent FW
+- **描述**：接入 OpenTelemetry 标准，提供完整的调用链追踪、性能指标采集、异常监控
+- **对标**：MS Agent FW 的 OTel 原生 + LangGraph 的 LangSmith 追踪
+- **核心技术点**：
+  - Agent 执行 Trace：每次 Agent 调用生成 Span
+  - Tool 调用 Trace：工具名 + 参数 + 耗时 + 结果
+  - Memory 操作 Trace：缓存命中/未命中 + 上下文压缩
+  - Harness 门禁 Trace：LOOP SOP 5 级门禁通过/拦截
+  - Metrics：token 用量 / API 耗时 / 缓存命中率 / 熔断次数
+- **优先级**：P1（12-Factor 合规）
+- **状态**：等待 Spec
+
+### IDEA-039：结构化输出验证
+- **来源**：12-Factor Agents #4
+- **描述**：所有 Agent 输出必须是结构化的、可验证的，基于 Pydantic Model 自动校验
+- **对标**：PydanticAI 的结构化输出 + LangGraph 的 state schema
+- **优先级**：P1（12-Factor 合规）
+- **状态**：等待 Spec
+
+### IDEA-040：Human-in-the-Loop API
+- **来源**：12-Factor Agents #9
+- **描述**：为关键决策提供标准化的 HITL 介入点 API（审批 / 修改 / 否决 / 补充信息）
+- **对标**：LangGraph 的 interrupt_before / interrupt_after + MS Agent FW 的审批中间件
+- **优先级**：P1（12-Factor 合规）
+- **状态**：等待 Spec
+
+### IDEA-041：Loop Engineering 工程化
+- **来源**：2026 Agent 核心话题 — Loop Engineering
+- **描述**：将 LOOP SOP 从应用级硬编码提升为框架级可配置的 Loop Engine，解决五个核心问题
+- **核心技术点**：
+  - Loop 运行：任务递归分解 + 工具调用策略可配置
+  - Loop 停止：退出条件检测器（收敛检测 / 最大轮次 / 人工终止）
+  - Loop 验证：中间结果自动质量评估
+  - Loop 恢复：检查点粒度可配置（节点级 / 执行器级 / 任务级）
+  - Loop 调试：全链路事件日志 + 回放
+- **优先级**：P0（2026 核心差异化）
+- **状态**：等待 Spec
+
+### IDEA-042：pip 包发布 + 文档站点
+- **来源**：框架化必备基础设施
+- **描述**：pyproject.toml + pip install tree-sop-agent + 文档站点（快速开始 / API 参考 / 示例）
+- **对标**：LangGraph / CrewAI / PydanticAI 文档质量
+- **优先级**：P1
+- **状态**：等待 Spec（IDEA-032 升级版）
+
+### IDEA-043：框架技术路线文档化
+- **来源**：2026 框架技术路线调研
+- **描述**：明确 Tree-SOP 的架构归属 — "Harness + 混合编排"创新路线，与七大模式的关系文档化
+- **产出**：
+  - 架构决策记录（ADR）：为什么选 Harness 路线而非图状态机/角色团队
+  - 技术白皮书 v3：框架化架构设计
+  - 对标文档：vs LangGraph / CrewAI / MS Agent FW / PydanticAI
+- **优先级**：P1
+- **状态**：等待 Spec
+
+### IDEA-044：MCP 协议完整支持
+- **来源**：2026 跨框架标准 — MCP 协议
+- **描述**：从 MCPClient 基础集成升级为完整 MCP Server + Client 双向支持，让 Tree-SOP Agent 可作为 MCP 工具被其他框架调用
+- **对标**：CrewAI v1.10.1 MCP 集成
+- **优先级**：P1
+- **状态**：等待 Spec（IDEA-016 升级版）
+
+### IDEA-045：A2A 协议探索
+- **来源**：2026 跨框架通信标准 — A2A
+- **描述**：探索 Agent-to-Agent Protocol，允许 Tree-SOP Agent 与其他框架的 Agent 跨框架协作
+- **对标**：CrewAI A2A 协议
+- **优先级**：P2
+- **状态**：等待 Spec
+
+### IDEA-046：可视化编排界面
+- **来源**：对标 LangGraph Studio / Google ADK
+- **描述**：在 Tauri 桌面应用中增加可视化编排器，支持拖拽式 Agent 工作流构建
+- **对标**：LangGraph Studio / Spring AI Alibaba Admin / Google ADK 可视化构建器
+- **优先级**：P2
+- **状态**：等待 Spec（IDEA-031 升级版）
+
+### IDEA-047：框架级缓存诊断面板
+- **来源**：IDEA-011 升级 + DeepSeek 缓存优化差异化
+- **描述**：将 cache-guard 从测试工具升级为框架级缓存诊断面板，可视化展示前缀命中率 / 冷启动 / 缓存节省成本
+- **优先级**：P1
+- **状态**：等待 Spec
+
+### IDEA-048：Skill 插件市场
+- **来源**：对标 Superpowers Skill 生态
+- **描述**：建立 Skill 插件分发机制，开发者可发布和安装第三方 SKILL.md 包
+- **优先级**：P3
+- **状态**：等待 Spec
+
 ## 📝 规划中
 
-> 所有想法池已清空 ✅
+> 所有想法池等待排期，优先级 P0 的 IDEA-036/037/041 为框架化第一批任务
 
 ---
 
@@ -223,8 +340,15 @@
 > IDEA-019（C++ 重构评估）已否决
 
 ### IDEA-019：C++ 重构评估（否决）
-- **来源**：老板提问 — "需不需要 C++ 重构来提升利用率"
-- **结论**：不需要。Python 胜任全部工作，瓶颈在 LLM 网络延迟。C++ 重构 = 投入 10 倍精力，收益 < 1%。
+- **结论**：Python 胜任全部工作，瓶颈在 LLM 网络延迟。
+
+### IDEA-031：Tauri 桌面应用增强（已废弃）
+- **来源**：战略调整
+- **结论**：聚焦框架核心，桌面不再投入
+
+### IDEA-046：可视化编排界面（已废弃）
+- **来源**：战略调整
+- **结论**：与 IDEA-031 同步废弃，专注框架核心
 
 ---
 

@@ -7,7 +7,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek_V4-4B32C3)](https://deepseek.com)
-[![Tauri](https://img.shields.io/badge/Desktop-Tauri_v2-FFC131?logo=tauri)](https://tauri.app)
+
 [![Status](https://img.shields.io/badge/Status-Alpha_0.2-orange)](CHANGELOG.md)
 
 </div>
@@ -148,7 +148,6 @@ tree-sop-agent/
 │   ├── cli/             # CLI 入口
 │   └── server/          # FastAPI 独立部署
 ├── skills/              # Agent 定义 SKILL.md + 留痕 LOG.md
-├── desktop/             # Tauri v2 桌面应用壳
 ├── tests/               # pytest 测试套件（47 个测试）
 ├── docs/                # 技术白皮书 · 框架对比 · PRD · 安全审计
 │   ├── framework-comparison-report.md  # 自研框架 vs 10+ 竞品
@@ -166,7 +165,7 @@ tree-sop-agent/
 | Phase 1–2 | Skill→Agent 映射 + DeepSeek 双模型接入 | ✅ v0.1.0 |
 | Phase 3–4 | 编排调度器 + 检查点 + 上下文压缩 | ✅ v0.2.0 |
 | Phase 5 | 完整 5 级 SOP 管道 + 自测 | ✅ v0.4.0 |
-| Phase 6 | Tauri 桌面应用壳 | ✅ v1.0.0 |
+| Phase 6 | Tauri 桌面应用壳 | ~~v1.0.0~~ 已归档 |
 | Phase 7 | 真·Tauri 原生桌面（IDEA-018） | ✅ vA.0.1 |
 | Phase 8 | Memory 体系重构 + Config + 风险模式（IDEA-022/025/026/027） | ✅ vA.0.2 |
 | Phase 9 | HyDE 路由 + 熔断检测（IDEA-020/021） | ✅ vA.0.3 |
