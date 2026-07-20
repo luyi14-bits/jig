@@ -1,34 +1,45 @@
-"""DeepSeek 适配层 — reasoning_content + Function Calling 兼容处理。
+"""DeepSeek 适配器 — reasoning_content + Function Calling 兼容 + 深度优化。
 
-Task 6: 处理 DeepSeek thinking 模式下的 reasoning_content 回传规则，
-以及 Function Calling 的多个兼容性陷阱（PRD IDEA-010）。
+FR-3: reasoning_effort 可配置（low/medium/high）
+FR-2: 自动 Tool-Call Repair（FC 格式错误自愈）
 """
 
 from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
 
 class DeepSeekAdapter:
-    """DeepSeek API 适配器。
+    """DeepSeek API 适配器（增强版）。
 
-    核心职责：
-    1. 带 tool_calls 的消息：原样保留 reasoning_content，否则 400
-    2. 不带 tool_calls 的消息：省略 reasoning_content，避免多余花费
-    3. tool_choice 使用显式函数名称，不使用 "required"
-    4. deepseek-reasoner 不支持 FC → 自动降级到 deepseek-chat
+    新增能力：
+    - reasoning_effort 可配置（FR-3）
+    - 自动 Tool-Call Repair（FR-2）
+    - FC 格式错误自愈
     """
 
-    # DeepSeek reasoner 系列模型（不支持 Function Calling）
     REASONER_MODELS = {"deepseek-reasoner", "deepseek-reasoner-v4"}
 
-    def __init__(self) -> None:
+    def __init__(self, reasoning_effort: str = "medium") -> None:
         self._last_reasoning_content: Optional[str] = None
         self._fc_fallback_triggered = False
+        self._repair_count = 0
+        self._repair_success = 0
+        self._reasoning_effort = reasoning_effort  # low / medium / high
+
+    @property
+    def reasoning_effort(self) -> str:
+        return self._reasoning_effort
+
+    @reasoning_effort.setter
+    def reasoning_effort(self, value: str) -> None:
+        if value in ("low", "medium", "high"):
+            self._reasoning_effort = value
 
     def prepare_request(
         self,
@@ -37,33 +48,15 @@ class DeepSeekAdapter:
         tool_choice: Any = None,
         model: str = "deepseek-chat",
     ) -> Dict[str, Any]:
-        """准备 API 请求参数。
-
-        Args:
-            messages: 消息列表（含历史）。
-            tools: 工具定义列表。
-            tool_choice: 工具选择策略。
-            model: 模型名称。
-
-        Returns:
-            处理后的请求参数字典。
-        """
-        # 检查是否需要 FC 降级
+        """准备 API 请求参数（含 reasoning_effort 注入）。"""
         if tools and model in self.REASONER_MODELS:
-            logger.warning(
-                "模型 %s 不支持 Function Calling，自动降级到 deepseek-chat",
-                model,
-            )
+            logger.warning("模型 %s 不支持 FC，自动降级到 deepseek-chat", model)
             model = "deepseek-chat"
             self._fc_fallback_triggered = True
 
-        # 处理 reasoning_content 规则
         processed_messages = self._process_messages(messages)
-
-        # 处理 tool_choice
         processed_tool_choice = self._process_tool_choice(tool_choice)
 
-        # 构建请求
         request: Dict[str, Any] = {
             "model": model,
             "messages": processed_messages,
@@ -74,80 +67,102 @@ class DeepSeekAdapter:
         if processed_tool_choice is not None:
             request["tool_choice"] = processed_tool_choice
 
+        # 注入 reasoning_effort（仅 Pro 模型）
+        if model != "flash" and self._reasoning_effort != "medium":
+            request["reasoning_effort"] = self._reasoning_effort
+
         return request
 
-    def process_response(self, response: Dict[str, Any]) -> Dict[str, Any]:
-        """处理 API 响应，提取 reasoning_content。
+    def repair_function_call(self, raw: str) -> Tuple[bool, Optional[Dict]]:
+        """自动修复 FC 返回格式错误（FR-2）。
 
         Args:
-            response: API 原始响应。
+            raw: 模型返回的原始字符串
 
         Returns:
-            处理后的响应（reasoning_content 单独提取）。
+            (是否修复成功, 修复后的 JSON)
         """
+        # 尝试直接解析
+        raw_clean = raw.strip()
+        try:
+            return True, json.loads(raw_clean)
+        except json.JSONDecodeError:
+            pass
+
+        # 修复 1: 去除代码块标记
+        if raw_clean.startswith("```"):
+            raw_clean = re.sub(r"^```(?:json)?\n", "", raw_clean)
+            raw_clean = re.sub(r"\n```$", "", raw_clean)
+            try:
+                result = json.loads(raw_clean)
+                self._repair_success += 1
+                return True, result
+            except json.JSONDecodeError:
+                pass
+
+        # 修复 2: 去除多余括号
+        raw_clean = re.sub(r",\s*([}\]])", r"\1", raw_clean)
+        try:
+            result = json.loads(raw_clean)
+            self._repair_success += 1
+            return True, result
+        except json.JSONDecodeError:
+            pass
+
+        # 修复 3: 补齐缺失的引号
+        raw_clean = re.sub(r"(?<=[:\s])([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*:)", r'"\1"', raw_clean)
+        try:
+            result = json.loads(raw_clean)
+            self._repair_success += 1
+            return True, result
+        except json.JSONDecodeError:
+            pass
+
+        self._repair_count += 1
+        return False, None
+
+    def process_response(self, response: Dict[str, Any]) -> Dict[str, Any]:
+        """处理 API 响应，提取 reasoning_content。"""
         choice = response.get("choices", [{}])[0]
         message = choice.get("message", {})
 
-        # 提取 reasoning_content（DeepSeek 特有字段）
         reasoning = message.get("reasoning_content")
         if reasoning is not None:
             self._last_reasoning_content = reasoning
-            logger.debug("提取 reasoning_content: %d 字符", len(reasoning))
         else:
             self._last_reasoning_content = None
 
         return response
 
     def _process_messages(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """处理消息列表中的 reasoning_content 规则。
-
-        FR-5.1: 带 tool_calls 的消息必须原样保留 reasoning_content
-        FR-5.2: 不带 tool_calls 的消息省略 reasoning_content
-        """
         processed = []
         for msg in messages:
             msg_copy = dict(msg)
-
             if msg.get("role") == "assistant":
                 has_tool_calls = bool(msg.get("tool_calls"))
-
                 if has_tool_calls:
-                    # FR-5.1: 必须保留 reasoning_content
-                    if "reasoning_content" not in msg_copy:
-                        # 尝试从缓存恢复
-                        if self._last_reasoning_content is not None:
-                            msg_copy["reasoning_content"] = self._last_reasoning_content
-                            logger.debug("从缓存恢复 reasoning_content")
+                    if "reasoning_content" not in msg_copy and self._last_reasoning_content:
+                        msg_copy["reasoning_content"] = self._last_reasoning_content
                 else:
-                    # FR-5.2: 省略 reasoning_content
                     msg_copy.pop("reasoning_content", None)
-
             processed.append(msg_copy)
-
         return processed
 
     def _process_tool_choice(self, tool_choice: Any) -> Any:
-        """处理 tool_choice 参数。
-
-        FR-5.3: 使用显式函数名称 {"type": "function", "function": {"name": "..."}}
-        DeepSeek 的 tool_choice="required" 不像 OpenAI 倾向于第一个函数。
-        """
         if tool_choice is None:
             return None
-
         if tool_choice == "required":
-            # 不使用 "required"，后续调用方应指定具体函数名称
             logger.warning("tool_choice='required' 在 DeepSeek 上不可靠，建议指定函数名称")
             return "required"
-
         if isinstance(tool_choice, dict):
             return tool_choice
-
-        # 字符串格式 → 转换为字典
         if isinstance(tool_choice, str):
             return {"type": "function", "function": {"name": tool_choice}}
-
         return tool_choice
+
+    @property
+    def repair_stats(self) -> Dict[str, int]:
+        return {"attempts": self._repair_count, "successes": self._repair_success}
 
     @property
     def last_reasoning_content(self) -> Optional[str]:
