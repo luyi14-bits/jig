@@ -113,7 +113,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ## 4. 关键维度矩阵
 
-| 维度 | CrewAI | MetaGPT | AutoGen | Superpowers | Mastra | LangGraph | **Tree-SOP** |
+| 维度 | CrewAI | MetaGPT | AutoGen | Superpowers | Mastra | LangGraph | **AgentHarness** |
 |------|:------:|:-------:|:-------:|:-----------:|:------:|:---------:|:------------:|
 | 硬约束层 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ 独有** |
 | 门禁机制 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ 独有** |
@@ -127,7 +127,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ## 5. 差距分析与追赶路线
 
-| 维度 | Tree-SOP 现状 | 高星框架 | 差距 | 建议优先级 |
+| 维度 | AgentHarness 现状 | 高星框架 | 差距 | 建议优先级 |
 |------|:---:|:--------:|:----:|:----------:|
 | GitHub 影响力 | ~0 | Superpowers 258k | 🔴 巨大 | P1 发布 PyPI + 英文 README |
 | 社区生态 | 单人 | 数百贡献者 | 🔴 巨大 | P1 开源运营 |

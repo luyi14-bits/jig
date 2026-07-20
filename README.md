@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌲 Tree-SOP Agent
+# ⚡ AgentHarness
 
 **🏗️ 自研多 Agent 编排框架 —— 13 个预设角色、4 层记忆、硬约束 Harness**
 
@@ -20,7 +20,7 @@
 
 ## 这是什么？
 
-Tree-SOP Agent 是一个**自研的多 Agent 编排框架**，对标 CrewAI / MetaGPT / Superpowers / AutoGen。核心差异化在于**硬约束 Harness 层**（ToolGuard + LOOP SOP 5 级门禁）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。
+AgentHarness 是一个**自研的多 Agent 编排框架**，对标 CrewAI / MetaGPT / Superpowers / AutoGen。核心差异化在于**硬约束 Harness 层**（ToolGuard + LOOP SOP 5 级门禁）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。
 
 **对标项目**：受 [Superpowers](https://github.com/superpowered-ai/superpowers) (258k+★) 的 Skill→Agent 理念和 [CrewAI](https://github.com/crewAIInc/crewAI) (55.8k+★) 的角色编排模式启发，融入了自研的**硬约束 Harness 层**和**四层记忆体系**。
 
@@ -58,7 +58,7 @@ Tree-SOP Agent 是一个**自研的多 Agent 编排框架**，对标 CrewAI / Me
 
 ## 🆚 与同类项目的关键差异
 
-| 维度 | CrewAI | MetaGPT | AutoGPT | OpenHands | **Tree-SOP Agent** |
+| 维度 | CrewAI | MetaGPT | AutoGPT | OpenHands | **AgentHarness** |
 |------|:------:|:-------:|:-------:|:---------:|:------------------:|
 | **硬约束层** | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ✅ **ToolGuard + LOOP SOP 5 级门禁** |
 | **角色体系** | 通用可定义 | 软件公司模拟 | 单 Agent | 编码 Agent | ✅ **11 个预设角色 + 自定义挂载** |
@@ -114,8 +114,8 @@ Layer 4: CheckpointManager   — JSON 检查点持久化
 ### 安装
 
 ```bash
-git clone https://github.com/luyi14-bits/tree-sop-agent.git
-cd tree-sop-agent
+git clone https://github.com/luyi14-bits/agent-harness.git
+cd agent-harness
 pip install pydantic pydantic-settings pyyaml
 ```
 
@@ -132,7 +132,7 @@ python run.py
 python run.py --attach my-custom-skill
 
 # 查看 Agent prompt 组装结果
-python -m src.tree_sop_agent.cli.main --skill-dir skills --inspect pm-mentor
+python -m src.agent_harness.cli.main --skill-dir skills --inspect pm-mentor
 ```
 
 ---
@@ -140,8 +140,8 @@ python -m src.tree_sop_agent.cli.main --skill-dir skills --inspect pm-mentor
 ## 📁 项目结构
 
 ```
-tree-sop-agent/
-├── src/tree_sop_agent/
+agent-harness/
+├── src/agent_harness/
 │   ├── core/            # SkillDef · Parser · Registry · AgentFactory
 │   ├── adapters/        # DeepSeekAdapter · CacheEngine · Context · MCPClient
 │   ├── orchestrator/    # Sequential · Parallel · Hierarchical · Checkpoint
@@ -182,5 +182,5 @@ tree-sop-agent/
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by Tree-SOP Agent Contributors · 2026</sub>
+  <sub>Built with ❤️ by AgentHarness Contributors · 2026</sub>
 </div>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tree-SOP Agent CLI 自测脚本。
+"""AgentHarness CLI 自测脚本。
 
 执行方式（不依赖 GUI / IDE）:
     python auto_test.py
@@ -353,7 +353,7 @@ def run_all_strategies() -> bool:
 def main():
     """自测脚本主入口。"""
     print("=" * 40)
-    print(" Tree-SOP Agent 自测脚本")
+    print(" AgentHarness 自测脚本")
     print("=" * 40)
 
     # 首先检查依赖
