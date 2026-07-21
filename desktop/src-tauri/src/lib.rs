@@ -5,7 +5,7 @@ use std::path::PathBuf;
 #[tauri::command]
 fn list_skills(skill_dir: String) -> Result<String, String> {
     let output = Command::new("python")
-        .args(["-m", "src.tree_sop_agent.cli.main", "--skill-dir", &skill_dir, "--list"])
+        .args(["-m", "src.agent_harness.cli.main", "--skill-dir", &skill_dir, "--list"])
         .output()
         .map_err(|e| format!("Python 调用失败: {}", e))?;
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
@@ -29,7 +29,7 @@ fn run_pipeline(prompt: String, skill_dir: String) -> Result<String, String> {
     let output = Command::new("python")
         .arg("-c")
         .arg(&format!(
-            "import sys; sys.path.insert(0,'{}'); from tree_sop_agent.orchestrator.dispatcher import Dispatcher; d=Dispatcher(skill_dir='{}'); print(d.handle('{}'))",
+            "import sys; sys.path.insert(0,'{}'); from agent_harness.orchestrator.dispatcher import Dispatcher; d=Dispatcher(skill_dir='{}'); print(d.handle('{}'))",
             src_path.to_string_lossy().replace("\\", "\\\\"),
             skill_dir.replace("\\", "\\\\"),
             prompt.replace('\'', "\\'")
@@ -108,5 +108,5 @@ pub fn run() {
             get_config, save_api_key, add_mcp_server
         ])
         .run(tauri::generate_context!())
-        .expect("启动 Tree-SOP Agent 桌面应用失败");
+        .expect("启动 AgentHarness 桌面应用失败");
 }

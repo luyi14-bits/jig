@@ -1,1 +1,64 @@
-IyBQeXRob24KX19weWNhY2hlX18vCioucHlbY29kXQoqJHB5LmNsYXNzCiouZWdnLWluZm8vCmRpc3QvCmJ1aWxkLwoqLnNwZWMKKi5leGUKLmVnZ3MvCiouZWdnCi52ZW52Lwp2ZW52LwplbnYvCgojIElERSAvIEVkaXRvcgoudnNjb2RlLwouaWRlYS8KKi5zd3AKKi5zd28KKn4KLnByb2plY3QKLnNldHRpbmdzLwoKIyDkuI3kuIrmlojkuoQKLmVudgouZW52LmxvY2FsCiouc2VjcmV0CnNlY3JldHMvCgojIE9mZmljZSBkb2N1bWVudHMgKG1ldGFkYXRhIGxlYWtzKQp+JCouZG9jeAovJCoueGxzeAovJCoucHB0eAoqLnRtcAoKIyBPUwouRFNfU3RvcmUKVGh1bWJzLmRiCmRlc2t0b3AuaW5pCgojIExvZ3MKKi5sb2cKbG9ncy8KCiMgQ2FjaGUKLnB5dGVzdF9jYWNoZS8KLm15cHlfY2FjaGUvCi5ydWZmX2NhY2hlLwoKIyBSdXN0IC8gVGF1cmkgYnVpbGQgYXJ0aWZhY3RzCmRlc2t0b3Avc3JjLXRhdXJpL3RhcmdldC8KZGVza3RvcC9kaXN0LwpkZXNrdG9wL25vZGVfbW9kdWxlcy8KCiMgSW50ZXJuYWwgdG9vbGluZwoucmVhc29uaXgvCi51cGxvYWRzLwo=
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.spec
+!AgentHarness.spec
+*.exe
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Trae / Cursor
+.trae/*
+!.trae/specs/
+!.trae/specs/**
+
+# 不上传
+.env
+.env.local
+*.secret
+secrets/
+
+# Office documents (metadata leaks)
+~$*.docx
+~$*.xlsx
+~$*.pptx
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Rust / Tauri build artifacts
+desktop/src-tauri/target/
+desktop/dist/
+desktop/node_modules/
+
+# Internal tooling
+.reasonix/
+.uploads/

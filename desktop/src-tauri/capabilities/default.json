@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "Default capabilities for Tree-SOP Agent",
+  "description": "Default capabilities for AgentHarness",
   "windows": ["main"],
   "permissions": [
     "core:default",

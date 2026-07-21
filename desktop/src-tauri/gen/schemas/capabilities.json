@@ -1,1 +1,1 @@
-{"default":{"identifier":"default","description":"Default capabilities for Tree-SOP Agent","local":true,"windows":["main"],"permissions":["core:default","core:window:default"]}}
+{"default":{"identifier":"default","description":"Default capabilities for AgentHarness","local":true,"windows":["main"],"permissions":["core:default","core:window:default"]}}

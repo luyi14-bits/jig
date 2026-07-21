@@ -189,7 +189,7 @@ const App: React.FC = () => {
   return (
     <div style={styles.container}>
       <div style={styles.titleBar}>
-        <span style={styles.title}>Tree-SOP Agent</span>
+        <span style={styles.title}>AgentHarness</span>
         <span style={styles.subtitle}>Multi-Agent Chat</span>
         <span style={styles.agentsBadge}>{agents.length} Agents</span>
         <button onClick={() => setShowSettings(true)} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 18, padding: "0 4px" }}>⚙</button>

@@ -16,8 +16,20 @@
   - PRD 完成 ✅
   - 优先级确认 ✅（RICE：6 个 P0 想法合并为一个大 Spec）
   - Out of Scope 明确 ✅（IDE-004/005/006/007 推迟到后续迭代）
-- **下一阶段**：阶段 1（规划）→ 调度 Spec-Pipeline 写 spec.md + tasks.md + checklist.md
-- **迭代追踪**：`ITERATION_LOG.md` 已初始化
+- **下一阶段**：阶段 1（规划）→ 调度 Spec-Pipeline 将想法池 P0 IDEA 转化为 Spec
+
+---
+
+## 2026-07-21
+
+### 启动：迭代 N — goals-guide 全清空 → 想法池映射
+- **触发者**：老板指令 — "loop直到goals-guide.html全清空"
+- **调度 Skill**：Luyi14-pm-mentor + Luyi14-project-secretary（阶段 0 对齐 + 想法池灌入）
+- **输入**：docs/goals-guide.html 三阶段目标 + PIPELINE_KANBAN.md 现有 IDEA
+- **产出**：PIPELINE_KANBAN.md 新增 IDEA-052，8 个已有 IDEA 补关联标注
+- **门禁 G0→1**：✅ PASS — goals-guide 目标已全部映射到想法池
+- **看板统计**：💡 7 项
+- **下一阶段**：阶段 1（规划）→ 调度 Spec-Pipeline
 
 ---
 

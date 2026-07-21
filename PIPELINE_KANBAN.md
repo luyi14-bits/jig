@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 0 项 | 0 项 | 0 项 | 0 项 | 21 项 | 3 项 |
+| 10 项 | 8 项 | 0 项 | 0 项 | 28 项 | 3 项 |
 
 ---
 
@@ -152,15 +152,11 @@
 - **优先级**：P1
 - **状态**：✅ **已交付**（ConfigManager.enable_risk_mode / risk_mode_acknowledged_at）
 
-### IDEA-031：Tauri 桌面应用增强（已废弃）
-- **优先级**：P1
-- **状态**：已废弃（战略调整：专注框架核心）
-
 ### IDEA-032：pip 包发布
-- **来源**：Alpha 0.2 规划
-- **描述**：添加 pyproject.toml，支持 pip install
+- **来源**：框架化基础设施
+- **描述**：pyproject.toml 已就位
 - **优先级**：P1
-- **状态**：等待 Spec
+- **状态**：✅ 已交付（pyproject.toml 存在，可 pip install）
 
 ### IDEA-033：真实 LLM 冒烟测试
 - **来源**：Alpha 0.2 规划
@@ -179,6 +175,7 @@
 - **描述**：异步执行 + 持久化 + token 认证
 - **优先级**：P2
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 3 方向E — Harness 即服务
 
 ---
 
@@ -196,7 +193,7 @@
   - Harness 配置接口：ToolGuard 级别 + LOOP SOP 门禁级别
   - Memory 配置接口：四层记忆可独立开关 + 后端选择
 - **优先级**：P0（框架化基石）
-- **状态**：等待 Spec
+- **状态**：✅ 已有代码（`api.py` + `.trae/specs/framework-core-apis/`）
 
 ### IDEA-037：DeepSeek 深度优化包
 - **来源**：awesome-deepseek-agent 对标 — 目标进入官方推荐列表
@@ -210,6 +207,7 @@
   - 多模型抽象延后到 v2
 - **优先级**：P0（DS 优先，官方曝光）
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 1 方向D — 进入 awesome-deepseek-agent 推荐列表
 
 ### IDEA-050：DeepSeek 成本感知调度
 - **来源**：awesome-deepseek-agent — Reasonix flash-first cost control
@@ -222,7 +220,7 @@
   - 预算上限：session 级 / 月度 Token 预算，超限熔断
   - 缓存节省可视化：每次请求展示 Cache Hit/Miss 费用对比
 - **优先级**：P0
-- **状态**：等待 Spec
+- **状态**：✅ 代码已交付（`cost_aware_router.py`）
 
 ### IDEA-051：自动 Tool-Call Repair
 - **来源**：awesome-deepseek-agent — Reasonix automatic tool-call repair
@@ -235,7 +233,19 @@
   - 降级路径：FC 反复失败 → 降级为纯文本模式
 - **优先级**：P1
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 1 方向D — Tool-Call Repair 是 PR 差异化亮点之一
+
+### IDEA-052：awesome-deepseek-agent 提 PR
+- **来源**：goals-guide Phase 1 方向D
+- **描述**：对照 awesome-deepseek-agent 已推荐项目（Reasonix / Pi / Deep Code），补齐差距后向仓库提 PR，目标进入官方推荐列表
+- **核心行动**：
+  - DS 优化自查 → 列出差距清单（缓存/成本/FC修复/MCP）
+  - awesome-deepseek-agent 仓库调研 → 阅读收录标准（双语+模型命名+1M上下文）
+  - 准备 PR 素材（对比表 + guide 文档）
+- **指标**：GitHub stars 100+，DS 官方社交媒体至少 1 次提及
+- **优先级**：P0
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 1 方向D + 立即行动 #1, #3
 
 ### IDEA-038：OpenTelemetry 可观测性接入
 - **来源**：12-Factor Agents #11 + 对标 MS Agent FW
@@ -249,6 +259,7 @@
   - Metrics：token 用量 / API 耗时 / 缓存命中率 / 熔断次数
 - **优先级**：P1（12-Factor 合规）
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 3 方向B — 12-Factor #11 OTel
 
 ### IDEA-039：结构化输出验证
 - **来源**：12-Factor Agents #4
@@ -256,6 +267,7 @@
 - **对标**：PydanticAI 的结构化输出 + LangGraph 的 state schema
 - **优先级**：P1（12-Factor 合规）
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 3 方向B — 12-Factor #4 结构化输出
 
 ### IDEA-040：Human-in-the-Loop API
 - **来源**：12-Factor Agents #9
@@ -263,6 +275,7 @@
 - **对标**：LangGraph 的 interrupt_before / interrupt_after + MS Agent FW 的审批中间件
 - **优先级**：P1（12-Factor 合规）
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 3 方向B — 12-Factor #9 HITL
 
 ### IDEA-041：Loop Engineering 工程化
 - **来源**：2026 Agent 核心话题 — Loop Engineering
@@ -275,6 +288,7 @@
   - Loop 调试：全链路事件日志 + 回放
 - **优先级**：P0（2026 核心差异化）
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 3 方向B — Loop Engineering 框架级
 
 ### IDEA-042：pip 包发布 + 文档站点
 - **来源**：框架化必备基础设施
@@ -282,6 +296,7 @@
 - **对标**：LangGraph / CrewAI / PydanticAI 文档质量
 - **优先级**：P1
 - **状态**：等待 Spec（IDEA-032 升级版）
+- **🎯 关联目标**：goals-guide Phase 2 方向A — pip包+文档站点+示例
 
 ### IDEA-043：框架技术路线文档化
 - **来源**：2026 框架技术路线调研
@@ -295,10 +310,10 @@
 
 ### IDEA-044：MCP 协议完整支持
 - **来源**：2026 跨框架标准 — MCP 协议
-- **描述**：从 MCPClient 基础集成升级为完整 MCP Server + Client 双向支持，让 AgentHarness 可作为 MCP 工具被其他框架调用
+- **描述**：MCP Server + Client 双向支持（代码已存在：`mcp_protocol.py`），让 AgentHarness 可作为 MCP 工具被其他框架调用
 - **对标**：CrewAI v1.10.1 MCP 集成
-- **优先级**：P0（升级 — 外部 Agent 兼容的基础通道）
-- **状态**：等待 Spec（IDEA-016 升级版）
+- **优先级**：P0
+- **状态**：✅ **规划中**（代码已存在：`src/agent_harness/adapters/mcp_protocol.py`）
 
 ### IDEA-045：A2A 协议探索
 - **来源**：2026 跨框架通信标准 — A2A
@@ -306,13 +321,6 @@
 - **对标**：CrewAI A2A 协议
 - **优先级**：P1（升级 — 跨框架协作通道）
 - **状态**：等待 Spec
-
-### IDEA-046：可视化编排界面
-- **来源**：对标 LangGraph Studio / Google ADK
-- **描述**：在 Tauri 桌面应用中增加可视化编排器，支持拖拽式 Agent 工作流构建
-- **对标**：LangGraph Studio / Spring AI Alibaba Admin / Google ADK 可视化构建器
-- **优先级**：P2
-- **状态**：等待 Spec（IDEA-031 升级版）
 
 ### IDEA-047：框架级缓存诊断面板
 - **来源**：IDEA-011 升级 + DeepSeek 缓存优化差异化
@@ -338,11 +346,45 @@
   - 混合编排：内置 Agent（13 角色）+ 外部 Agent 在同一管道中协作
 - **与 Omnigent 差异**：Omnigent Harness 外挂（事后审批），AgentHarness ToolGuard 内置（事前阻断）
 - **优先级**：P0（框架双模核心）
+- **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/ds-ecosystem-pr/`）
+
+### IDEA-053：真实项目验证
+- **来源**：goals-guide.html Phase 1 方向 C
+- **描述**：用 AgentHarness 完成 1 个真实小项目（Web 工具 / 数据处理 / 内部工具），从 0 到 1 跑通全链路，记录每个痛点
+- **指标**：1 份案例文档，暴露并修复 ≥10 个真实痛点
+- **优先级**：P0（验证期核心）
+- **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/real-project-validation/`）
+
+### IDEA-055：示例库（3 个完整示例）
+- **来源**：goals-guide.html Phase 2 方向 A
+- **描述**：3 个完整示例（1 个 Web 工具 + 1 个数据处理 + 1 个代码审查 Agent）
+- **优先级**：P1
 - **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 2 方向A
+
+### IDEA-056：社区运营
+- **来源**：goals-guide.html Phase 2 方向 A
+- **描述**：GitHub Discussions 开启 + README 打磨 + 贡献指南完善
+- **优先级**：P1
+- **状态**：等待 Spec
+- **🎯 关联目标**：goals-guide Phase 2 方向A
+
+### IDEA-057：版本治理（Beta→RC→v1.0）
+- **来源**：goals-guide.html Phase 2 方向 A
+- **描述**：Beta → RC → v1.0 三轮发布，每轮收集用户反馈
+- **优先级**：P1
+- **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/examples-community/`）
+- **🎯 关联目标**：goals-guide Phase 2 方向A
 
 ## 📝 规划中
 
-> 优先级 P0 任务：IDEA-037 DS 深度优化 / IDEA-050 成本感知 / IDEA-036 公开 API / IDEA-049 外部 Agent 兼容 / IDEA-044 MCP 协议 / IDEA-051 Tool-Call Repair / IDEA-041 Loop Engineering
+> IDEA-052 (awesome PR) — `.trae/specs/ds-ecosystem-pr/`
+> IDEA-053 (真实项目验证) — `.trae/specs/real-project-validation/`
+> IDEA-055 (示例库) — `.trae/specs/examples-community/`
+> IDEA-056 (社区运营) — `.trae/specs/examples-community/`
+> IDEA-057 (版本治理) — `.trae/specs/examples-community/`
+
+> 优先级 P0 任务：IDEA-037 DS 深度优化 / IDEA-050 成本感知 / IDEA-036 公开 API / IDEA-049 外部 Agent 兼容 / IDEA-044 MCP 协议 / IDEA-051 Tool-Call Repair / IDEA-041 Loop Engineering / IDEA-053 真实项目验证 / IDEA-052 awesome PR
 
 ---
 

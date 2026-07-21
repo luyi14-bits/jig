@@ -36,11 +36,11 @@ class Settings(BaseSettings):
 
     # ── 模型配置 ──
     pro_model: str = Field(
-        default="deepseek-chat",
+        default="deepseek-v4-pro",
         description="Pro 模型名称（复杂推理场景）",
     )
     flash_model: str = Field(
-        default="deepseek-chat",
+        default="deepseek-v4-flash",
         description="Flash 模型名称（快速执行场景）",
     )
     pro_temperature: float = Field(

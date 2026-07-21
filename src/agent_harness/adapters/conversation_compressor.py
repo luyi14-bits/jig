@@ -19,7 +19,7 @@ class ConversationCompressor:
 
     Usage:
         compressor = ConversationCompressor(mode="hybrid")
-        compressed = compressor.compress(messages, model="deepseek-chat")
+        compressed = compressor.compress(messages, model="deepseek-v4-flash")
         print(f"压缩率: {compressor.compression_ratio:.0%}")
     """
 
@@ -41,7 +41,7 @@ class ConversationCompressor:
         self._original_token_count = 0
         self._compressed_token_count = 0
 
-    def compress(self, messages: List[Dict[str, Any]], model: str = "deepseek-chat") -> List[Dict[str, Any]]:
+    def compress(self, messages: List[Dict[str, Any]], model: str = "deepseek-v4-flash") -> List[Dict[str, Any]]:
         """压缩对话历史。
 
         Args:
