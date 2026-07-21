@@ -99,6 +99,9 @@ cd agent-harness
 # Install dependencies
 pip install pydantic>=2.0 pydantic-settings>=2.0 pyyaml>=6.0
 
+# (Optional) Dev install
+pip install -e .
+
 # (Optional) Install test dependencies
 pip install pytest
 ```
