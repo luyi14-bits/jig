@@ -5,7 +5,7 @@
 ## 变更
 
 - 版本一致性修复：README / CHANGELOG / server / 白皮书 → Alpha 0.2
-- skills 补齐：从 5 个扩容到 12 个（含 acceptance-testing / coding-ethics / security-academy / spec-pipeline / tdd / trinity-mentors / horror-story-writer）
+- skills 补齐：从 5 个扩容到 12 个（含 acceptance-testing / coding-ethics / security-academy / spec-pipeline / tdd / trinity-mentors）
 - 新增端到端 LOOP SOP 集成测试（test_e2e_loop.py）
 
 ## 测试覆盖

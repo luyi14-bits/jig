@@ -199,7 +199,6 @@ The `MemoryRouter` classifies new information into four types and routes accordi
 | 9 | **DevOps** | `Luyi14-devops` | Flash |
 | 10 | **Secretary** | `Luyi14-project-secretary` | Flash |
 | 11 | **LOOP SOP** | `Luyi14-loop-sop` | Pro |
-| 12 | **Story Writer** | `luyi14-horror-story-writer` | Flash |
 
 ### 4.2 Skill → Agent Mapping Engine
 

@@ -87,7 +87,6 @@ Plugin Plane:           VisionTool · ImageReader · PluginMarket (optional, fro
 | 9 | **DevOps** | Luyi14-devops | Flash |
 | 10 | **Secretary** | Luyi14-project-secretary | Flash |
 | 11 | **LOOP SOP** | Luyi14-loop-sop | Pro |
-| 12 | **Horror Writer** | luyi14-horror-story-writer | Flash |
 
 ## Comparison
 
