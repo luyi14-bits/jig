@@ -284,15 +284,16 @@ Tool Call Request
 
 ## Comparison
 
-| Dimension | CrewAI | MetaGPT | AutoGPT | **Jig** |
-|-----------|:------:|:-------:|:-------:|:----------------:|
-| **Hard Constraint Layer** | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ✅ **ToolGuard + 5-stage gating (pre-execution)** |
-| **Harness Level** | ❌ | ❌ | ❌ | ✅ **Built-in framework harness** |
-| **Role System** | Generic, user-defined | Software company sim | Single agent | ✅ **12 preset roles + custom mount** |
-| **Memory Architecture** | Short-term | Message sharing | Vector store | ✅ **4-layer + 5-level compression** |
-| **Cache Optimization** | — | — | — | ✅ **Prefix SHA-256 hashing for DeepSeek cache** |
-| **Failure Handling** | Manual retry | Manual retry | Loop retry | ✅ **Auto-degrade + circuit breaker + checkpoint resume** |
-| **License** | MIT | MIT | Apache 2.0 | **MIT** |
+| Dimension | CrewAI | LangGraph | OpenAI Agents | PydanticAI | **Jig** |
+|-----------|:------:|:---------:|:-------------:|:----------:|:-------:|
+| **Hard Constraint Layer** | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ✅ **ToolGuard (pre-execution)** |
+| **DeepSeek Cache Optimized** | — | — | — | — | ✅ **SHA-256 prefix hashing** |
+| **Memory Architecture** | Short-term | Checkpointer | Conversation | Context | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
+| **Failure Handling** | Manual retry | Retry policy | Manual | Manual | ✅ **Degradation + CircuitBreaker + Checkpoint** |
+| **Cost Governance** | — | — | — | — | ✅ **CostAwareRouter + token budgets** |
+| **MCP Support** | ✅ Client | ✅ Client | ❌ | ❌ | ✅ **Client + Server** |
+| **External Agent Governance** | ❌ | ❌ | ❌ | ❌ | ✅ **Meta-Harness adapters** |
+| **License** | MIT | MIT | Apache 2.0 | MIT | **MIT** |
 
 > 📊 Full 10+ framework comparison: [Framework Comparison Report](docs/framework-comparison-report.md)
 
