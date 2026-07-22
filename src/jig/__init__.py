@@ -10,18 +10,31 @@
     result = app.run("帮我做一个登录功能")
     print(result)
 
-核心组件:
-- Jig: 框架主入口（公开 SDK API）
-- SkillRegistry: 加载和注册 skill 定义
-- AgentFactory: 从 skill 定义创建 Agent 实例
-- ModelRouter: Pro/Flash 双模型路由
-- DeepSeekAdapter: reasoning_content + Function Calling 适配
-- CacheEngine: 缓存前缀组装 + 诊断
-- ContextPartitioner: 三层上下文分区
+二次开发:
+    from jig import Jig, SkillRegistry, ConfigManager, LoopEngine
+    from jig.adapters.cache_engine import CacheEngine
+    
+    app = Jig()
+    app.add_agent("my-agent", "角色描述", tools=["read", "write"])
+    app.attach_skill("path/to/skill.md")
+    app.set_pipeline([pm_agent, coding_agent, qa_agent])
+    result = await app.arun("任务描述", on_stage=my_callback)
 """
 
 from .api import Jig
+from .core.skill_registry import SkillRegistry
+from .core.skill_parser import SkillParser
+from .core.agent_factory import AgentFactory
+from .core.config_manager import ConfigManager
+from .orchestrator.loop_engine import LoopEngine, LoopConfig, LoopStatus
 
 __all__ = [
     "Jig",
+    "SkillRegistry",
+    "SkillParser",
+    "AgentFactory",
+    "ConfigManager",
+    "LoopEngine",
+    "LoopConfig",
+    "LoopStatus",
 ]
