@@ -14,7 +14,7 @@
 
 ---
 
-> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Framework core is complete: 13 agents, 41 modules, 112 tests. Production use is not yet recommended. Contributions welcome.
+> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Framework core is complete: 12 agents, 41 modules, 112 tests. Production use is not yet recommended. Contributions welcome.
 
 ---
 
@@ -35,7 +35,7 @@ print(app.run('Build a login flow'))
 
 | You need... | Use Jig because... |
 |-------------|-------------------|
-| Multi-agent orchestration | 13 preset roles + custom SKILL.md mounting |
+| Multi-agent orchestration | 12 preset roles + custom SKILL.md mounting |
 | **Hard-constraint safety** | **Only framework with ToolGuard (pre-execution interception)** |
 | DeepSeek optimization | SHA-256 prefix caching + CostAwareRouter + FC auto-repair |
 | Multi-model support | DeepSeek + OpenAI (extensible via BaseModelProvider) |
