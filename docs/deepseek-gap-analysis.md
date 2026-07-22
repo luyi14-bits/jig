@@ -5,87 +5,28 @@
 
 ## Benchmark Projects
 
-> **Note**: Reasonix, Deep Code, and Pi are **Agent applications** (terminal tools for end users), not frameworks for developers. They are included here as DeepSeek optimization benchmarks, not as framework competitors. Jig's framework competitors are LangGraph / CrewAI / PydanticAI / MS Agent FW / Omnigent.
+Jig is a **framework** (for developers, installed via `pip install jig`). The projects below that have done DeepSeek-specific optimization are included as technical benchmarks, not as framework competitors.
 
-| Project | Stars | Type | DeepSeek Specific |
-|---------|-------|------|:-----------------:|
-| **Reasonix** | N/A | Terminal coding agent | ✅ Native (cache-first, flash-first) |
-| **Deep Code** | N/A | Terminal AI assistant | ✅ Agent Skills + reasoning effort |
-| **Pi** | N/A | Terminal coding harness | ✅ Tree-structured sessions |
-| **Jig** | ~0 | Multi-Agent framework | ✅ FR-2/3 (repair + effort) |
+| Project | Type | DeepSeek Specific |
+|---------|------|:-----------------:|
+| **Jig** | Multi-Agent framework | ✅ FR-2/3 (repair + effort) |
+| LangGraph | Agent orchestration | — |
+| CrewAI | Role-based agents | — |
+| PydanticAI | Type-safe agent framework | — |
+| MS Agent FW | Enterprise agent platform | — |
+| Omnigent | Meta-harness | — |
 
----
+## Framework-Level DeepSeek Optimization
 
-## Dimension-by-Dimension Comparison
+Jig is currently the **only Python agent framework** with framework-level DeepSeek optimizations:
 
-### 1. Cache Optimization
-
-| Aspect | Reasonix | Deep Code | Pi | Jig |
-|--------|----------|-----------|----|--------------|
-| Strategy | Cache-first loop | — | — | SHA-256 prefix hashing |
-| Prefix stabilization | ✅ | — | — | ✅ immutable_frozen |
-| Per-session cache | ✅ | — | — | ✅ CacheEngine stats |
-| Cost visualization | — | — | — | ✅ CacheStats (hit_rate, savings) |
-
-**Verdict**: 🟢 **Leader** — Jig has the most structured cache system with stats tracking.
-
-### 2. Reasoning Effort Control
-
-| Aspect | Reasonix | Deep Code | Pi | Jig |
-|--------|----------|-----------|----|--------------|
-| Levels | flash/pro/preset max | deep thinking max | — | low/medium/high |
-| Configurable | ✅ `/pro` TUI command | ✅ CLI flag | — | ✅ `reasoning_effort` setter |
-| Per-request | ✅ | ✅ | — | ✅ In `prepare_request` |
-| Max thinking | — | ✅ | — | ⚠️ Missing `max` level |
-
-**Verdict**: 🟡 **On par** — Has configurable levels but missing `max` thinking mode.
-
-### 3. Tool-Call Repair
-
-| Aspect | Reasonix | Deep Code | Pi | Jig |
-|--------|----------|-----------|----|--------------|
-| JSON repair | ✅ automatic | — | — | ✅ 4 strategies (code block, trailing comma, missing quotes) |
-| FC fallback | ✅ | — | — | ✅ reasoner→chat auto-degrade |
-| Repair stats | — | — | — | ✅ `repair_stats` property |
-
-**Verdict**: 🟢 **Leader** — Most comprehensive repair system with fallback chain.
-
-### 4. Cost Control
-
-| Aspect | Reasonix | Deep Code | Pi | Jig |
-|--------|----------|-----------|----|--------------|
-| Flash-first | ✅ default | — | — | ✅ CostAwareRouter |
-| Token budget | — | — | — | ✅ session + monthly budget |
-| Cost estimation | — | — | — | ✅ `estimate_cost` with cache discount |
-| Circuit breaker | — | — | — | ✅ CircuitBreaker (drift + iteration limit) |
-
-**Verdict**: 🟢 **Leader** — Only framework with multi-level cost governance.
-
-### 5. MCP Integration
-
-| Aspect | Reasonix | Deep Code | Pi | Jig |
-|--------|----------|-----------|----|--------------|
-| MCP Client | ✅ native | — | ✅ | ✅ MCPClient |
-| MCP Server | — | — | — | ✅ MCPServer |
-| ToolGuard layer | — | — | — | ✅ whitelist/denylist/pre-tool-use |
-
-**Verdict**: 🟢 **Leader** — Only framework with bidirectional MCP + security layer.
-
-### 6. Model Naming Compliance
-
-| Aspect | Required | Reasonix | Deep Code | Pi | Jig |
-|--------|:--------:|:---------:|:---------:|:--:|:------------:|
-| Uses v4 names | ✅ Yes | ✅ | ✅ | ✅ | ❌ **Uses `deepseek-chat`** |
-
-**Verdict**: 🔴 **Must fix** — `deepseek_adapter.py:49` uses `deepseek-chat` (V3 deprecated name). See CONTRIBUTING.md §1.
-
-### 7. 1M Context Window
-
-| Aspect | Required | Reasonix | Deep Code | Pi | Jig |
-|--------|:--------:|:---------:|:---------:|:--:|:------------:|
-| 1M context configured | ✅ Yes | ✅ | ✅ | ✅ | ❌ **Not mentioned** |
-
-**Verdict**: 🔴 **Must add** — No code or documentation mentions the 1M context window.
+| Dimension | Jig's Implementation |
+|-----------|---------------------|
+| Cache Optimization | SHA-256 prefix hashing for cache hit max |
+| Reasoning Effort | Configurable low/medium/high |
+| Tool-Call Repair | 4-strategy auto-repair |
+| Cost Control | Flash-first, auto-upgrade to Pro |
+| Token Budget | Session + monthly caps, circuit-breaker |
 
 ---
 

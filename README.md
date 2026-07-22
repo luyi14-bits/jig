@@ -284,15 +284,15 @@ Tool Call Request
 
 ## Comparison
 
-| Dimension | CrewAI | LangGraph | OpenAI Agents | PydanticAI | **Jig** |
-|-----------|:------:|:---------:|:-------------:|:----------:|:-------:|
-| **Hard Constraint Layer** | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ✅ **ToolGuard (pre-execution)** |
-| **DeepSeek Cache Optimized** | — | — | — | — | ✅ **SHA-256 prefix hashing** |
-| **Memory Architecture** | Short-term | Checkpointer | Conversation | Context | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
-| **Failure Handling** | Manual retry | Retry policy | Manual | Manual | ✅ **Degradation + CircuitBreaker + Checkpoint** |
-| **Cost Governance** | — | — | — | — | ✅ **CostAwareRouter + token budgets** |
-| **MCP Support** | ✅ Client | ✅ Client | ❌ | ❌ | ✅ **Client + Server** |
-| **External Agent Governance** | ❌ | ❌ | ❌ | ❌ | ✅ **Meta-Harness adapters** |
+| Dimension | LangGraph | CrewAI | PydanticAI | MS Agent FW | Omnigent | **Jig** |
+|-----------|:---------:|:------:|:----------:|:-----------:|:--------:|:-------:|
+| **Hard Constraint Layer** | ❌ | ❌ | ❌ | ❌ | ⚠️ post-hoc | ✅ **ToolGuard pre-execution** |
+| **DeepSeek Cache Optimized** | — | — | — | — | — | ✅ **SHA-256 prefix hashing** |
+| **Memory Architecture** | Checkpointer | Short-term | Context | Session | — | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
+| **Failure Handling** | Retry policy | Manual | Manual | Retry | — | ✅ **Degradation + CircuitBreaker + Checkpoint** |
+| **Cost Governance** | — | — | — | — | — | ✅ **CostAwareRouter + token budgets** |
+| **MCP Support** | ✅ Client | ✅ Client | ❌ | ❌ | ❌ | ✅ **Client + Server** |
+| **External Agent Governance** | ❌ | ❌ | ❌ | ❌ | ✅ Route only | ✅ **Meta-Harness + ToolGuard passthrough** |
 | **License** | MIT | MIT | Apache 2.0 | MIT | **MIT** |
 
 > 📊 Full 10+ framework comparison: [Framework Comparison Report](docs/framework-comparison-report.md)
