@@ -5,6 +5,8 @@
 
 ## Benchmark Projects
 
+> **Note**: Reasonix, Deep Code, and Pi are **Agent applications** (terminal tools for end users), not frameworks for developers. They are included here as DeepSeek optimization benchmarks, not as framework competitors. Jig's framework competitors are LangGraph / CrewAI / PydanticAI / MS Agent FW / Omnigent.
+
 | Project | Stars | Type | DeepSeek Specific |
 |---------|-------|------|:-----------------:|
 | **Reasonix** | N/A | Terminal coding agent | ✅ Native (cache-first, flash-first) |

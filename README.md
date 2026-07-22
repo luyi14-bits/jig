@@ -38,7 +38,7 @@
 
 Jig is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. It introduces a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution — a capability absent in prompt-only frameworks like CrewAI, MetaGPT, and AutoGPT. The 4-tier memory architecture is purpose-built for DeepSeek Context Caching with SHA-256 prefix hashing.
 
-Unlike fork-based projects, Jig is written from scratch with its own orchestration engine, memory system, and agent definition protocol.
+Unlike agent applications (Reasonix, Deep Code, Pi) that are terminal tools for end users, Jig is a **framework** — developers import it via `pip install jig` and build their own agents on top. It is designed from scratch with its own orchestration engine, memory system, and agent definition protocol.
 
 ```
 You: "Build a login flow with phone + OTP"
