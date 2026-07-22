@@ -3,7 +3,7 @@
 核心入口，5 行代码跑通整条 SOP 管道。
 
 Usage:
-    from agent_harness import AgentHarness
+    from forge import AgentHarness
     app = AgentHarness()
     app.run("帮我做一个登录功能")
 """
@@ -26,7 +26,7 @@ class AgentHarness:
 
     所有用户从这里开始。5 行示例：
 
-        from agent_harness import AgentHarness
+        from forge import AgentHarness
         app = AgentHarness(skills_dir="./skills")
         result = app.run("帮我做一个登录功能")
         print(result)

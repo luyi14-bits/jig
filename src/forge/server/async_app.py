@@ -23,7 +23,7 @@ try:
 
     @app.post("/execute")
     async def execute(request: ExecuteRequest) -> Dict[str, Any]:
-        from agent_harness import AgentHarness
+        from forge import AgentHarness
         h = AgentHarness(skills_dir=request.skill_dir)
         result = h.run(request.prompt)
         return {"result": result}

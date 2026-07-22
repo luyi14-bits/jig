@@ -150,3 +150,15 @@
   - `docs/framework-comparison-report.md`（新建）
   - `PIPELINE_KANBAN.md`（想法池扩充到 13 项）
 - **验证**：GitHub 已推送
+
+---
+
+## 2026-07-21
+
+### 创建：技术白皮书 v3 — 框架化架构设计
+- **触发者**：LOOP SOP 调度 + 秘书自驱动
+- **触发材料**：PIPELINE_KANBAN.md IDEA-043 + framework-comparison-report.md
+- **变更类型**：文档创建
+- **变更摘要**：technical-whitepaper-v3.md（15KB），9 章：框架化架构、Harness工程、四层记忆、13角色、安全、对标、集中式分析、路线图
+- **涉及文件**：`docs/technical-whitepaper-v3.md`（新建），`PIPELINE_KANBAN.md`（IDEA-043 更新）
+- **验证**：IDE-043 看板已更新为 ✅ 已交付

@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from agent_harness.core.skill_parser import SkillParser, SkillParseError
+from forge.core.skill_parser import SkillParser, SkillParseError
 
 
 class TestSkillParser:

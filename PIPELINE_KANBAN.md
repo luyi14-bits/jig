@@ -300,20 +300,17 @@
 
 ### IDEA-043：框架技术路线文档化
 - **来源**：2026 框架技术路线调研
-- **描述**：明确 Tree-SOP 的架构归属 — "Harness + 混合编排"创新路线，与七大模式的关系文档化
-- **产出**：
-  - 架构决策记录（ADR）：为什么选 Harness 路线而非图状态机/角色团队
-  - 技术白皮书 v3：框架化架构设计
-  - 对标文档：vs LangGraph / CrewAI / MS Agent FW / PydanticAI
+- **描述**：明确架构归属 — "Harness + 混合编排"创新路线
+- **产出**：技术白皮书 v3：框架化架构设计（已交付）
 - **优先级**：P1
-- **状态**：等待 Spec
+- **状态**：✅ **已交付**（`docs/technical-whitepaper-v3.md` 15KB）
 
 ### IDEA-044：MCP 协议完整支持
 - **来源**：2026 跨框架标准 — MCP 协议
 - **描述**：MCP Server + Client 双向支持（代码已存在：`mcp_protocol.py`），让 AgentHarness 可作为 MCP 工具被其他框架调用
 - **对标**：CrewAI v1.10.1 MCP 集成
 - **优先级**：P0
-- **状态**：✅ **规划中**（代码已存在：`src/agent_harness/adapters/mcp_protocol.py`）
+- **状态**：✅ **规划中**（代码已存在：`src/forge/adapters/mcp_protocol.py`）
 
 ### IDEA-045：A2A 协议探索
 - **来源**：2026 跨框架通信标准 — A2A

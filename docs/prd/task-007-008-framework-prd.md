@@ -5,7 +5,7 @@
 | FR | 需求 | Pri |
 |:--:|------|:---:|
 | FR-1 | pyproject.toml 完整配置（setuptools + wheel） | P1 |
-| FR-2 | pip install agent-harness 成功 | P1 |
+| FR-2 | pip install forge 成功 | P1 |
 | FR-3 | 英文 README | P1 |
 | FR-4 | 用户指南 docs/user-guide.md | P2 |
 | FR-5 | 结构化输出 Pydantic model | P1 |

@@ -3,7 +3,7 @@
 import pytest
 import tempfile
 import os
-from agent_harness.orchestrator.memory import LocalStore, MemoryRouter, Consolidator
+from forge.orchestrator.memory import LocalStore, MemoryRouter, Consolidator
 
 
 class TestLocalStore:

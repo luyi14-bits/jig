@@ -2,9 +2,9 @@
 
 import pytest
 
-from agent_harness.core.skill_def import SkillDef
-from agent_harness.core.skill_registry import SkillRegistry
-from agent_harness.core.agent_factory import AgentFactory, Agent
+from forge.core.skill_def import SkillDef
+from forge.core.skill_registry import SkillRegistry
+from forge.core.agent_factory import AgentFactory, Agent
 
 
 class TestSkillRegistry:
@@ -90,7 +90,7 @@ class TestAgentFactory:
 
     def test_receive_handover(self):
         """接收交接包应更新上下文。"""
-        from agent_harness.core.skill_def import HandoverPackage
+        from forge.core.skill_def import HandoverPackage
 
         skill1 = SkillDef(name="agent-1", description="First", model="flash")
         skill2 = SkillDef(name="agent-2", description="Second", model="flash")
