@@ -1,0 +1,48 @@
+site_name: Jig
+site_description: A self-built multi-agent orchestration framework with hard-constraint Harness layer
+site_url: https://luyi14-bits.github.io/jig
+repo_url: https://github.com/luyi14-bits/jig
+repo_name: luyi14-bits/jig
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: teal
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Installation: installation.md
+  - Usage:
+    - CLI: usage/cli.md
+    - Python API: usage/api.md
+    - Streaming: usage/streaming.md
+  - Building Agents: build-agents.md
+  - Architecture: architecture.md
+  - Preset Agents: agents.md
+  - Comparison: comparison.md
+  - Roadmap: roadmap.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
