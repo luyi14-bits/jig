@@ -2,376 +2,145 @@
 
 # ⚡ Jig
 
-**A self-built multi-agent orchestration framework with 12 preset roles, 4-layer memory, and hard-constraint harness.**
+**A self-built multi-agent orchestration framework with hard-constraint Harness layer.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
-[![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek_V3-4B32C3)](https://deepseek.com)
-[![Status](https://img.shields.io/badge/Status-Alpha_0.2-orange)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/Tests-62%2F62-brightgreen)](tests/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-112%2F117-brightgreen)](tests/)
+[![Multi-Model](https://img.shields.io/badge/Models-DeepSeek+OpenAI-4B32C3)](https://platform.deepseek.com)
+[![Status](https://img.shields.io/badge/Status-Alpha_v0.5.0-orange)](CHANGELOG.md)
 
 </div>
 
 ---
 
-> ⚠️ **Alpha Status**: Jig is in active development (Alpha 0.2). Core architecture, agent pipeline, and SOP orchestration are proof-of-concept complete. Production use is not yet recommended. Contributions and feedback welcome.
-
----
-
-## 📖 Table of Contents
-
-- [What is Jig?](#what-is-jig)
-- [Key Features](#key-features)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-- [Architecture](#architecture)
-- [Built-in Agents](#built-in-agents)
-- [Comparison](#comparison)
-- [Roadmap](#roadmap)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## What is Jig?
-
-Jig is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. It introduces a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution — a capability absent in prompt-only frameworks like CrewAI, MetaGPT, and AutoGPT. The 4-tier memory architecture is purpose-built for DeepSeek Context Caching with SHA-256 prefix hashing.
-
-Unlike agent applications (Reasonix, Deep Code, Pi) that are terminal tools for end users, Jig is a **framework** — developers import it via `pip install jig` and build their own agents on top. It is designed from scratch with its own orchestration engine, memory system, and agent definition protocol.
-
-```
-You: "Build a login flow with phone + OTP"
-         │
-         ▼
-  Dispatcher ─── Routes intent, launches pipeline
-         │
-         ▼
-  PM Agent ────→ Trinity Architecture Review
-         │
-         ▼
-  Spec-Pipeline ─── Task breakdown + acceptance checklist
-         │
-         ▼
-  Coding Agent ──→ Code-Review Agent ──→ TDD Agent
-         │
-         ▼
-  Acceptance + Security (parallel verification + security audit)
-         │
-         ▼
-  DevOps Agent ─── Build & release
-         │
-         ▼
-  Secretary Agent ─── Kanban update + version snapshot
-```
-
----
-
-## Key Features
-
-- 🧩 **12 Preset Agent Roles** — PM, Trinity (3 AI experts), Spec-Pipeline, Coding, Code-Review, TDD (3 testing legends), Acceptance, Security (3 auditors), DevOps, Secretary, LOOP SOP, plus extensible custom agents
-- 🛡️ **Hard-Constraint Harness** — ToolGuard whitelist/denylist/PreToolUse hook intercepts tools *before* execution; prompt-only frameworks can't do this
-- 🚦 **5-Stage LOOP SOP Gating** — Every pipeline stage has a gate check; auto-degrade on failure (circuit breaker, drift detection, max-iteration cap)
-- 🧠 **4-Layer Memory Architecture** — CacheEngine (SHA-256 prefix hashing) → ContextPartitioner (immutable/append-only/volatile) → EmbeddingIndex (semantic skill retrieval) → SQLite CheckpointManager
-- 💰 **Dual-Model Cost Optimization** — Pro model for planning/review; Flash model for coding/testing. Targets 60-70% API cost reduction
-- 📦 **Skill → Agent Mapping Engine** — Any `SKILL.md` with YAML frontmatter becomes a runnable agent. Mount custom skills at runtime with `--attach`
-- 🔄 **HandoverPackage Protocol** — Typed handoff schema (`source → target + summary + artifacts + decisions + confidence`) ensures no information loss between agents
-- 🧪 **62 Tests, Full Green** — pytest suite covering parser, registry, factory, orchestrator, memory, context compression, and end-to-end pipeline
+> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Framework core is complete: 13 agents, 41 modules, 112 tests. Production use is not yet recommended. Contributions welcome.
 
 ---
 
 ## Quick Start
 
-### Prerequisites
-
-- **Python 3.10+**
-- **DeepSeek API Key** — [Get one here](https://platform.deepseek.com/api_keys)
-
-### Installation
-
 ```bash
-# Clone the repo
-git clone https://github.com/luyi14-bits/agent-harness.git
-cd agent-harness
+pip install jig
+export JIG_API_KEY="sk-your-deepseek-key"
 
-# Install dependencies
-pip install pydantic>=2.0 pydantic-settings>=2.0 pyyaml>=6.0
-
-# (Optional) Dev install
-pip install -e .
-
-# (Optional) Install test dependencies
-pip install pytest
-
-# Development install (editable)
-pip install -e .
+python -c "
+from jig import Jig
+app = Jig(skills_dir='./skills')
+print(app.run('Build a login flow'))
+"
 ```
 
-### Configuration
+## Why Jig?
 
-Set your DeepSeek API key as an environment variable:
+| You need... | Use Jig because... |
+|-------------|-------------------|
+| Multi-agent orchestration | 13 preset roles + custom SKILL.md mounting |
+| **Hard-constraint safety** | **Only framework with ToolGuard (pre-execution interception)** |
+| DeepSeek optimization | SHA-256 prefix caching + CostAwareRouter + FC auto-repair |
+| Multi-model support | DeepSeek + OpenAI (extensible via BaseModelProvider) |
+| Graph workflow | GraphOrchestrator (conditional/parallel/loop) |
+| Streaming output | Async chat_stream with SSE support |
+| External agent governance | Meta-Harness adapters for Claude Code, Codex, Cursor |
+| Cost control | Flash-first routing + token budgets + circuit breaker |
 
-```bash
-# Linux / macOS
-export DEEPSEEK_API_KEY="sk-your-key-here"
+## Key Features
 
-# Windows (PowerShell)
-$env:DEEPSEEK_API_KEY="sk-your-key-here"
-
-# Windows (CMD)
-set DEEPSEEK_API_KEY=sk-your-key-here
-```
-
-Alternatively, create a `.env` file in the project root:
-
-```
-DEEPSEEK_API_KEY=sk-your-key-here
-```
-
-All configuration is managed via `src/jig/settings.py` (Pydantic `BaseSettings`). See the file for advanced options: model selection, temperature, cache prefix order, session timeout, etc.
-
-### 5-Minute Smoke Test
-
-```bash
-# Run the self-test suite (CLI, no IDE needed)
-python auto_test.py
-```
-
-Expected output: all checks pass, skill parser works, agent factory creates instances, dependencies verified.
-
----
-
-## Usage
-
-### CLI — Chat Mode (Dispatcher)
-
-```bash
-# Start interactive group-chat with natural language routing
-python run.py
-
-# You'll see:
-#   Tree-SOP Agent — 纯终端群聊模式
-#   Skills: .../skills
-#   已加载 12 个 Agent
-# >
-# Type your request and the Dispatcher routes it to the right agent.
-```
-
-### CLI — Inspect an Agent's Assembled Prompt
-
-```bash
-python -m src.forge.cli.main --skill-dir skills --inspect pm-mentor
-```
-
-### CLI — Mount Custom Skills at Runtime
-
-```bash
-python run.py --attach my-custom-skill
-```
-
-### Python API
-
-```python
-from jig.orchestrator.dispatcher import Dispatcher
-
-# Initialize with skill directory
-dispatcher = Dispatcher(skill_dir="./skills")
-print(f"Loaded {dispatcher.registry.count()} agents")
-
-# Dispatch a natural-language request
-result = dispatcher.handle("Create a PRD for a user login feature")
-print(result)
-```
-
-For advanced orchestration (sequential, parallel, hierarchical), see `src/jig/orchestrator/orchestrator.py`.
-
-### FastAPI Server (Standalone)
-
-```bash
-python -m src.forge.server.app
-# Endpoints:
-#   POST /execute  — run a pipeline
-#   GET  /status   — check server health
-```
-
----
+- ⚡ **Harness Layer** — ToolGuard pre-execution interception + LOOP SOP 5-stage gating + GlobalConstraints
+- 🧩 **13 Preset Agents** — PM · Trinity · Spec-Pipeline · Coding · Code-Review · TDD · Acceptance · Security · DevOps · Secretary · LOOP SOP · Horror-Story-Writer + custom mounts
+- 🧠 **4-Layer Memory** — CacheEngine (SHA-256) → ContextPartitioner (3-zone) → EmbeddingIndex → SQLite (MemoryRouter + Consolidator)
+- 🌐 **Multi-Model** — DeepSeekProvider + OpenAIProvider + BaseModelProvider abstraction (extensible)
+- 🔄 **Graph Engine** — GraphOrchestrator with conditional routing, parallel execution, loop detection
+- ⏱️ **Streaming** — Async chat_stream with SSE Server-Sent Events support
+- 🛡️ **Safety** — CircuitBreaker (3-state) + DriftDetector + Risk Mode + 19 security red lines
+- 💰 **Cost Optimization** — CostAwareRouter (Flash-first, auto-upgrade to Pro) + TokenBudget + CacheStats
+- 🔌 **Plugin System** — VisionTool (free local Florence-2), ImageReader, PluginMarket (planned)
+- 🔗 **Interop** — MCP Client + Server, A2A Protocol, Meta-Harness (external agent governance)
+- 🎯 **Intent Routing** — IntentRouter with HyDE rewrite + multi-intent decomposition
+- 🛠️ **Loop Engineering** — LoopEngine with convergence detection, quality validation, checkpoint restore, event replay
+- 📦 **Public SDK** — `from jig import Jig · ModelRouter · SkillRegistry · ConfigManager · LoopEngine · GraphOrchestrator`
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                 Control Plane (Harness)                       │
-│  LOOP SOP · ToolGuard · GlobalConstraints · MemoryRouter     │
-├──────────────────────────────────────────────────────────────┤
-│                 Agent Plane                                   │
-│  SkillParser → SkillRegistry → AgentFactory → Agent (12)     │
-│  HandoverPackage · Dispatcher · IntentRouter                 │
-├──────────────────────────────────────────────────────────────┤
-│                 Orchestration Plane                           │
-│  SequentialOrch · ParallelOrch · HierarchicalOrch            │
-│  CheckpointManager · CircuitBreaker · DriftDetector          │
-├──────────────────────────────────────────────────────────────┤
-│                 Tool Plane                                    │
-│  MCPClient · ToolGuard · RepoMap · EmbeddingIndex            │
-│  DeepSeekAdapter · CacheEngine · ContextPartitioner          │
-└──────────────────────────────────────────────────────────────┘
+Control Plane (Harness): LOOP SOP · ToolGuard · GlobalConstraints · MemoryRouter · CircuitBreaker
+Agent Plane:             SkillParser → SkillRegistry → AgentFactory → 13 Agents
+Orchestration Plane:    Sequential · Parallel · Hierarchical · Graph · LoopEngine · Checkpoint
+Tool Plane:             MCPClient · Server · RepoMap · EmbeddingIndex · ModelRouter
+                        CacheEngine · ContextPartitioner · CostAwareRouter · IntentRouter
+Plugin Plane:           VisionTool · ImageReader · PluginMarket (optional, from jig.contrib)
 ```
 
-### SOP Pipeline
+## Build-in Agents
 
-```
-Dispatcher → PM → Trinity → Spec → Coding → Code-Review
-          → TDD → Acceptance ∥ Security → DevOps → Secretary
-```
-
-### 5-Stage LOOP SOP Gating
-
-| Gate   | Check                                        | On Failure        |
-|--------|----------------------------------------------|-------------------|
-| G0→1   | PRD complete + priority set + Out of Scope   | Return to Stage 0 |
-| G1→2   | Spec + Tasks + Checklist ready + BREAKING    | Return to Stage 1 |
-| G2→3   | Self-test exit(0) + tests green + 24 checks  | Return to Stage 2 (max 3×) |
-| G3→4   | Acceptance PASS + Security zero-red          | Return to Stage 2 |
-| G4→end | Version snapshot + Kanban + trace log        | Return to Stage 4 |
-
-### 4-Layer Memory
-
-| Layer | Component            | Mechanism                                          |
-|:-----:|----------------------|----------------------------------------------------|
-| 1     | **CacheEngine**      | SHA-256 prefix hashing for DeepSeek cache hit max. |
-| 2     | **ContextPartitioner** | immutable / append-only / volatile 3-zone context |
-| 3     | **EmbeddingIndex**   | Semantic skill retrieval (sentence-transformers, keyword fallback) |
-| 4     | **CheckpointManager** | JSON checkpoint persist + resume                  |
-
-### ToolGuard — 3-Layer Hard Constraint
-
-```
-Tool Call Request
-      │
-      ▼
- [Whitelist Check] ── Fail → Block + Log
-      │ Pass
-      ▼
- [Denylist Check]  ── Hit  → Block + Log
-      │ Pass
-      ▼
- [PreToolUse Hook] ── Fail → Block + Log
-      │ Pass
-      ▼
-   Execute Tool
-```
-
----
-
-## Built-in Agents
-
-| # | Agent | Skill File | Role | Model |
-|---|-------|-----------|------|:-----:|
-| 0 | **Dispatcher** | (built-in) | Intent routing, pipeline launch | — |
-| 1 | **PM** | `Luyi14-pm-mentor` | Requirements, PRD (12-section), RICE scoring | Pro |
-| 2 | **Trinity** | `Luyi14-trinity-mentors` | 3 AI/ML experts (Raschka, Karpathy, Lyalin) for architecture review | Pro |
-| 3 | **Spec-Pipeline** | `Luyi14-spec-pipeline` | Spec writing, task breakdown, checklist, complexity control | Pro |
-| 4 | **Coding** | (built-in) | Code generation with Coding Ethics (八荣八耻) enforcement | Flash |
-| 5 | **Code-Review** | `Luyi14-code-review` | Code style, bugs, security, performance anti-patterns | Pro |
-| 6 | **TDD** | `Luyi14-test-driven-development` | 3 testing legends (Beck, Stewart, Okken) for test strategy | Flash |
-| 7 | **Acceptance** | `Luyi14-acceptance-testing` | Evidence-based verification, severity grading, fix tracking | Flash |
-| 8 | **Security** | `Luyi14-security-academy` | 3 security experts (Miessler, Kettle, Ormandy) for audit | Pro |
-| 9 | **DevOps** | `Luyi14-devops` | Build, packaging, tagging, release, rollback | Flash |
-| 10 | **Secretary** | `Luyi14-project-secretary` | File organization, kanban, docs, git, cross-team coordination | Flash |
-| 11 | **LOOP SOP** | `Luyi14-loop-sop` | Gate checking, degradation trigger, iteration tracking | Pro |
-
----
+| # | Agent | Skill | Model |
+|---|-------|-------|:-----:|
+| 0 | **Dispatcher** | Built-in | — |
+| 1 | **PM** | Luyi14-pm-mentor | Pro |
+| 2 | **Trinity** | Luyi14-trinity-mentors | Pro |
+| 3 | **Spec-Pipeline** | Luyi14-spec-pipeline | Pro |
+| 4 | **Coding** | Luyi14-coding-ethics | Flash |
+| 5 | **Code-Review** | Luyi14-code-review | Pro |
+| 6 | **TDD** | Luyi14-test-driven-development | Flash |
+| 7 | **Acceptance** | Luyi14-acceptance-testing | Flash |
+| 8 | **Security** | Luyi14-security-academy | Pro |
+| 9 | **DevOps** | Luyi14-devops | Flash |
+| 10 | **Secretary** | Luyi14-project-secretary | Flash |
+| 11 | **LOOP SOP** | Luyi14-loop-sop | Pro |
+| 12 | **Horror Writer** | luyi14-horror-story-writer | Flash |
 
 ## Comparison
 
-| Dimension | LangGraph | CrewAI | PydanticAI | MS Agent FW | Omnigent | **Jig** |
-|-----------|:---------:|:------:|:----------:|:-----------:|:--------:|:-------:|
-| **Hard Constraint Layer** | ❌ | ❌ | ❌ | ❌ | ⚠️ post-hoc | ✅ **ToolGuard pre-execution** |
-| **DeepSeek Cache Optimized** | — | — | — | — | — | ✅ **SHA-256 prefix hashing** |
-| **Memory Architecture** | Checkpointer | Short-term | Context | Session | — | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
-| **Failure Handling** | Retry policy | Manual | Manual | Retry | — | ✅ **Degradation + CircuitBreaker + Checkpoint** |
-| **Cost Governance** | — | — | — | — | — | ✅ **CostAwareRouter + token budgets** |
-| **MCP Support** | ✅ Client | ✅ Client | ❌ | ❌ | ❌ | ✅ **Client + Server** |
-| **External Agent Governance** | ❌ | ❌ | ❌ | ❌ | ✅ Route only | ✅ **Meta-Harness + ToolGuard passthrough** |
-| **License** | MIT | MIT | Apache 2.0 | MIT | **MIT** |
+| Dimension | LangGraph | CrewAI | PydanticAI | **Jig** |
+|-----------|:---------:|:------:|:----------:|:-------:|
+| **Hard Constraint** | ❌ | ❌ | ❌ | ✅ **ToolGuard pre-execution** |
+| **DeepSeek Cache** | — | — | — | ✅ **SHA-256 prefix hashing** |
+| **Memory** | Checkpointer | Short-term | Context | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
+| **Graph Engine** | ✅ Native | ❌ | ❌ | ✅ **GraphOrchestrator** |
+| **Streaming** | ✅ | ✅ | ✅ | ✅ **SSE chat_stream** |
+| **Multi-Model** | ✅ 20+ | ✅ 10+ | ✅ 20+ | ✅ **DS + OpenAI + extensible** |
+| **MCP** | ✅ Client | ✅ Client | ❌ | ✅ **Client + Server** |
+| **External Agent Gov.** | ❌ | ❌ | ❌ | ✅ **Meta-Harness adapters** |
+| **Cost Governance** | — | — | — | ✅ **CostAwareRouter + TokenBudget** |
+| **Loop Engineering** | ❌ | ❌ | ❌ | ✅ **LoopEngine (convergence + replay)** |
+| **License** | MIT | MIT | MIT | **MIT** |
 
-> 📊 Full 10+ framework comparison: [Framework Comparison Report](docs/framework-comparison-report.md)
+## Project Structure
 
----
+```
+jig/
+├── src/jig/                    # Framework core
+│   ├── core/                   # SkillDef · Parser · Registry · AgentFactory · Config
+│   ├── adapters/               # ModelRouter · DeepSeekProvider · OpenAIProvider · CacheEngine · Context · MCPClient · MCPProtocol · Streaming · CostAwareRouter · IntentRouter
+│   ├── orchestrator/           # Sequential · Parallel · Hierarchical · GraphOrchestrator · LoopEngine · CircuitBreaker · Dispatcher · Memory · Checkpoint
+│   ├── contrib/                # VisionTool · ImageReader (optional plugins)
+│   ├── cli/                    # CLI entry point
+│   └── server/                 # FastAPI + AsyncApp
+├── tests/                      # 117 tests (pytest)
+├── skills/                     # 13 Agent SKILL.md definitions
+├── docs/                       # Whitepapers · PRDs · Comparison reports · Gap analysis
+├── versions/                   # Version snapshots (v0.1.0 through v0.5.0)
+├── .trae/specs/               # Spec documents
+├── pyproject.toml              # Build config
+└── CHANGELOG.md                # Release history
+```
 
 ## Roadmap
 
 | Phase | Content | Status |
 |-------|---------|:------:|
-| 0 | Research 10+ open-source agent frameworks | ✅ |
-| 1–2 | Skill→Agent mapping + DeepSeek dual-model adapter | ✅ v0.1.0 |
-| 3–4 | Orchestrator + Checkpoint + Context compression | ✅ v0.2.0 |
-| 5 | Full 5-stage SOP pipeline + self-test suite | ✅ v0.4.0 |
-| 6 | Tauri desktop shell (archived) | ✅ vA.0.1 |
-| 7 | Memory system refactor + Config + Risk mode | ✅ vA.0.2 |
-| 8 | HyDE routing + Circuit breaker detection | ✅ vA.0.3 |
-| 9 | PyPI publishing + GitHub Actions CI + MkDocs | 🚧 In progress |
-| 10 | Stable release + community validation | 💡 Planned |
-| 11 | **Plugin interface** (VisionTool, WebSearch, etc.) | 💡 Planned |
-
-### Plugin Extensions
-
-Jig exposes an `add_tool()` interface for community extensions:
-
-```python
-from jig import Jig
-from jig.contrib.vision_tool import VisionTool  # bundled optional plugin
-
-app = Jig(model="deepseek-v4-flash")
-app.add_tool(VisionTool())  # → DeepSeek agents gain multimodal via local Florence-2 (free)
-```
-
-More plugins (WebSearch, CodeRunner, DataAnalysis) planned as `pip install jig-[plugin]` packages.
-
----
-
-## Project Structure
-
-```
-agent-harness/
-├── src/jig/
-│   ├── core/              # SkillDef · Parser · Registry · AgentFactory · Config
-│   ├── adapters/          # DeepSeekAdapter · CacheEngine · Context · MCPClient · RepoMap
-│   ├── orchestrator/      # Sequential · Parallel · Hierarchical · CircuitBreaker · Memory
-│   ├── cli/               # CLI entry point
-│   └── server/            # FastAPI standalone deployment
-├── skills/                # 12 Agent SKILL.md definitions + trace LOG.md
-├── tests/                 # pytest suite (62 tests)
-├── docs/                  # Whitepaper · Framework comparison · PRD · Security audit
-├── desktop/               # Tauri v2 desktop app shell (archived)
-├── versions/              # Version snapshots (v0.1.0 through Alpha-0.2)
-├── auto_test.py           # Self-test CLI script
-├── run.py                 # Dispatcher group-chat entry
-├── pyproject.toml         # Build config
-└── CHANGELOG.md           # Release history
-```
-
----
-
-## Contributing
-
-Jig is in Alpha. We welcome:
-
-- 🐛 **Bug reports** — Open an [issue](https://github.com/luyi14-bits/agent-harness/issues)
-- 💡 **Feature ideas** — Discuss in issues before coding
-- 🔧 **Pull requests** — Keep them small and focused; run `pytest` before submitting
-- 📝 **Documentation** — Improvements to docs, README, or inline comments
-
-See [CHANGELOG.md](CHANGELOG.md) for the full release history and [PIPELINE_KANBAN.md](PIPELINE_KANBAN.md) for the idea pipeline.
-
----
+| 0 | Research 10+ agent frameworks | ✅ |
+| 1–2 | Skill→Agent mapping + DS dual-model | ✅ v0.1.0 |
+| 3–4 | Orchestrator + Checkpoint + Context | ✅ v0.2.0 |
+| 5 | Full SOP pipeline + self-test suite | ✅ v0.4.0 |
+| 6–7 | Memory refactor + Config + Risk mode | ✅ vA.0.2 |
+| 8 | HyDE routing + Circuit breaker | ✅ vA.0.3 |
+| 9 | Multi-model + Streaming (IDEA-058+059) | ✅ v0.5.0 |
+| 10 | Graph Engine + Durable (IDEA-060+061) | ✅ v0.6.0 |
+| 11 | Real project validation (IDEA-053) | 🚧 In progress |
+| 12 | pip + Docs site (IDEA-042) | 📝 Planned |
+| 13 | Plugin interface (VisionTool, etc.) | 💡 Planned |
 
 ## License
 
-[MIT](LICENSE) · Copyright (c) 2026 Jig Contributors
-
----
-
-<div align="center">
-  <sub>Built with ❤️ by Jig Contributors · 2026</sub>
-</div>
+MIT — Copyright (c) 2026 Jig Contributors
