@@ -32,6 +32,7 @@ from .adapters.model_provider import (
     ModelRouter, ModelResponse, StreamChunk,
 )
 from .tools.image_reader import ImageReader
+from .tools.vision_tool import VisionTool
 
 __all__ = [
     "Jig",
@@ -49,4 +50,5 @@ __all__ = [
     "ModelResponse",
     "StreamChunk",
     "ImageReader",
+    "VisionTool",
 ]
