@@ -12,11 +12,12 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, AsyncIterator, Dict, List, Optional
 
 from .core.skill_registry import SkillRegistry
 from .core.agent_factory import AgentFactory
 from .orchestrator.dispatcher import Dispatcher
+from .adapters.model_provider import ModelRouter, DeepSeekProvider, OpenAIProvider, StreamChunk
 
 logger = logging.getLogger(__name__)
 

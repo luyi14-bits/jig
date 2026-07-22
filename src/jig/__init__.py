@@ -27,6 +27,10 @@ from .core.skill_parser import SkillParser
 from .core.agent_factory import AgentFactory
 from .core.config_manager import ConfigManager
 from .orchestrator.loop_engine import LoopEngine, LoopConfig, LoopStatus
+from .adapters.model_provider import (
+    BaseModelProvider, DeepSeekProvider, OpenAIProvider,
+    ModelRouter, ModelResponse, StreamChunk,
+)
 
 __all__ = [
     "Jig",
@@ -37,4 +41,10 @@ __all__ = [
     "LoopEngine",
     "LoopConfig",
     "LoopStatus",
+    "BaseModelProvider",
+    "DeepSeekProvider",
+    "OpenAIProvider",
+    "ModelRouter",
+    "ModelResponse",
+    "StreamChunk",
 ]

@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 9 项 | 8 项 | 0 项 | 0 项 | 29 项 | 3 项 |
+| 14 项 | 8 项 | 0 项 | 0 项 | 29 项 | 3 项 |
 
 ---
 
@@ -373,15 +373,59 @@
 - **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/examples-community/`）
 - **🎯 关联目标**：goals-guide Phase 2 方向A
 
+### IDEA-058：多模型支持
+- **来源**：gap-vs-5-frameworks.md 致命缺失
+- **描述**：LLM Provider 抽象层，支持 OpenAI / Anthropic / Ollama / 本地模型
+- **核心行动**：BaseLLM 抽象接口 → DeepSeekProvider / OpenAIProvider / AnthropicProvider → ModelRouter 泛化
+- **优先级**：P0（框架不成立）
+- **状态**：等待 Spec
+
+### IDEA-059：流式输出
+- **来源**：gap-vs-5-frameworks.md 致命缺失
+- **描述**：run() → run_stream() 异步迭代器，SOP 节点级 yield 实时推送
+- **核心行动**：StreamingOrchestrator → Dispatcher.stream() → SOP 节点 yield
+- **优先级**：P0（框架不成立）
+- **状态**：等待 Spec
+
+### IDEA-060：Durable Execution
+- **来源**：gap-vs-5-frameworks.md 重大缺失
+- **描述**：中断恢复 + 长时间运行。CheckpointManager 提升到框架级
+- **核心行动**：SOP 管道节点执行后自动保存 → 崩溃恢复 → 异步长时间运行
+- **优先级**：P1
+- **状态**：等待 Spec
+
+### IDEA-061：Graph 工作流
+- **来源**：gap-vs-5-frameworks.md 重大缺失
+- **描述**：图编排替代线性管道。GraphOrchestrator 节点=Agent 边=条件/上下文/超时
+- **核心行动**：GraphNode + GraphEdge 定义 → 条件路由 → 自环 → 递归
+- **优先级**：P1
+- **状态**：等待 Spec
+
+### IDEA-062：Evals 评测系统
+- **来源**：gap-vs-5-frameworks.md 重大缺失
+- **描述**：系统化 Agent 精度评测，结合 LoopEngine QualityValidator 做自动化评估
+- **核心行动**：EvalRunner → 测试集定义 → 自动评分 → 回归报告
+- **优先级**：P2
+- **状态**：等待 Spec
+
 ## 📝 规划中
 
-> IDEA-052 (awesome PR) — `.trae/specs/ds-ecosystem-pr/`
-> IDEA-053 (真实项目验证) — `.trae/specs/real-project-validation/`
-> IDEA-055 (示例库) — `.trae/specs/examples-community/`
-> IDEA-056 (社区运营) — `.trae/specs/examples-community/`
-> IDEA-057 (版本治理) — `.trae/specs/examples-community/`
+### Loop 合并组
 
-> 优先级 P0 任务：IDEA-037 DS 深度优化 / IDEA-050 成本感知 / IDEA-036 公开 API / IDEA-049 外部 Agent 兼容 / IDEA-044 MCP 协议 / IDEA-051 Tool-Call Repair / IDEA-041 Loop Engineering / IDEA-053 真实项目验证 / IDEA-052 awesome PR
+| Loop | 合并 | 工时 | 包含 IDEA |
+|:----:|------|:---:|:---------:|
+| #1 | awesome PR | 1天 | 052 |
+| #2 | **多模型 + 流式** | 4天 | 058+059 |
+| #3 | **Durable + Graph** | 7天 | 060+061 |
+| #4 | 真实项目验证 | 3天 | 053 |
+| #5 | pip + 文档站点 | 2天 | 042 |
+| #6 | **OTel + Evals** | 4天 | 038+062 |
+
+> 已就位 Spec：IDEA-052 → `.trae/specs/ds-ecosystem-pr/`
+> IDEA-053 → `.trae/specs/real-project-validation/`
+> IDEA-055/056/057 → `.trae/specs/examples-community/`
+
+> 优先级 P0 任务：058+059 多模型+流式 / 052 awesome PR / 053 真实项目 / 049 外部Agent / 044 MCP
 
 ---
 
