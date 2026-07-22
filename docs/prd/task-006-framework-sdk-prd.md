@@ -19,7 +19,7 @@
 - 可视化编排（废弃）
 
 ## 4. Success Metrics
-- Jig API：`from forge import Jig` 成功
+- Jig API：`from jig import Jig` 成功
 - MetaHarness：`route("claude", "prompt")` 返回结果
 - MCP：`list_tools() + call_tool()` 正常
 - 全量回归 62/62

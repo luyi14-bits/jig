@@ -199,7 +199,7 @@ class Consolidator:
                 "DELETE FROM memory_log WHERE created_at<?", (cutoff,)
             ).rowcount
         self._store._conn.commit()
-        logger.info("Forget: 删除了 %d 条记忆 (agent=%s, >%d天)", deleted, agent or "*", threshold_days)
+        logger.info("Jigt: 删除了 %d 条记忆 (agent=%s, >%d天)", deleted, agent or "*", threshold_days)
         return deleted
 
     def merge(self, agent: str, topic: str) -> bool:

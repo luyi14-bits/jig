@@ -310,18 +310,21 @@ The following extensions are in the specification phase (`IDEA-022`):
 
 ## 4. Comparative Analysis
 
-| Dimension | GPT (OpenAI) | Gemini (Google) | Claude (Anthropic) | **Jig** |
-|-----------|:------------:|:---------------:|:------------------:|:------------------:|
-| **Metadata store** | Built-in session state | Structured KV | Project knowledge | Design phase (SQLite) |
-| **User profile** | Persistent, learnable | System instruction | CLAUDE.md | Design phase |
-| **Summary engine** | LLM-generated | RAG-retrieved | LLM auto-summary | Offline keywords → Flash LLM |
-| **Cross-session memory** | Vector DB (assistants API) | Vector DB + RAG | Project knowledge files | Design phase (SQLite + EmbeddingIndex) |
-| **Hard constraints** | None (prompt-only) | None (prompt-only) | Hooks + denylist | **✅ ToolGuard + GlobalConstraints** |
-| **Orchestration gating** | Function calling only | Tool use only | Hooks + pre/post | **✅ LOOP SOP 5-stage gate matrix** |
-| **Cost optimization** | Prompt caching | Context caching (>32K) | Prompt caching | **✅ 4-layer memory + Flash/Pro routing** |
-| **Per-call cost** | Medium | Low (cached) | High (uncached) | **Very low (local SQLite + Flash)** |
+| Dimension | LangGraph | CrewAI | PydanticAI | **Jig** |
+|-----------|:---------:|:------:|:-----------:|:------------------:|
+| **Skill system** | Graph nodes | Agent roles | Single Agent | **✅ SKILL.md → Agent mapping engine** |
+| **Memory architecture** | Checkpoint/state | Short-term conversation | Stateless | **✅ 4-tier (CacheEngine → Context → EmbeddingIndex → SQLite)** |
+| **Hard constraints** | None (prompt-only) | None (prompt-only) | None (prompt-only) | **✅ ToolGuard + GlobalConstraints (code-level)** |
+| **Orchestration gating** | Graph transitions | Sequential/hierarchical | Single Agent | **✅ LOOP SOP 5-stage gate matrix** |
+| **Cost optimization** | Manual model config | — | — | **✅ SHA-256 prefix caching + Flash/Pro routing** |
+| **External Agent compatibility** | — | — | — | **✅ Meta-Harness adapter layer** |
+| **Loop Engineering** | — | — | — | **✅ LoopEngine (convergence + checkpoint + replay)** |
+| **License** | MIT | MIT | MIT | **MIT** |
 
-**Key differentiator**: Jig is the only framework with a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gates). All others rely on prompt-only soft constraints.
+> Jig is designed as an **Agent framework** — a tool for building agents — not an Agent itself.  
+> It competes with orchestration frameworks (LangGraph, CrewAI, PydanticAI), not with LLM providers.
+
+**Key differentiator**: Jig is the only framework with a **hard-constraint Harness layer** operating at the code level (not prompt-only). All others rely on prompt-based soft constraints that can be bypassed by the Agent.
 
 ---
 

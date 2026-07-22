@@ -5,7 +5,7 @@
 """Jig: 自研多 Agent 编排框架 — 13 个预设角色、4 层记忆、硬约束 Harness。
 
 快速开始:
-    from forge import Jig
+    from jig import Jig
     app = Jig(skills_dir="./skills")
     result = app.run("帮我做一个登录功能")
     print(result)

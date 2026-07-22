@@ -23,7 +23,7 @@ try:
 
     @app.post("/execute")
     async def execute(request: ExecuteRequest) -> Dict[str, Any]:
-        from forge import Jig
+        from jig import Jig
         h = Jig(skills_dir=request.skill_dir)
         result = h.run(request.prompt)
         return {"result": result}

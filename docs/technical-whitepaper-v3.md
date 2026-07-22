@@ -12,7 +12,7 @@ Jig is a **self-built multi-agent orchestration framework** — not a wrapper ar
 
 **Key metrics**: 13 Agent roles · 4-tier memory architecture · 5-stage LOOP SOP gating · 3-layer ToolGuard · 62/62 tests passing · 28 delivered features
 
-**Architecture lineage**: Jig was designed from scratch as a framework, not evolved from an application. The public SDK API (`from forge import Jig`), external Agent compatibility layer (Meta-Harness), and MCP protocol support enable third-party developers to build on top of it.
+**Architecture lineage**: Jig was designed from scratch as a framework, not evolved from an application. The public SDK API (`from jig import Jig`), external Agent compatibility layer (Meta-Harness), and MCP protocol support enable third-party developers to build on top of it.
 
 ---
 
@@ -54,7 +54,7 @@ The architecture evolved through three phases:
 The framework SDK boundary is defined in `src/jig/api.py`. External consumers interact through:
 
 ```python
-from forge import Jig
+from jig import Jig
 
 # 5-line pipeline
 app = Jig(skills_dir="./skills")
