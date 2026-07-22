@@ -47,7 +47,7 @@ print(app.run('Build a login flow'))
 ## Key Features
 
 - ⚡ **Harness Layer** — ToolGuard pre-execution interception + LOOP SOP 5-stage gating + GlobalConstraints
-- 🧩 **13 Preset Agents** — PM · Trinity · Spec-Pipeline · Coding · Code-Review · TDD · Acceptance · Security · DevOps · Secretary · LOOP SOP · Horror-Story-Writer + custom mounts
+- 🧩 **12 Preset Agents** — PM · Trinity · Spec-Pipeline · Coding · Code-Review · TDD · Acceptance · Security · DevOps · Secretary · LOOP SOP + custom mounts
 - 🧠 **4-Layer Memory** — CacheEngine (SHA-256) → ContextPartitioner (3-zone) → EmbeddingIndex → SQLite (MemoryRouter + Consolidator)
 - 🌐 **Multi-Model** — DeepSeekProvider + OpenAIProvider + BaseModelProvider abstraction (extensible)
 - 🔄 **Graph Engine** — GraphOrchestrator with conditional routing, parallel execution, loop detection
@@ -64,7 +64,7 @@ print(app.run('Build a login flow'))
 
 ```
 Control Plane (Harness): LOOP SOP · ToolGuard · GlobalConstraints · MemoryRouter · CircuitBreaker
-Agent Plane:             SkillParser → SkillRegistry → AgentFactory → 13 Agents
+Agent Plane:             SkillParser → SkillRegistry → AgentFactory → 12 Agents
 Orchestration Plane:    Sequential · Parallel · Hierarchical · Graph · LoopEngine · Checkpoint
 Tool Plane:             MCPClient · Server · RepoMap · EmbeddingIndex · ModelRouter
                         CacheEngine · ContextPartitioner · CostAwareRouter · IntentRouter
@@ -116,7 +116,7 @@ jig/
 │   ├── cli/                    # CLI entry point
 │   └── server/                 # FastAPI + AsyncApp
 ├── tests/                      # 117 tests (pytest)
-├── skills/                     # 13 Agent SKILL.md definitions
+├── skills/                     # 12 Agent SKILL.md definitions
 ├── docs/                       # Whitepapers · PRDs · Comparison reports · Gap analysis
 ├── versions/                   # Version snapshots (v0.1.0 through v0.5.0)
 ├── .trae/specs/               # Spec documents
