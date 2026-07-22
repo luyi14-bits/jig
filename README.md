@@ -312,6 +312,21 @@ Tool Call Request
 | 8 | HyDE routing + Circuit breaker detection | ✅ vA.0.3 |
 | 9 | PyPI publishing + GitHub Actions CI + MkDocs | 🚧 In progress |
 | 10 | Stable release + community validation | 💡 Planned |
+| 11 | **Plugin interface** (VisionTool, WebSearch, etc.) | 💡 Planned |
+
+### Plugin Extensions
+
+Jig exposes an `add_tool()` interface for community extensions:
+
+```python
+from jig import Jig
+from jig.contrib.vision_tool import VisionTool  # bundled optional plugin
+
+app = Jig(model="deepseek-v4-flash")
+app.add_tool(VisionTool())  # → DeepSeek agents gain multimodal via local Florence-2 (free)
+```
+
+More plugins (WebSearch, CodeRunner, DataAnalysis) planned as `pip install jig-[plugin]` packages.
 
 ---
 
