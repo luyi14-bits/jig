@@ -6,12 +6,12 @@ import tempfile
 
 import pytest
 
-from forge.orchestrator import (
+from jig.orchestrator import (
     ParallelOrchestrator,
     CheckpointManager,
     create_dev_workflow,
 )
-from forge.core.skill_def import HandoverPackage, SOPNode
+from jig.core.skill_def import HandoverPackage, SOPNode
 
 
 class TestParallelOrchestrator:
@@ -129,7 +129,7 @@ class TestCacheGuard:
 
     def test_release_cache_hit_guard(self):
         """TestReleaseCacheHitGuard: 缓存命中率退化检测。"""
-        from forge.adapters.cache_engine import CacheEngine
+        from jig.adapters.cache_engine import CacheEngine
 
         engine = CacheEngine()
 

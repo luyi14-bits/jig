@@ -3,7 +3,7 @@
 import pytest
 import tempfile
 import os
-from forge.orchestrator.memory import LocalStore, MemoryRouter, Consolidator
+from jig.orchestrator.memory import LocalStore, MemoryRouter, Consolidator
 
 
 class TestLocalStore:

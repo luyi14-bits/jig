@@ -51,7 +51,7 @@ The architecture evolved through three phases:
 | vA.0.1-vA.0.3 (Day 4-7) | Pipeline orchestration + memory | Hard-constraint Harness over prompt-only gating |
 | Alpha 0.2 (Day 8+) | **Framework SDK** | Public API + External Agent layer + MCP protocol |
 
-The framework SDK boundary is defined in `src/forge/api.py`. External consumers interact through:
+The framework SDK boundary is defined in `src/jig/api.py`. External consumers interact through:
 
 ```python
 from forge import AgentHarness

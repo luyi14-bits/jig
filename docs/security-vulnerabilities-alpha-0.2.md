@@ -8,7 +8,7 @@
 
 ### C1: API Key 明文落盘
 
-**文件**: `src/forge/core/config_manager.py:62-65, 81-91`
+**文件**: `src/jig/core/config_manager.py:62-65, 81-91`
 **违反**: 全局约束 `global_constraints.py:26-27`（"API Key / Token 禁止明文落盘"）
 **漏洞**: `deepseek_api_key` 以纯文本形式写入 `~/.tree-sop/config.json`，任何能读取该文件的进程均可获取用户 API Key
 **CWE**: CWE-312 (Cleartext Storage of Sensitive Information)
@@ -16,14 +16,14 @@
 
 ### C2: settings.py 环境变量不安全性
 
-**文件**: `src/forge/settings.py:31`
+**文件**: `src/jig/settings.py:31`
 **漏洞**: 虽然 API Key 来自环境变量，但 `.env` 文件本身可能被提交到版本控制
 **CWE**: CWE-522 (Insufficiently Protected Credentials)
 **状态**: 当前 `.env` 已在 `.gitignore` 中 ✅，但无额外保护
 
 ### C3: AppConfig 明文存储
 
-**文件**: `src/forge/core/config_manager.py:42`
+**文件**: `src/jig/core/config_manager.py:42`
 **漏洞**: `AppConfig` dataclass 中 `deepseek_api_key` 为明文 `str`，序列化时直接写盘
 
 ---
@@ -32,13 +32,13 @@
 
 ### H1-H2: repo_map.py 静默吞异常
 
-**文件**: `src/forge/adapters/repo_map.py:79-80, 130-131`
+**文件**: `src/jig/adapters/repo_map.py:79-80, 130-131`
 **漏洞**: 两处 `except Exception: continue` 无声无息隐藏 IO/编码错误
 **违反**: 第十九荣 / 安全红线 8
 
 ### H3: memory.py SQL 注入风险
 
-**文件**: `src/forge/orchestrator/memory.py:238-244`
+**文件**: `src/jig/orchestrator/memory.py:238-244`
 **漏洞**: `Consolidator.merge()` 使用 f-string 拼接 SQL（`WHERE id IN ({placeholders})`）
 **CWE**: CWE-89
 

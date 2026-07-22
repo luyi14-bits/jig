@@ -64,8 +64,8 @@ AgentHarness is purpose-built for DeepSeek V4's API, with optimizations not foun
 AgentHarness uses SHA-256 prefix hashing to maximize DeepSeek's context caching discount (cache hits cost ~2% of full price). The immutable context prefix is frozen per session and only rebuilt when the prefix changes — achieving near-100% cache hit rates on stable system prompts.
 
 ```python
-from forge.adapters.cache_engine import CacheEngine
-from forge.adapters.cache_stats import CacheStats
+from jig.adapters.cache_engine import CacheEngine
+from jig.adapters.cache_stats import CacheStats
 
 engine = CacheEngine(max_prefix_size=1024)
 stats: CacheStats = engine.stats
@@ -81,7 +81,7 @@ All agents default to `deepseek-v4-flash` for cost efficiency. Short queries (<1
 Configure per-agent reasoning depth:
 
 ```python
-from forge.adapters.deepseek_adapter import DeepSeekAdapter
+from jig.adapters.deepseek_adapter import DeepSeekAdapter
 
 adapter = DeepSeekAdapter(reasoning_effort="high")  # low / medium / high
 ```
@@ -102,7 +102,7 @@ If all strategies fail, it degrades gracefully to plain-text mode.
 AgentHarness fully supports DeepSeek V4's 1 million token context window. Configure in settings:
 
 ```python
-from forge.settings import AgentHarnessSettings
+from jig.settings import AgentHarnessSettings
 
 settings = AgentHarnessSettings()
 settings.pro_model = "deepseek-v4-pro"       # Pro for reasoning

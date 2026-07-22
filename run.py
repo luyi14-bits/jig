@@ -24,7 +24,7 @@ print(f"  Skills: {SKILL_DIR}")
 print("=" * 50)
 
 # ── 启动 Dispatcher ──
-from forge.orchestrator.dispatcher import Dispatcher
+from jig.orchestrator.dispatcher import Dispatcher
 
 dispatcher = Dispatcher(skill_dir=str(SKILL_DIR))
 print(f"  已加载 {dispatcher.registry.count()} 个 Agent\n")

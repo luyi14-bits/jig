@@ -1,11 +1,11 @@
 """上下文压缩体系测试套件。"""
 import pytest
 from pathlib import Path
-from forge.adapters.repo_map import RepoMapBuilder, PySymbolExtractor
-from forge.adapters.conversation_compressor import ConversationCompressor
-from forge.adapters.embedding_index import EmbeddingIndex
-from forge.adapters.cache_engine import CacheEngine
-from forge.core.skill_def import SkillDef
+from jig.adapters.repo_map import RepoMapBuilder, PySymbolExtractor
+from jig.adapters.conversation_compressor import ConversationCompressor
+from jig.adapters.embedding_index import EmbeddingIndex
+from jig.adapters.cache_engine import CacheEngine
+from jig.core.skill_def import SkillDef
 
 BUDGET_A = 500
 BUDGET_B = 50000

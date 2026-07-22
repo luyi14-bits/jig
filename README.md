@@ -128,7 +128,7 @@ Alternatively, create a `.env` file in the project root:
 DEEPSEEK_API_KEY=sk-your-key-here
 ```
 
-All configuration is managed via `src/forge/settings.py` (Pydantic `BaseSettings`). See the file for advanced options: model selection, temperature, cache prefix order, session timeout, etc.
+All configuration is managed via `src/jig/settings.py` (Pydantic `BaseSettings`). See the file for advanced options: model selection, temperature, cache prefix order, session timeout, etc.
 
 ### 5-Minute Smoke Test
 
@@ -172,7 +172,7 @@ python run.py --attach my-custom-skill
 ### Python API
 
 ```python
-from forge.orchestrator.dispatcher import Dispatcher
+from jig.orchestrator.dispatcher import Dispatcher
 
 # Initialize with skill directory
 dispatcher = Dispatcher(skill_dir="./skills")
@@ -183,7 +183,7 @@ result = dispatcher.handle("Create a PRD for a user login feature")
 print(result)
 ```
 
-For advanced orchestration (sequential, parallel, hierarchical), see `src/forge/orchestrator/orchestrator.py`.
+For advanced orchestration (sequential, parallel, hierarchical), see `src/jig/orchestrator/orchestrator.py`.
 
 ### FastAPI Server (Standalone)
 
@@ -318,7 +318,7 @@ Tool Call Request
 
 ```
 agent-harness/
-├── src/forge/
+├── src/jig/
 │   ├── core/              # SkillDef · Parser · Registry · AgentFactory · Config
 │   ├── adapters/          # DeepSeekAdapter · CacheEngine · Context · MCPClient · RepoMap
 │   ├── orchestrator/      # Sequential · Parallel · Hierarchical · CircuitBreaker · Memory
