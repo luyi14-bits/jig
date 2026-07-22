@@ -31,6 +31,7 @@ from .adapters.model_provider import (
     BaseModelProvider, DeepSeekProvider, OpenAIProvider,
     ModelRouter, ModelResponse, StreamChunk,
 )
+from .tools.image_reader import ImageReader
 
 __all__ = [
     "Jig",
@@ -47,4 +48,5 @@ __all__ = [
     "ModelRouter",
     "ModelResponse",
     "StreamChunk",
+    "ImageReader",
 ]
