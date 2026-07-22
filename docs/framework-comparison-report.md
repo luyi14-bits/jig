@@ -1,33 +1,33 @@
 # Jig 框架对比技术报告
 
-> **版本**: Alpha 0.2 | **日期**: 2026-07-17 | **类型**: 自研框架 vs 开源竞品
+> **版本**: Alpha 0.2 | **日期**: 2026-07-22 | **类型**: 自研框架 vs 开源竞品
 
 ---
 
 ## 0. 摘要
 
-Jig 是一个**自研的 Python 多 Agent 编排框架**，直接对标 CrewAI / MetaGPT / AutoGen / Superpowers。核心差异化在于**硬约束 Harness 层**（ToolGuard 三层拦截 + LOOP SOP 5 级门禁）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。在硬约束和记忆架构上拥有真正的技术壁垒，但在 GitHub 影响力和社区生态上差距显著。
+Jig 是一个**自研的 Python 多 Agent 编排框架**，对标 LangGraph / CrewAI / MS Agent FW / PydanticAI / Omnigent。核心差异化在于**硬约束 Harness 层**（ToolGuard 代码级拦截 + LOOP SOP 5 级门禁 + LoopEngine 收敛检测 + CircuitBreaker 熔断）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。在硬约束、记忆架构和成本治理上拥有真正的技术壁垒。
 
 ---
 
-## 1. 开源 Agent 框架全景（2026-07）
+## 1. 开源 Agent 框架全景（2026-07 更新）
 
-| 框架 | Stars | 语言 | 定位 | 趋势 |
-|------|:----:|:----:|------|:----:|
-| Superpowers | 258k | TS/JS | 技能驱动 AI 编程 | 🔥 爆发 |
-| LangChain | 142k | Python | LLM 应用平台 | 📈 持续 |
-| MetaGPT | 69.4k | Python | 软件公司模拟 | 📈 稳定 |
-| AutoGen | 59.8k | Python | 多 Agent 对话 | 📈 微软支持 |
-| CrewAI | 55.8k | Python | 角色编排 | 📈 快速增长 |
-| LangGraph | 37.7k | Python | 图状态机编排 | 📈 |
-| OpenAI Agents SDK | 28k | Python | OpenAI 官方 Agent | 📈 |
-| Mastra | 26.4k | TypeScript | TS Agent 框架 | 🆕 新星 |
-| Swarm | 21.8k | Python | OpenAI 轻量实验 | 📈 |
-| elizaOS | 18.8k | TS | AI Agent 框架 | 🆕 |
-| PydanticAI | 18.7k | Python | Pydantic Agent | 📈 |
-| CAMEL | 17.4k | Python | 角色扮演 | 🆕 |
-| Microsoft Agent FW | 12.2k | C#/TS | 微软官方 | 🆕 |
-| **Jig** | **—** | **Python** | **自研多 Agent** | **🚧 新项目** |
+| # | 框架 | Stars | 语言 | 定位 |
+|---|------|:-----:|:----:|------|
+| 1 | BettaFish | 41.8k | Python | 多Agent舆情分析 |
+| 2 | deepagents | 26.6k | Python | "batteries-included agent harness" |
+| 3 | Haystack | 26k | Python | LLM 编排管道 |
+| 4 | OpenAI Agents SDK | 28k | Python | OpenAI 官方多Agent |
+| 5 | PydanticAI | 18.7k | Python | 类型安全 Agent 框架 |
+| 6 | MS Agent Framework | 12.3k | Python/.NET | 企业级多Agent编排 |
+| 7 | Hive | 10.8k | Python | "Multi-Agent Harness for Production" |
+| 8 | Upsonic | 7.9k | Python | 自主 Agent 构建 |
+| 9 | Omnigent | 7.6k | Python | Meta-harness，编排外部Agent |
+| 10 | Strands harness-sdk | 6.7k | Python/TS | Agent harness SDK |
+| 11 | AG2 (AutoGen) | 4.8k | Python | 微软开源 AgentOS |
+| 12 | CrewAI | ~55k | Python | 角色团队编排 |
+| 13 | LangGraph | ~38k | Python | 图状态机编排 |
+| **—** | **Jig** | **—** | **Python** | **自研 Harness 硬约束框架** |
 
 ---
 
@@ -61,7 +61,19 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ## 3. 核心竞品深度对比
 
-### 3.1 CrewAI (55.8k★)
+### 3.1 LangGraph / deepagents (26.6k★)
+
+| 维度 | LangGraph | Jig |
+|------|-----------|----------------|
+| **硬约束** | ❌ prompt-only | ✅ ToolGuard + 门禁 |
+| **编排模型** | 图状态机 | SOP 5 级管道 |
+| **缓存优化** | ❌ 无 | ✅ DeepSeek 前缀 hash |
+| **熔断降级** | Retry policy | ✅ CircuitBreaker + DriftDetector |
+| **成本治理** | — | ✅ CostAwareRouter + TokenBudget |
+| **记忆架构** | Checkpointer | 4 层 (Cache→Partition→Embedding→SQLite) |
+| **外部Agent管控** | ❌ | ✅ Meta-Harness 适配器 |
+
+### 3.2 CrewAI (~55k★)
 
 | 维度 | CrewAI | Jig |
 |------|--------|----------------|
@@ -70,27 +82,51 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 | **缓存优化** | ❌ 无 | ✅ 前缀 hash |
 | **角色体系** | 通用可定义 | 13 预设 + 用户挂载 |
 | **记忆** | 简单短期 | 四层体系 |
-| **桌面** | ❌ | ✅ Tauri v2 |
+| **MCP** | ✅ Client | ✅ Client + Server |
 
-### 3.2 MetaGPT (69.4k★)
+### 3.3 MS Agent Framework (12.3k★)
 
-| 维度 | MetaGPT | Jig |
-|------|---------|----------------|
-| **角色** | 4 个固定 | 13 预设 + 可扩展 |
-| **SOP** | 硬编码 pipeline | 多模式编排 |
-| **自定义 Skill** | ❌ 不支持 | ✅ SKILL.md 挂载 |
-| **维护状态** | Jan 21 后停滞 | 活跃开发 |
-| **硬约束** | ❌ | ✅ |
+| 维度 | MS Agent FW | Jig |
+|------|-------------|----------------|
+| **硬约束** | ❌ prompt-only | ✅ ToolGuard + 门禁 |
+| **编排** | Plugin-based | SOP 5 级管道 |
+| **企业治理** | Policy 审批（事后） | ✅ ToolGuard（事前阻断） |
+| **缓存优化** | — | ✅ DeepSeek 前缀 hash |
+| **记忆** | State | 4 层体系 |
+| **License** | MIT | MIT |
 
-### 3.3 AutoGen (59.8k★, Microsoft)
+### 3.4 PydanticAI (18.7k★)
 
-| 维度 | AutoGen | Jig |
-|------|---------|----------------|
-| **定位** | 通用对话路由 | 软件开发专用 |
-| **预设角色** | ❌ 需自建 | ✅ 13 个 |
-| **Harness** | ❌ | ✅ |
-| **记忆** | 对话历史 | 四层分层 |
+| 维度 | PydanticAI | Jig |
+|------|------------|----------------|
+| **硬约束** | ❌ prompt-only | ✅ ToolGuard |
+| **结构化输出** | ✅ 原生 Pydantic | ✅ 支持 |
+| **多Agent** | ❌ Single | ✅ 13 角色 |
+| **缓存优化** | — | ✅ DeepSeek 前缀 hash |
+| **记忆** | Context | 4 层体系 |
+| **License** | MIT | MIT |
 
+### 3.5 Omnigent (7.6k★) — 最接近的竞品
+
+| 维度 | Omnigent | Jig |
+|------|----------|----------------|
+| **管控模式** | 事后审批（Policy） | ✅ 事前阻断（ToolGuard） |
+| **外部Agent** | ✅ 编排 | ✅ Meta-Harness |
+| **缓存优化** | — | ✅ DeepSeek 前缀 hash |
+| **熔断** | — | ✅ CircuitBreaker |
+| **成本治理** | — | ✅ CostAwareRouter |
+| **License** | Apache 2.0 | MIT |
+
+**关键差异**：Omnigent 是"Harness 外挂"——它在 Agent 执行后审批结果。Jig 的 ToolGuard 在工具调用前直接拦截，这是架构级差异，不是配置差异。
+
+### 3.6 AG2 / AutoGen (4.8k★, Microsoft)
+
+| 维度 | AG2 | Jig |
+|------|-----|----------------|
+| **定位** | 通用 Agent 操作系统 | 框架化编排 |
+| **硬约束** | ❌ | ✅ ToolGuard |
+| **缓存优化** | — | ✅ DeepSeek 前缀 hash |
+| **外部 Agent** | — | ✅ Meta-Harness |
 ### 3.4 Superpowers (258k★)
 
 | 维度 | Superpowers | Jig |
@@ -144,7 +180,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 |------|:---:|:--------:|:----:|:----------:|
 | GitHub 影响力 | ~0 | Superpowers 258k | 🔴 巨大 | P1 发布 PyPI + 英文 README |
 | 社区生态 | 单人 | 数百贡献者 | 🔴 巨大 | P1 开源运营 |
-| 文档教程 | 白皮书 | 完整文档站 | 🟠 大 | P1 MkDocs 文档站 |
+| 文档教程 | 白皮书 + 用户指南 | 完整文档站 | 🟠 大 | P1 MkDocs 文档站 |
 | PyPI 发布 | ❌ | 全部已发布 | 🔴 必须做 | **P0** |
 | CI/CD | ❌ | 全部有 | 🔴 必须做 | P0 GitHub Actions |
 | 插件/MCP 生态 | 基础 | 数百 MCP | 🟠 大 | P2 对接 MCP Hub |
