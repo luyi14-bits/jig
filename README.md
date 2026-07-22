@@ -2,7 +2,7 @@
 
 # ⚡ Jig
 
-**A self-built multi-agent orchestration framework with hard-constraint Harness layer.**
+**The agent framework with pre-execution safety gates — ToolGuard intercepts every tool call before execution. DeepSeek-optimized, extensible.**
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -14,7 +14,7 @@
 
 ---
 
-> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Framework core is complete: 12 agents, 41 modules, 112 tests. Production use is not yet recommended. Contributions welcome.
+> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Core framework is complete: Harness layer, 4-tier memory, multi-model support, graph orchestration. Production use is not yet recommended. Contributions welcome.
 
 ---
 
@@ -35,8 +35,7 @@ print(app.run('Build a login flow'))
 
 | You need... | Use Jig because... |
 |-------------|-------------------|
-| Multi-agent orchestration | 12 preset roles + custom SKILL.md mounting |
-| **Hard-constraint safety** | **Only framework with ToolGuard (pre-execution interception)** |
+| **Pre-execution safety** | **Only framework with ToolGuard (intercepts before execution)** |
 | DeepSeek optimization | SHA-256 prefix caching + CostAwareRouter + FC auto-repair |
 | Multi-model support | DeepSeek + OpenAI (extensible via BaseModelProvider) |
 | Graph workflow | GraphOrchestrator (conditional/parallel/loop) |
@@ -46,8 +45,7 @@ print(app.run('Build a login flow'))
 
 ## Key Features
 
-- ⚡ **Harness Layer** — ToolGuard pre-execution interception + LOOP SOP 5-stage gating + GlobalConstraints
-- 🧩 **12 Preset Agents** — PM · Trinity · Spec-Pipeline · Coding · Code-Review · TDD · Acceptance · Security · DevOps · Secretary · LOOP SOP + custom mounts
+- ⚡ **Harness Layer** — ToolGuard pre-execution interception + LOOP SOP 5-stage gating + GlobalConstraints + CircuitBreaker
 - 🧠 **4-Layer Memory** — CacheEngine (SHA-256) → ContextPartitioner (3-zone) → EmbeddingIndex → SQLite (MemoryRouter + Consolidator)
 - 🌐 **Multi-Model** — DeepSeekProvider + OpenAIProvider + BaseModelProvider abstraction (extensible)
 - 🔄 **Graph Engine** — GraphOrchestrator with conditional routing, parallel execution, loop detection
@@ -58,20 +56,22 @@ print(app.run('Build a login flow'))
 - 🔗 **Interop** — MCP Client + Server, A2A Protocol, Meta-Harness (external agent governance)
 - 🎯 **Intent Routing** — IntentRouter with HyDE rewrite + multi-intent decomposition
 - 🛠️ **Loop Engineering** — LoopEngine with convergence detection, quality validation, checkpoint restore, event replay
-- 📦 **Public SDK** — `from jig import Jig · ModelRouter · SkillRegistry · ConfigManager · LoopEngine · GraphOrchestrator`
+- 🧩 **Skill-to-Agent** — SKILL.md → Agent mapping, preset roles available, custom mounts supported
 
 ## Architecture
 
 ```
 Control Plane (Harness): LOOP SOP · ToolGuard · GlobalConstraints · MemoryRouter · CircuitBreaker
-Agent Plane:             SkillParser → SkillRegistry → AgentFactory → 12 Agents
+Agent Plane:             SkillParser → SkillRegistry → AgentFactory → Agents (via SKILL.md)
 Orchestration Plane:    Sequential · Parallel · Hierarchical · Graph · LoopEngine · Checkpoint
 Tool Plane:             MCPClient · Server · RepoMap · EmbeddingIndex · ModelRouter
                         CacheEngine · ContextPartitioner · CostAwareRouter · IntentRouter
 Plugin Plane:           VisionTool · ImageReader · PluginMarket (optional, from jig.contrib)
 ```
 
-## Build-in Agents
+## Built-in Agents
+
+Jig ships with preset agent definitions via SKILL.md. You can use them, customize them, or create your own.
 
 | # | Agent | Skill | Model |
 |---|-------|-------|:-----:|
@@ -116,7 +116,7 @@ jig/
 │   ├── cli/                    # CLI entry point
 │   └── server/                 # FastAPI + AsyncApp
 ├── tests/                      # 117 tests (pytest)
-├── skills/                     # 12 Agent SKILL.md definitions
+├── skills/                     # Agent SKILL.md definitions
 ├── docs/                       # Whitepapers · PRDs · Comparison reports · Gap analysis
 ├── versions/                   # Version snapshots (v0.1.0 through v0.5.0)
 ├── .trae/specs/               # Spec documents
