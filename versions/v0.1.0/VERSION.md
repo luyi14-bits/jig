@@ -1,7 +1,7 @@
 # 版本快照记录
 
 ## v0.1.0 (2026-07-13)
-- **初始版本**：AgentHarness 系统核心引擎
+- **初始版本**：Jig 系统核心引擎
 - **功能**：
   - Skill 定义格式解析器（YAML frontmatter → SkillDef）
   - Skill → Agent 映射引擎（SkillRegistry + AgentFactory）

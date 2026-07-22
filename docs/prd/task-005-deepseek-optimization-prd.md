@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-将 AgentHarness 的 DeepSeek 集成从"能用"升级到"标杆水平"。目标：进入 awesome-deepseek-agent 官方推荐列表。合并 IDEA-037（reasoning_effort）+ 050（成本感知）+ 051（Tool-Call Repair）+ 047（参数透传）。
+将 Jig 的 DeepSeek 集成从"能用"升级到"标杆水平"。目标：进入 awesome-deepseek-agent 官方推荐列表。合并 IDEA-037（reasoning_effort）+ 050（成本感知）+ 051（Tool-Call Repair）+ 047（参数透传）。
 
 ## 2. Problem Statement
 

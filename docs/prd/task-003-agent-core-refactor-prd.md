@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-本次迭代完成 AgentHarness 的核心架构升级：让每个 Agent 真正拥有完整的 SKILL.md body 作为 system prompt，支持用户向 Agent 动态挂载多个 Skill，新增群聊入口 Dispatcher 和 Code-Review Agent。这是从"空壳 Agent"到"真正按 skill 运行的 Agent"的关键重构。
+本次迭代完成 Jig 的核心架构升级：让每个 Agent 真正拥有完整的 SKILL.md body 作为 system prompt，支持用户向 Agent 动态挂载多个 Skill，新增群聊入口 Dispatcher 和 Code-Review Agent。这是从"空壳 Agent"到"真正按 skill 运行的 Agent"的关键重构。
 
 ## 2. Problem Statement
 

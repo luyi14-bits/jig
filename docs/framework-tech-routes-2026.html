@@ -94,7 +94,7 @@
   <span>📅 2026-07-20</span>
   <span>📊 覆盖 12+ 框架</span>
   <span>🔬 7 种架构模式</span>
-  <span>🎯 AgentHarness 战略转向依据</span>
+  <span>🎯 Jig 战略转向依据</span>
 </div>
 
 <div class="highlight">
@@ -109,7 +109,7 @@
   <li><a href="#patterns">七大架构模式深度解析</a></li>
   <li><a href="#comparison">核心技术能力横向对比</a></li>
   <li><a href="#12factor">12-Factor Agents 与 Context Engineering</a></li>
-  <li><a href="#implications">AgentHarness 框架化战略启示</a></li>
+  <li><a href="#implications">Jig 框架化战略启示</a></li>
 </ol>
 </div>
 
@@ -200,7 +200,7 @@
 </table>
 
 <div class="highlight">
-  <strong>关键洞察：</strong>大多数开源框架只做到了 Framework 层，缺乏 Harness 层的硬约束和稳定性保障。这正是 AgentHarness 的差异化机会 — <strong>Harness 层（ToolGuard + LOOP SOP 5 级门禁）是真正的技术壁垒</strong>。
+  <strong>关键洞察：</strong>大多数开源框架只做到了 Framework 层，缺乏 Harness 层的硬约束和稳定性保障。这正是 Jig 的差异化机会 — <strong>Harness 层（ToolGuard + LOOP SOP 5 级门禁）是真正的技术壁垒</strong>。
 </div>
 
 <!-- ==================== 3. 七大架构模式 ==================== -->
@@ -571,16 +571,16 @@ crew = Crew(
 </table>
 
 <div class="highlight">
-  <strong>AgentHarness 对标情况：</strong>已在 Context Compression（三模式压缩）、Context Routing（HyDE 路由）、Tool Management（MCPClient + ToolGuard）三个模式上实现了对标。Progressive Disclosure 通过 Skill 按需加载部分实现。
+  <strong>Jig 对标情况：</strong>已在 Context Compression（三模式压缩）、Context Routing（HyDE 路由）、Tool Management（MCPClient + ToolGuard）三个模式上实现了对标。Progressive Disclosure 通过 Skill 按需加载部分实现。
 </div>
 
 <!-- ==================== 6. 战略启示 ==================== -->
-<h2 id="implications">六、AgentHarness 框架化战略启示</h2>
+<h2 id="implications">六、Jig 框架化战略启示</h2>
 
 <h3>6.1 当前定位与差距分析</h3>
 
 <table>
-<tr><th>维度</th><th>AgentHarness 当前</th><th>框架化目标</th><th>差距</th></tr>
+<tr><th>维度</th><th>Jig 当前</th><th>框架化目标</th><th>差距</th></tr>
 <tr><td><strong>定位</strong></td><td>自研多 Agent 应用</td><td>可复用 Agent 框架</td><td>需抽象 API 层</td></tr>
 <tr><td><strong>架构模式</strong></td><td>Harness + 自定义编排</td><td>需明确归属哪种模式</td><td>混合模式需文档化</td></tr>
 <tr><td><strong>API 设计</strong></td><td>内部调用</td><td>公开 SDK + 文档</td><td>需设计公开 API</td></tr>
@@ -594,7 +594,7 @@ crew = Crew(
 <h3>6.2 七大模式中的 Tree-SOP 定位</h3>
 
 <div class="card card-green">
-<p><strong>AgentHarness 的架构归属：</strong>不属于任何单一模式，而是<strong>Harness + 混合编排</strong>的创新路线。</p>
+<p><strong>Jig 的架构归属：</strong>不属于任何单一模式，而是<strong>Harness + 混合编排</strong>的创新路线。</p>
 <ul>
 <li><strong>Harness 层</strong>：对标 Microsoft Agent FW 的执行器模式，但更强（ToolGuard 三层拦截 + LOOP SOP 5 级门禁）</li>
 <li><strong>编排层</strong>：融合 Sequential / Parallel / Hierarchical 三种模式</li>
@@ -648,7 +648,7 @@ crew = Crew(
 
 <div class="card card-accent">
 <h4>📊 战略结论</h4>
-<p>AgentHarness 在 <strong>Harness 硬约束</strong>、<strong>四层记忆</strong>、<strong>缓存优化</strong>、<strong>Skill→Agent 映射</strong> 四个维度拥有真正的技术壁垒，这些是竞品不具备或不重视的。框架化的核心任务不是追赶 LangGraph 的图编排精度或 CrewAI 的社区规模，而是<strong>把已有的差异化能力封装成可复用的框架 API</strong>，让其他开发者能基于 Tree-SOP 的 Harness + 记忆体系构建自己的 Agent。</p>
+<p>Jig 在 <strong>Harness 硬约束</strong>、<strong>四层记忆</strong>、<strong>缓存优化</strong>、<strong>Skill→Agent 映射</strong> 四个维度拥有真正的技术壁垒，这些是竞品不具备或不重视的。框架化的核心任务不是追赶 LangGraph 的图编排精度或 CrewAI 的社区规模，而是<strong>把已有的差异化能力封装成可复用的框架 API</strong>，让其他开发者能基于 Tree-SOP 的 Harness + 记忆体系构建自己的 Agent。</p>
 <p><strong>一句话定位：Tree-SOP 不是又一个 LangGraph 或 CrewAI，而是唯一一个把 Harness 硬约束和 DeepSeek 缓存优化做到框架级别的 Agent 框架。</strong></p>
 </div>
 
@@ -656,7 +656,7 @@ crew = Crew(
 
 <div class="meta">
   <p>📅 报告日期：2026-07-20 | 🔬 数据截止：2026-07-18 | 📚 来源：CSDN · cnblogs · 51CTO · 腾讯云 · toutiao · GitHub</p>
-  <p>维护人：项目秘书 (Luyi14-project-secretary) | 用途：AgentHarness 战略转向决策依据</p>
+  <p>维护人：项目秘书 (Luyi14-project-secretary) | 用途：Jig 战略转向决策依据</p>
 </div>
 
 </div>

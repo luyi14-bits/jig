@@ -13,7 +13,7 @@ try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
 
-    app = FastAPI(title="AgentHarness API", version="Alpha 0.2")
+    app = FastAPI(title="Jig API", version="Alpha 0.2")
 
     class ExecuteRequest(BaseModel):
         prompt: str
@@ -23,8 +23,8 @@ try:
 
     @app.post("/execute")
     async def execute(request: ExecuteRequest) -> Dict[str, Any]:
-        from forge import AgentHarness
-        h = AgentHarness(skills_dir=request.skill_dir)
+        from forge import Jig
+        h = Jig(skills_dir=request.skill_dir)
         result = h.run(request.prompt)
         return {"result": result}
 

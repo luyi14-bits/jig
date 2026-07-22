@@ -1,4 +1,4 @@
-# AgentHarness — Technical Whitepaper v3
+# Jig — Technical Whitepaper v3
 
 > **Version**: Alpha 0.2 · Framework Architecture Edition
 > **Date**: 2026-07-21 · **Type**: Framework Architecture Whitepaper
@@ -8,11 +8,11 @@
 
 ## 0. Executive Summary
 
-AgentHarness is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. Its core differentiator is a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution, a capability absent in prompt-only orchestration frameworks (CrewAI, MetaGPT, AutoGPT).
+Jig is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. Its core differentiator is a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution, a capability absent in prompt-only orchestration frameworks (CrewAI, MetaGPT, AutoGPT).
 
 **Key metrics**: 13 Agent roles · 4-tier memory architecture · 5-stage LOOP SOP gating · 3-layer ToolGuard · 62/62 tests passing · 28 delivered features
 
-**Architecture lineage**: AgentHarness was designed from scratch as a framework, not evolved from an application. The public SDK API (`from forge import AgentHarness`), external Agent compatibility layer (Meta-Harness), and MCP protocol support enable third-party developers to build on top of it.
+**Architecture lineage**: Jig was designed from scratch as a framework, not evolved from an application. The public SDK API (`from forge import Jig`), external Agent compatibility layer (Meta-Harness), and MCP protocol support enable third-party developers to build on top of it.
 
 ---
 
@@ -54,17 +54,17 @@ The architecture evolved through three phases:
 The framework SDK boundary is defined in `src/jig/api.py`. External consumers interact through:
 
 ```python
-from forge import AgentHarness
+from forge import Jig
 
 # 5-line pipeline
-app = AgentHarness(skills_dir="./skills")
+app = Jig(skills_dir="./skills")
 result = app.run("Build a login flow")
 print(result)
 ```
 
 ### 1.3 Meta-Harness: External Agent Compatibility Layer
 
-AgentHarness can govern external agents (Claude Code, Codex, Cursor, Pi) through the Meta-Harness layer:
+Jig can govern external agents (Claude Code, Codex, Cursor, Pi) through the Meta-Harness layer:
 
 ```
 External Agent ──→ MetaHarness ──→ ToolGuard ──→ Execution
@@ -74,7 +74,7 @@ External Agent ──→ MetaHarness ──→ ToolGuard ──→ Execution
                       └── PiAdapter
 ```
 
-Each adapter implements `start / send / stop / observe`. Tool calls from external agents pass through AgentHarness's ToolGuard interception, enabling hard-constraint governance over tools that lack their own.
+Each adapter implements `start / send / stop / observe`. Tool calls from external agents pass through Jig's ToolGuard interception, enabling hard-constraint governance over tools that lack their own.
 
 ---
 
@@ -283,7 +283,7 @@ Every Agent action is logged to `skills/<name>/LOG.md` with:
 
 ## 6. Comparative Analysis
 
-| Dimension | LangGraph | CrewAI | MS Agent FW | PydanticAI | **AgentHarness** |
+| Dimension | LangGraph | CrewAI | MS Agent FW | PydanticAI | **Jig** |
 |-----------|:---------:|:------:|:-----------:|:----------:|:----------------:|
 | **Hard Constraint** | ❌ Prompt-only | ❌ Prompt-only | ❌ Prompt-only | ❌ Prompt-only | ✅ **ToolGuard + Gating** |
 | **Harness Level** | ❌ | ❌ | ❌ | ❌ | ✅ **Built-in framework harness** |
@@ -294,7 +294,7 @@ Every Agent action is logged to `skills/<name>/LOG.md` with:
 | **License** | MIT | MIT | MIT | MIT | **MIT** |
 
 **Unique differentiators**:
-- AgentHarness is the **only framework with a hard-constraint Harness layer** operating at the code level
+- Jig is the **only framework with a hard-constraint Harness layer** operating at the code level
 - **Only framework with DeepSeek-specific cache optimization** (prefix hashing, cost-aware routing, Tool-Call Repair)
 - **Only framework with a gated SOP pipeline** that applies across all Agents uniformly
 
@@ -334,7 +334,7 @@ The optimal compromise:
 
 ### 8.2 Ecosystem Position
 
-AgentHarness targets the **Harness layer** — not agent framework compatibility (LangGraph), not community size (CrewAI), not general LLM platform (LangChain). The only framework with a code-level hard constraint layer that governs ALL Agents uniformly, regardless of whether they are built-in or external.
+Jig targets the **Harness layer** — not agent framework compatibility (LangGraph), not community size (CrewAI), not general LLM platform (LangChain). The only framework with a code-level hard constraint layer that governs ALL Agents uniformly, regardless of whether they are built-in or external.
 
 ### 8.3 Key Upcoming Milestones
 
@@ -347,4 +347,4 @@ AgentHarness targets the **Harness layer** — not agent framework compatibility
 
 ---
 
-*This document describes the AgentHarness architecture as of Alpha 0.2 (2026-07-21). Components in 🚧 are in progress; 📝 are planned.*
+*This document describes the Jig architecture as of Alpha 0.2 (2026-07-21). Components in 🚧 are in progress; 📝 are planned.*

@@ -1,4 +1,4 @@
-# AgentHarness — Technical Whitepaper v2
+# Jig — Technical Whitepaper v2
 
 > **Version**: Alpha 0.2 | **Last Updated**: 2026-07-16
 > **Status**: Production Design Reference
@@ -7,7 +7,7 @@
 
 ## 0. Executive Summary
 
-AgentHarness is a **multi-agent orchestration framework** that predefines 13 Agent roles as pipeline nodes—Dispatcher, PM, Trinity, Spec, Coding, Code-Review, TDD, Acceptance, Security, DevOps, Secretary, LOOP SOP—and allows users to mount arbitrary SKILL.md files onto each Agent as knowledge augmentation. The system enforces behavior through a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) and optimizes API costs through a **4-layer memory architecture** with DeepSeek Context Caching. Unlike prompt-only frameworks (CrewAI, MetaGPT, AutoGPT), AgentHarness implements PreToolUse interception, mandatory HandoverPackage schema, and 5-stage pipeline gating.
+Jig is a **multi-agent orchestration framework** that predefines 13 Agent roles as pipeline nodes—Dispatcher, PM, Trinity, Spec, Coding, Code-Review, TDD, Acceptance, Security, DevOps, Secretary, LOOP SOP—and allows users to mount arbitrary SKILL.md files onto each Agent as knowledge augmentation. The system enforces behavior through a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) and optimizes API costs through a **4-layer memory architecture** with DeepSeek Context Caching. Unlike prompt-only frameworks (CrewAI, MetaGPT, AutoGPT), Jig implements PreToolUse interception, mandatory HandoverPackage schema, and 5-stage pipeline gating.
 
 ---
 
@@ -208,7 +208,7 @@ All Agents → Shared Message Bus (Harness)
 
 ## 7. Comparative Analysis
 
-| Dimension | CrewAI | MetaGPT | AutoGPT | OpenHands | **AgentHarness** |
+| Dimension | CrewAI | MetaGPT | AutoGPT | OpenHands | **Jig** |
 |-----------|:------:|:-------:|:-------:|:---------:|:------------------:|
 | Hard constraints | ❌ | ❌ | ❌ | ❌ | ✅ ToolGuard + Gates |
 | Role system | Generic | Company sim | Single | Code agent | ✅ 13 roles + mounts |

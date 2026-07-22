@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ AgentHarness
+# ⚡ Jig
 
 **A self-built multi-agent orchestration framework with 12 preset roles, 4-layer memory, and hard-constraint harness.**
 
@@ -14,13 +14,13 @@
 
 ---
 
-> ⚠️ **Alpha Status**: AgentHarness is in active development (Alpha 0.2). Core architecture, agent pipeline, and SOP orchestration are proof-of-concept complete. Production use is not yet recommended. Contributions and feedback welcome.
+> ⚠️ **Alpha Status**: Jig is in active development (Alpha 0.2). Core architecture, agent pipeline, and SOP orchestration are proof-of-concept complete. Production use is not yet recommended. Contributions and feedback welcome.
 
 ---
 
 ## 📖 Table of Contents
 
-- [What is AgentHarness?](#what-is-agentharness)
+- [What is Jig?](#what-is-jig)
 - [Key Features](#key-features)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
@@ -34,11 +34,11 @@
 
 ---
 
-## What is AgentHarness?
+## What is Jig?
 
-AgentHarness is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. It introduces a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution — a capability absent in prompt-only frameworks like CrewAI, MetaGPT, and AutoGPT. The 4-tier memory architecture is purpose-built for DeepSeek Context Caching with SHA-256 prefix hashing.
+Jig is a **self-built multi-agent orchestration framework** — not a wrapper around existing agent libraries. It introduces a **hard-constraint Harness layer** (ToolGuard + LOOP SOP gating) that intercepts tool calls *before* execution — a capability absent in prompt-only frameworks like CrewAI, MetaGPT, and AutoGPT. The 4-tier memory architecture is purpose-built for DeepSeek Context Caching with SHA-256 prefix hashing.
 
-Unlike fork-based projects, AgentHarness is written from scratch with its own orchestration engine, memory system, and agent definition protocol.
+Unlike fork-based projects, Jig is written from scratch with its own orchestration engine, memory system, and agent definition protocol.
 
 ```
 You: "Build a login flow with phone + OTP"
@@ -284,7 +284,7 @@ Tool Call Request
 
 ## Comparison
 
-| Dimension | CrewAI | MetaGPT | AutoGPT | **AgentHarness** |
+| Dimension | CrewAI | MetaGPT | AutoGPT | **Jig** |
 |-----------|:------:|:-------:|:-------:|:----------------:|
 | **Hard Constraint Layer** | ❌ prompt-only | ❌ prompt-only | ❌ prompt-only | ✅ **ToolGuard + 5-stage gating (pre-execution)** |
 | **Harness Level** | ❌ | ❌ | ❌ | ✅ **Built-in framework harness** |
@@ -339,7 +339,7 @@ agent-harness/
 
 ## Contributing
 
-AgentHarness is in Alpha. We welcome:
+Jig is in Alpha. We welcome:
 
 - 🐛 **Bug reports** — Open an [issue](https://github.com/luyi14-bits/agent-harness/issues)
 - 💡 **Feature ideas** — Discuss in issues before coding
@@ -352,10 +352,10 @@ See [CHANGELOG.md](CHANGELOG.md) for the full release history and [PIPELINE_KANB
 
 ## License
 
-[MIT](LICENSE) · Copyright (c) 2026 AgentHarness Contributors
+[MIT](LICENSE) · Copyright (c) 2026 Jig Contributors
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by AgentHarness Contributors · 2026</sub>
+  <sub>Built with ❤️ by Jig Contributors · 2026</sub>
 </div>

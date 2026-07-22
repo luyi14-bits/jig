@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-本迭代为 AgentHarness 引擎添加企业级能力：并行编排调度、状态检查点恢复、完整开发工作流链、FastAPI 独立部署、以及 cache-guard CI 工程纪律。目标是让引擎从"核心可用"升级到"生产就绪"。
+本迭代为 Jig 引擎添加企业级能力：并行编排调度、状态检查点恢复、完整开发工作流链、FastAPI 独立部署、以及 cache-guard CI 工程纪律。目标是让引擎从"核心可用"升级到"生产就绪"。
 
 ## 2. Problem Statement
 

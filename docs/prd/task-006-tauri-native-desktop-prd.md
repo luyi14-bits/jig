@@ -16,7 +16,7 @@
 | Agent 列表 | 硬编码在 App.tsx 中 | 从 Rust `list_skills` 命令实时获取 |
 | 聊天功能 | 前端 mock，无后端响应 | 输入 → invoke → Python Dispatcher → 回显 |
 | Python 引擎 | 无 | sidecar 方式启动，stdout 流到前端终端 |
-| 构建产出 | 无（未跑过 tauri build） | `desktop/src-tauri/target/release/AgentHarness.exe` |
+| 构建产出 | 无（未跑过 tauri build） | `desktop/src-tauri/target/release/Jig.exe` |
 
 ## 3. 需要做的工作
 
@@ -53,7 +53,7 @@
 ```
 cd desktop
 npm run tauri build
-# 产物: desktop/src-tauri/target/release/AgentHarness.exe
+# 产物: desktop/src-tauri/target/release/Jig.exe
 ```
 
 ## 4. 不做的（Out of Scope）

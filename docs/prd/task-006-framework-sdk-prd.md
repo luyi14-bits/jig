@@ -8,7 +8,7 @@
 ## 2. FR
 | ID | 需求 | Pri |
 |:--:|------|:---:|
-| FR-1 | AgentHarness API 类，5 行代码跑通管道 | P0 |
+| FR-1 | Jig API 类，5 行代码跑通管道 | P0 |
 | FR-2 | MetaHarness：Claude Code / Codex 等外部 Agent 接入 ToolGuard | P0 |
 | FR-3 | MCPServer：MCP 双向 Server + Client | P0 |
 | FR-4 | CostAwareRouter 的 Gate 循环集成 | P0 |
@@ -19,7 +19,7 @@
 - 可视化编排（废弃）
 
 ## 4. Success Metrics
-- AgentHarness API：`from forge import AgentHarness` 成功
+- Jig API：`from forge import Jig` 成功
 - MetaHarness：`route("claude", "prompt")` 返回结果
 - MCP：`list_tools() + call_tool()` 正常
 - 全量回归 62/62

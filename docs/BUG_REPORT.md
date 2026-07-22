@@ -6,7 +6,7 @@
 
 ## 问题概述
 
-AgentHarness 桌面应用的 Settings 面板中，「API Key 保存」「MCP Server 添加」「Skills 加载」三个功能全部失效。exe 打开后显示"无法访问页面"。
+Jig 桌面应用的 Settings 面板中，「API Key 保存」「MCP Server 添加」「Skills 加载」三个功能全部失效。exe 打开后显示"无法访问页面"。
 
 ---
 

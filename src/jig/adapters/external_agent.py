@@ -1,7 +1,7 @@
 """外部 Agent 兼容层（Meta-Harness）。
 
 IDEA-049: 让 Claude Code / Codex / Cursor / Pi 等第三方 Agent 
-能接入 AgentHarness 的硬约束管控体系。
+能接入 Jig 的硬约束管控体系。
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ class MetaHarness:
     """Meta-Harness — 统一管理外部 Agent 的接入和硬约束穿透。
 
     外部 Agent 的工具调用经过 ToolGuard 三层拦截后，
-    才能访问 AgentHarness 的内部 Agent。
+    才能访问 Jig 的内部 Agent。
     """
 
     def __init__(self) -> None:

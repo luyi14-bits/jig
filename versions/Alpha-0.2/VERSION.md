@@ -1,4 +1,4 @@
-# AgentHarness Alpha 0.2
+# Jig Alpha 0.2
 
 > 版本：Alpha 0.2 | 2026-07-15
 

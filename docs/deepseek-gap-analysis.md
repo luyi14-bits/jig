@@ -1,6 +1,6 @@
 # DeepSeek Optimization Gap Analysis
 
-> AgentHarness Alpha 0.2 vs awesome-deepseek-agent ecosystem
+> Jig Alpha 0.2 vs awesome-deepseek-agent ecosystem
 > Date: 2026-07-21 | Methodology: Luyi14-acceptance-testing + Luyi14-code-review
 
 ## Benchmark Projects
@@ -10,7 +10,7 @@
 | **Reasonix** | N/A | Terminal coding agent | ✅ Native (cache-first, flash-first) |
 | **Deep Code** | N/A | Terminal AI assistant | ✅ Agent Skills + reasoning effort |
 | **Pi** | N/A | Terminal coding harness | ✅ Tree-structured sessions |
-| **AgentHarness** | ~0 | Multi-Agent framework | ✅ FR-2/3 (repair + effort) |
+| **Jig** | ~0 | Multi-Agent framework | ✅ FR-2/3 (repair + effort) |
 
 ---
 
@@ -18,18 +18,18 @@
 
 ### 1. Cache Optimization
 
-| Aspect | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Reasonix | Deep Code | Pi | Jig |
 |--------|----------|-----------|----|--------------|
 | Strategy | Cache-first loop | — | — | SHA-256 prefix hashing |
 | Prefix stabilization | ✅ | — | — | ✅ immutable_frozen |
 | Per-session cache | ✅ | — | — | ✅ CacheEngine stats |
 | Cost visualization | — | — | — | ✅ CacheStats (hit_rate, savings) |
 
-**Verdict**: 🟢 **Leader** — AgentHarness has the most structured cache system with stats tracking.
+**Verdict**: 🟢 **Leader** — Jig has the most structured cache system with stats tracking.
 
 ### 2. Reasoning Effort Control
 
-| Aspect | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Reasonix | Deep Code | Pi | Jig |
 |--------|----------|-----------|----|--------------|
 | Levels | flash/pro/preset max | deep thinking max | — | low/medium/high |
 | Configurable | ✅ `/pro` TUI command | ✅ CLI flag | — | ✅ `reasoning_effort` setter |
@@ -40,7 +40,7 @@
 
 ### 3. Tool-Call Repair
 
-| Aspect | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Reasonix | Deep Code | Pi | Jig |
 |--------|----------|-----------|----|--------------|
 | JSON repair | ✅ automatic | — | — | ✅ 4 strategies (code block, trailing comma, missing quotes) |
 | FC fallback | ✅ | — | — | ✅ reasoner→chat auto-degrade |
@@ -50,7 +50,7 @@
 
 ### 4. Cost Control
 
-| Aspect | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Reasonix | Deep Code | Pi | Jig |
 |--------|----------|-----------|----|--------------|
 | Flash-first | ✅ default | — | — | ✅ CostAwareRouter |
 | Token budget | — | — | — | ✅ session + monthly budget |
@@ -61,7 +61,7 @@
 
 ### 5. MCP Integration
 
-| Aspect | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Reasonix | Deep Code | Pi | Jig |
 |--------|----------|-----------|----|--------------|
 | MCP Client | ✅ native | — | ✅ | ✅ MCPClient |
 | MCP Server | — | — | — | ✅ MCPServer |
@@ -71,7 +71,7 @@
 
 ### 6. Model Naming Compliance
 
-| Aspect | Required | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Required | Reasonix | Deep Code | Pi | Jig |
 |--------|:--------:|:---------:|:---------:|:--:|:------------:|
 | Uses v4 names | ✅ Yes | ✅ | ✅ | ✅ | ❌ **Uses `deepseek-chat`** |
 
@@ -79,7 +79,7 @@
 
 ### 7. 1M Context Window
 
-| Aspect | Required | Reasonix | Deep Code | Pi | AgentHarness |
+| Aspect | Required | Reasonix | Deep Code | Pi | Jig |
 |--------|:--------:|:---------:|:---------:|:--:|:------------:|
 | 1M context configured | ✅ Yes | ✅ | ✅ | ✅ | ❌ **Not mentioned** |
 

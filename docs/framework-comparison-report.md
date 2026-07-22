@@ -1,4 +1,4 @@
-# AgentHarness 框架对比技术报告
+# Jig 框架对比技术报告
 
 > **版本**: Alpha 0.2 | **日期**: 2026-07-17 | **类型**: 自研框架 vs 开源竞品
 
@@ -6,7 +6,7 @@
 
 ## 0. 摘要
 
-AgentHarness 是一个**自研的 Python 多 Agent 编排框架**，直接对标 CrewAI / MetaGPT / AutoGen / Superpowers。核心差异化在于**硬约束 Harness 层**（ToolGuard 三层拦截 + LOOP SOP 5 级门禁）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。在硬约束和记忆架构上拥有真正的技术壁垒，但在 GitHub 影响力和社区生态上差距显著。
+Jig 是一个**自研的 Python 多 Agent 编排框架**，直接对标 CrewAI / MetaGPT / AutoGen / Superpowers。核心差异化在于**硬约束 Harness 层**（ToolGuard 三层拦截 + LOOP SOP 5 级门禁）和**四层记忆体系**（CacheEngine → ContextPartitioner → EmbeddingIndex → SQLite）。在硬约束和记忆架构上拥有真正的技术壁垒，但在 GitHub 影响力和社区生态上差距显著。
 
 ---
 
@@ -27,11 +27,11 @@ AgentHarness 是一个**自研的 Python 多 Agent 编排框架**，直接对标
 | PydanticAI | 18.7k | Python | Pydantic Agent | 📈 |
 | CAMEL | 17.4k | Python | 角色扮演 | 🆕 |
 | Microsoft Agent FW | 12.2k | C#/TS | 微软官方 | 🆕 |
-| **AgentHarness** | **—** | **Python** | **自研多 Agent** | **🚧 新项目** |
+| **Jig** | **—** | **Python** | **自研多 Agent** | **🚧 新项目** |
 
 ---
 
-## 2. AgentHarness 自研架构
+## 2. Jig 自研架构
 
 ```
 Control Plane (Harness): LOOP SOP · ToolGuard · GlobalConstraints · MemoryRouter
@@ -63,7 +63,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.1 CrewAI (55.8k★)
 
-| 维度 | CrewAI | AgentHarness |
+| 维度 | CrewAI | Jig |
 |------|--------|----------------|
 | **硬约束** | ❌ prompt-only | ✅ ToolGuard + 门禁 |
 | **Skill→Agent** | ❌ 无 | ✅ SKILL.md 自动映射 |
@@ -74,7 +74,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.2 MetaGPT (69.4k★)
 
-| 维度 | MetaGPT | AgentHarness |
+| 维度 | MetaGPT | Jig |
 |------|---------|----------------|
 | **角色** | 4 个固定 | 13 预设 + 可扩展 |
 | **SOP** | 硬编码 pipeline | 多模式编排 |
@@ -84,7 +84,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.3 AutoGen (59.8k★, Microsoft)
 
-| 维度 | AutoGen | AgentHarness |
+| 维度 | AutoGen | Jig |
 |------|---------|----------------|
 | **定位** | 通用对话路由 | 软件开发专用 |
 | **预设角色** | ❌ 需自建 | ✅ 13 个 |
@@ -93,7 +93,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.4 Superpowers (258k★)
 
-| 维度 | Superpowers | AgentHarness |
+| 维度 | Superpowers | Jig |
 |------|-------------|----------------|
 | **本质** | AI 编程工具插件 | 独立 Python 框架 |
 | **运行方式** | Claude Code/Codex 内 | CLI/桌面/后端 |
@@ -103,7 +103,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.5 Mastra (26.4k★)
 
-| 维度 | Mastra | AgentHarness |
+| 维度 | Mastra | Jig |
 |------|-------|----------------|
 | **语言** | TypeScript | Python |
 | **生态** | 前端全栈 | LLM 深度集成 |
@@ -111,7 +111,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ### 3.6 Omnigent (7.5k★)
 
-| 维度 | Omnigent | AgentHarness |
+| 维度 | Omnigent | Jig |
 |------|----------|--------------|
 | **定位** | Meta-harness — 在已有 Agent 外加统一层 | 内置 Harness — 框架自带硬约束 |
 | **Agent 来源** | 外部（Claude Code/Codex/Pi） | 自产（13 预设 + Skill 挂载） |
@@ -120,13 +120,13 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 | **编排** | 会话级协作 | SOP 管道 + 5 级门禁 |
 | **记忆** | 会话同步 | 四层体系（CacheEngine→SQLite） |
 
-**一句话差异**：Omnigent 是"给别人的 Agent 套缰绳"，AgentHarness 是"自己的 Agent 自带缰绳"。
+**一句话差异**：Omnigent 是"给别人的 Agent 套缰绳"，Jig 是"自己的 Agent 自带缰绳"。
 
 ---
 
 ## 4. 关键维度矩阵
 
-| 维度 | CrewAI | MetaGPT | AutoGen | Superpowers | Mastra | LangGraph | **AgentHarness** |
+| 维度 | CrewAI | MetaGPT | AutoGen | Superpowers | Mastra | LangGraph | **Jig** |
 |------|:------:|:-------:|:-------:|:-----------:|:------:|:---------:|:------------:|
 | 硬约束层 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ 独有** |
 | 门禁机制 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ 独有** |
@@ -140,7 +140,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ## 5. 差距分析与追赶路线
 
-| 维度 | AgentHarness 现状 | 高星框架 | 差距 | 建议优先级 |
+| 维度 | Jig 现状 | 高星框架 | 差距 | 建议优先级 |
 |------|:---:|:--------:|:----:|:----------:|
 | GitHub 影响力 | ~0 | Superpowers 258k | 🔴 巨大 | P1 发布 PyPI + 英文 README |
 | 社区生态 | 单人 | 数百贡献者 | 🔴 巨大 | P1 开源运营 |
@@ -163,7 +163,7 @@ Tool Plane:            MCPClient · ToolGuard · RepoMap · EmbeddingIndex · Ca
 
 ## 6. 结论
 
-AgentHarness 在**技术架构**上有真实壁垒（硬约束 Harness 独一无二），但在**社区影响力**上几乎为零。建议按此优先级追赶：
+Jig 在**技术架构**上有真实壁垒（硬约束 Harness 独一无二），但在**社区影响力**上几乎为零。建议按此优先级追赶：
 
 1. **P0**：PyPI 发布 + GitHub Actions CI → 解决"装不了/测不了"问题
 2. **P1**：英文 README + MkDocs 文档站 → 解决"看不懂"问题

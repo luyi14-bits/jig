@@ -307,14 +307,14 @@
 
 ### IDEA-044：MCP 协议完整支持
 - **来源**：2026 跨框架标准 — MCP 协议
-- **描述**：MCP Server + Client 双向支持（代码已存在：`mcp_protocol.py`），让 AgentHarness 可作为 MCP 工具被其他框架调用
+- **描述**：MCP Server + Client 双向支持（代码已存在：`mcp_protocol.py`），让 Jig 可作为 MCP 工具被其他框架调用
 - **对标**：CrewAI v1.10.1 MCP 集成
 - **优先级**：P0
 - **状态**：✅ **规划中**（代码已存在：`src/jig/adapters/mcp_protocol.py`）
 
 ### IDEA-045：A2A 协议探索
 - **来源**：2026 跨框架通信标准 — A2A
-- **描述**：探索 Agent-to-Agent Protocol，允许 AgentHarness 与其他框架的 Agent 跨框架协作
+- **描述**：探索 Agent-to-Agent Protocol，允许 Jig 与其他框架的 Agent 跨框架协作
 - **对标**：CrewAI A2A 协议
 - **优先级**：P1（升级 — 跨框架协作通道）
 - **状态**：等待 Spec
@@ -333,7 +333,7 @@
 
 ### IDEA-049：外部 Agent 兼容层（Meta-Harness）
 - **来源**：框架双模定位 — "既要提供 Agent，也要兼容外部 Agent" + 对标 Omnigent
-- **描述**：提供统一的外部 Agent 适配接口，让 Claude Code / Codex / Cursor / Pi 等第三方 Agent 能接入 AgentHarness 的硬约束管控体系
+- **描述**：提供统一的外部 Agent 适配接口，让 Claude Code / Codex / Cursor / Pi 等第三方 Agent 能接入 Jig 的硬约束管控体系
 - **对标**：Omnigent（7.5k★）— meta-harness 统一编排 + Policy 审批
 - **核心技术点**：
   - ExternalAgentAdapter 抽象基类：start / send / stop / observe
@@ -341,13 +341,13 @@
   - Harness 穿透：外部 Agent 工具调用经过 ToolGuard 三层拦截
   - 管道接入：外部 Agent 可作为 SOP 管道中的一个节点
   - 混合编排：内置 Agent（13 角色）+ 外部 Agent 在同一管道中协作
-- **与 Omnigent 差异**：Omnigent Harness 外挂（事后审批），AgentHarness ToolGuard 内置（事前阻断）
+- **与 Omnigent 差异**：Omnigent Harness 外挂（事后审批），Jig ToolGuard 内置（事前阻断）
 - **优先级**：P0（框架双模核心）
 - **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/ds-ecosystem-pr/`）
 
 ### IDEA-053：真实项目验证
 - **来源**：goals-guide.html Phase 1 方向 C
-- **描述**：用 AgentHarness 完成 1 个真实小项目（Web 工具 / 数据处理 / 内部工具），从 0 到 1 跑通全链路，记录每个痛点
+- **描述**：用 Jig 完成 1 个真实小项目（Web 工具 / 数据处理 / 内部工具），从 0 到 1 跑通全链路，记录每个痛点
 - **指标**：1 份案例文档，暴露并修复 ≥10 个真实痛点
 - **优先级**：P0（验证期核心）
 - **状态**：✅ **规划中**（Spec 已就位：`.trae/specs/real-project-validation/`）

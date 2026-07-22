@@ -1,6 +1,6 @@
 """A2A 协议探索 — Agent-to-Agent 跨框架通信。
 
-IDEA-045: 允许 AgentHarness 与其他框架的 Agent 跨框架协作。
+IDEA-045: 允许 Jig 与其他框架的 Agent 跨框架协作。
 """
 
 from __future__ import annotations

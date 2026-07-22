@@ -7,7 +7,7 @@ name = "jig"
 version = "0.2.0"
 description = "自研多 Agent 编排框架 — 13 个预设角色、4 层记忆、硬约束 Harness"
 readme = "README.md"
-authors = [{ name = "AgentHarness Contributors" }]
+authors = [{ name = "Jig Contributors" }]
 license = { text = "MIT" }
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -32,4 +32,4 @@ BugReports = "https://github.com/luyi14-bits/agent-harness/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["forge*"]
+include = ["jig*"]

@@ -1,10 +1,10 @@
-"""AgentHarness — 公开 SDK API。
+"""Jig — 公开 SDK API。
 
 核心入口，5 行代码跑通整条 SOP 管道。
 
 Usage:
-    from forge import AgentHarness
-    app = AgentHarness()
+    from forge import Jig
+    app = Jig()
     app.run("帮我做一个登录功能")
 """
 
@@ -21,13 +21,13 @@ from .orchestrator.dispatcher import Dispatcher
 logger = logging.getLogger(__name__)
 
 
-class AgentHarness:
-    """AgentHarness 框架主入口。
+class Jig:
+    """Jig 框架主入口。
 
     所有用户从这里开始。5 行示例：
 
-        from forge import AgentHarness
-        app = AgentHarness(skills_dir="./skills")
+        from forge import Jig
+        app = Jig(skills_dir="./skills")
         result = app.run("帮我做一个登录功能")
         print(result)
     """
@@ -47,7 +47,7 @@ class AgentHarness:
         if self._skills_dir.exists():
             self._registry.register_skill_dir(str(self._skills_dir))
             count = self._registry.load_all()
-            logger.info("AgentHarness 初始化: %d 个 skill 已加载", count)
+            logger.info("Jig 初始化: %d 个 skill 已加载", count)
         else:
             logger.warning("skills 目录不存在: %s", skills_dir)
 

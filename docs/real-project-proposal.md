@@ -5,7 +5,7 @@
 
 ## TL;DR
 
-Use AgentHarness's own SOP pipeline to perform a **full code review + security audit of AgentHarness itself**. This validates the framework on a real, non-trivial project and produces immediate value.
+Use Jig's own SOP pipeline to perform a **full code review + security audit of Jig itself**. This validates the framework on a real, non-trivial project and produces immediate value.
 
 ---
 

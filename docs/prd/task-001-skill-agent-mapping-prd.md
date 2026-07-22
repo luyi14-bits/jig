@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-本项目旨在创建一个 **AgentHarness 系统**，将结构化的 skill 定义文件自动映射为独立的 AI Agent，支持树形 SOP 编排、DeepSeek V4 Pro/Flash 混用策略、以及缓存优化架构。核心产出是一个可嵌入编程 AI 工具或独立部署的 Agent 编排引擎，让开发工作流中的每个 skill（PM、架构师、编码员、验收员等）自动获得独立 Agent 能力，按树形 SOP 协同完成软件开发。
+本项目旨在创建一个 **Jig 系统**，将结构化的 skill 定义文件自动映射为独立的 AI Agent，支持树形 SOP 编排、DeepSeek V4 Pro/Flash 混用策略、以及缓存优化架构。核心产出是一个可嵌入编程 AI 工具或独立部署的 Agent 编排引擎，让开发工作流中的每个 skill（PM、架构师、编码员、验收员等）自动获得独立 Agent 能力，按树形 SOP 协同完成软件开发。
 
 ---
 
@@ -53,13 +53,13 @@
 - **痛点**：手动切换 Agent 模式、重复写提示词
 
 ### Persona 2：Tree-SOP 系统开发者
-- **背景**：维护和扩展 AgentHarness 系统的工程师
+- **背景**：维护和扩展 Jig 系统的工程师
 - **需求**：清晰的 skill 定义格式、可测试的映射引擎、明确的扩展点
 - **痛点**：文档不全、API 兼容性陷阱多
 
 ### Persona 3：独立部署用户
 - **背景**：后端服务集成场景
-- **需求**：REST API / CLI 调用 AgentHarness 工作流
+- **需求**：REST API / CLI 调用 Jig 工作流
 - **优先级**：P2（后续迭代）
 
 ---

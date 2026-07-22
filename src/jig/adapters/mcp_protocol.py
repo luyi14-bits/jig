@@ -1,6 +1,6 @@
 """MCP 协议完整支持 — 双向 Server + Client。
 
-IDEA-044: MCP 协议完整支持，AgentHarness 可作为 MCP 工具被其他框架调用。
+IDEA-044: MCP 协议完整支持，Jig 可作为 MCP 工具被其他框架调用。
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class MCPServer:
-    """MCP Server — 让 AgentHarness 的 Agent 作为工具被外部调用。"""
+    """MCP Server — 让 Jig 的 Agent 作为工具被外部调用。"""
 
     def __init__(self, registry) -> None:
         self._registry = registry

@@ -1,8 +1,8 @@
-# 集成 AgentHarness
+# 集成 Jig
 
 [English](./awesome-deepseek-agent-guide.md) | [简体中文](./awesome-deepseek-agent-guide.zh-CN.md) · [← Back](../README.md)
 
-AgentHarness 是一个 Python 多 Agent 编排框架，内置 12 个预设角色、4 层记忆架构和硬约束 Harness 层。针对 DeepSeek V4 API 做了缓存优先前缀哈希、Flash 优先成本路由和自动 Tool-Call Repair 优化。
+Jig 是一个 Python 多 Agent 编排框架，内置 12 个预设角色、4 层记忆架构和硬约束 Harness 层。针对 DeepSeek V4 API 做了缓存优先前缀哈希、Flash 优先成本路由和自动 Tool-Call Repair 优化。
 
 #### 1. 前置条件
 
@@ -57,7 +57,7 @@ python run.py --attach my-custom-skill
 
 ## DeepSeek 专有优化
 
-AgentHarness 为 DeepSeek V4 API 专门优化：
+Jig 为 DeepSeek V4 API 专门优化：
 
 ### 缓存优先前缀哈希
 
@@ -76,15 +76,15 @@ adapter = DeepSeekAdapter(reasoning_effort="high")  # low / medium / high
 
 ### 自动 Tool-Call Repair
 
-DeepSeek V4 的 FC 返回偶尔有格式错误（末尾逗号、未引号 key、代码块包裹）。AgentHarness 用 4 层修复链自动处理，全部失败时优雅降级到纯文本模式。
+DeepSeek V4 的 FC 返回偶尔有格式错误（末尾逗号、未引号 key、代码块包裹）。Jig 用 4 层修复链自动处理，全部失败时优雅降级到纯文本模式。
 
 ### 100 万 Token 上下文
 
-AgentHarness 完整支持 DeepSeek V4 的 100 万 token 上下文窗口。
+Jig 完整支持 DeepSeek V4 的 100 万 token 上下文窗口。
 
 ### 硬约束 Harness 层
 
-与纯 prompt 框架不同，AgentHarness 通过 3 层 ToolGuard（白名单/黑名单/调用前钩子）在工具执行前拦截，5 阶段 LOOP SOP 门禁自动降级。
+与纯 prompt 框架不同，Jig 通过 3 层 ToolGuard（白名单/黑名单/调用前钩子）在工具执行前拦截，5 阶段 LOOP SOP 门禁自动降级。
 
 ---
 

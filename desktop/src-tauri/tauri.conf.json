@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicegui/tauri-v2/main/schema.json",
-  "productName": "AgentHarness",
+  "productName": "Jig",
   "version": "0.2.0",
   "identifier": "com.tree-sop.desktop",
   "build": {
@@ -18,7 +18,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "AgentHarness",
+        "title": "Jig",
         "width": 1280,
         "height": 800,
         "resizable": true,
