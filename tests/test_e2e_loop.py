@@ -5,9 +5,9 @@
 
 import pytest
 from pathlib import Path
-from forge.core.skill_registry import SkillRegistry
-from forge.core.skill_parser import SkillParser
-from forge.core.agent_factory import AgentFactory
+from jig.core.skill_registry import SkillRegistry
+from jig.core.skill_parser import SkillParser
+from jig.core.agent_factory import AgentFactory
 
 
 class TestE2ELOOP:
@@ -61,7 +61,7 @@ class TestE2ELOOP:
 
     def test_dispatcher_routes_to_pm(self, registry):
         """Dispatcher 收到需求后路由到 PM Agent。"""
-        from forge.orchestrator.dispatcher import Dispatcher
+        from jig.orchestrator.dispatcher import Dispatcher
         if not self.SKILL_DIR.exists():
             pytest.skip("skills 目录不存在")
         d = Dispatcher(skill_dir=str(self.SKILL_DIR))
@@ -77,7 +77,7 @@ class TestE2ELOOP:
         print(f"[OK] Spec 文档数: {spec_count}")
 
         # 阶段 2: 核心模块存在
-        src_dir = Path(__file__).parent.parent / "src" / "forge"
+        src_dir = Path(__file__).parent.parent / "src" / "jig"
         core_files = list(src_dir.rglob("*.py"))
         assert len(core_files) >= 15, f"核心模块数不足: {len(core_files)}"
         print(f"[OK] 核心模块数: {len(core_files)}")
@@ -90,7 +90,7 @@ class TestE2ELOOP:
     def test_checkpoint_persistence(self):
         """阶段 4: 检查点持久化。"""
         import tempfile
-        from forge.orchestrator.orchestrator import CheckpointManager
+        from jig.orchestrator.orchestrator import CheckpointManager
         with tempfile.TemporaryDirectory() as tmp:
             mgr = CheckpointManager(checkpoint_dir=tmp)
             path = mgr.save("test-loop-e2e", {"phase": 4, "status": "done"})

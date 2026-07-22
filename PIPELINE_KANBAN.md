@@ -310,7 +310,7 @@
 - **描述**：MCP Server + Client 双向支持（代码已存在：`mcp_protocol.py`），让 AgentHarness 可作为 MCP 工具被其他框架调用
 - **对标**：CrewAI v1.10.1 MCP 集成
 - **优先级**：P0
-- **状态**：✅ **规划中**（代码已存在：`src/forge/adapters/mcp_protocol.py`）
+- **状态**：✅ **规划中**（代码已存在：`src/jig/adapters/mcp_protocol.py`）
 
 ### IDEA-045：A2A 协议探索
 - **来源**：2026 跨框架通信标准 — A2A

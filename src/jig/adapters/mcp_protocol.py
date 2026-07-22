@@ -31,6 +31,6 @@ class MCPServer:
         skill = self._registry.get(name)
         if not skill:
             return json.dumps({"error": f"未知 Agent: {name}"})
-        from forge.orchestrator.dispatcher import Dispatcher
+        from jig.orchestrator.dispatcher import Dispatcher
         d = Dispatcher(skill_dir="skills")
         return json.dumps({"result": d.handle(arguments.get("prompt", ""))})

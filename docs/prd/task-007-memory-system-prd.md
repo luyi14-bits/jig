@@ -48,10 +48,10 @@ MemoryManager
 
 | 文件 | 改动 |
 |------|------|
-| `src/forge/core/__init__.py` | 导出 MemoryManager |
-| `src/forge/orchestrator/memory.py` | **新建** — MemoryManager + LocalStore + Consolidator |
-| `src/forge/adapters/conversation_compressor.py` | 升级 _make_summary 为 Flash LLM 模式 |
-| `src/forge/adapters/embedding_index.py` | 新增 add_conversation()，双索引 |
+| `src/jig/core/__init__.py` | 导出 MemoryManager |
+| `src/jig/orchestrator/memory.py` | **新建** — MemoryManager + LocalStore + Consolidator |
+| `src/jig/adapters/conversation_compressor.py` | 升级 _make_summary 为 Flash LLM 模式 |
+| `src/jig/adapters/embedding_index.py` | 新增 add_conversation()，双索引 |
 | `tests/test_memory.py` | **新建** — 5 个测试 |
 
 ## 5. Out of Scope

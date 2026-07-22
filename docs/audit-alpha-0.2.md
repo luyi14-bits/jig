@@ -22,7 +22,7 @@
 
 ### R1: config_manager.py 静默吞异常
 
-**文件**: `src/forge/core/config_manager.py` 第 73-74 行
+**文件**: `src/jig/core/config_manager.py` 第 73-74 行
 **违反**: 第十九荣（禁止 `except: pass`）/ 安全红线 8
 **代码**:
 ```python
@@ -34,7 +34,7 @@ except Exception:
 
 ### R2: repo_map.py 静默吞异常
 
-**文件**: `src/forge/adapters/repo_map.py` 第 79-80 行, 第 130-131 行
+**文件**: `src/jig/adapters/repo_map.py` 第 79-80 行, 第 130-131 行
 **违反**: 第十九荣 / 安全红线 8
 **代码**:
 ```python
@@ -50,40 +50,40 @@ except Exception:
 
 ### W1: LocalStore 全部 SQLite 操作无错误处理
 
-**文件**: `src/forge/orchestrator/memory.py`
+**文件**: `src/jig/orchestrator/memory.py`
 **影响**: `set_profile` / `save_session` / `log_memory` / `forget` / `merge` 等 15+ 处
 **风险**: 数据库连接失败/磁盘满时直接崩溃，无降级路径
 **修复**: 对每个 execute() + commit() 加 try/except，失败时 logger.exception + 返回 False/空
 
 ### W2: CheckpointManager 文件写入无错误处理
 
-**文件**: `src/forge/orchestrator/orchestrator.py` 第 240-241 行
+**文件**: `src/jig/orchestrator/orchestrator.py` 第 240-241 行
 **风险**: JSON 序列化失败或磁盘写入失败时抛未处理异常
 **修复**: 加 try/except，失败时 logger.error + 返回 "" 而非 path
 
 ### W3: 用户消息写入日志可能泄露敏感信息
 
-**文件**: `src/forge/orchestrator/dispatcher.py` 第 45 行, 第 69 行
-**文件**: `src/forge/adapters/mcp_client.py` 第 45 行
+**文件**: `src/jig/orchestrator/dispatcher.py` 第 45 行, 第 69 行
+**文件**: `src/jig/adapters/mcp_client.py` 第 45 行
 **风险**: API Key、密码等敏感输入可能出现在日志中
 **修复**: dispatcher 日志截断到 60 字已有一定防护，建议加 `re.sub(r'sk-[a-zA-Z0-9]+', 'sk-***', msg)` 过滤
 
 ### W4: ToolType 枚举未导出
 
-**文件**: `src/forge/core/__init__.py`
+**文件**: `src/jig/core/__init__.py`
 **问题**: `ToolType` 在 `skill_def.py` 中定义为 public enum，但未在 `__init__.py` 的 `__all__` 中导出
 **修复**: 在 `core/__init__.py` 和顶层 `__init__.py` 中导出 `ToolType`
 
 ### W5: Hardcoded skills/ 路径
 
-**文件**: `src/forge/core/agent_factory.py` 第 103 行
-**文件**: `src/forge/orchestrator/dispatcher.py` 第 23 行
+**文件**: `src/jig/core/agent_factory.py` 第 103 行
+**文件**: `src/jig/orchestrator/dispatcher.py` 第 23 行
 **风险**: 从非项目根目录运行时找不到 skills 目录
 **修复**: 改为可配置路径，从 settings 或 ConfigManager 读取
 
 ### W6: SQLite 连接无异常处理
 
-**文件**: `src/forge/orchestrator/memory.py` 第 32 行
+**文件**: `src/jig/orchestrator/memory.py` 第 32 行
 **风险**: `sqlite3.connect()` 失败时直接抛出
 **修复**: 加 try/except，失败时 logger.critical + raise 包装
 

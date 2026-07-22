@@ -70,7 +70,7 @@ AgentHarness 为 DeepSeek V4 API 专门优化：
 ### 推理力度控制
 
 ```python
-from forge.adapters.deepseek_adapter import DeepSeekAdapter
+from jig.adapters.deepseek_adapter import DeepSeekAdapter
 adapter = DeepSeekAdapter(reasoning_effort="high")  # low / medium / high
 ```
 

@@ -43,7 +43,7 @@ def check_dependencies() -> bool:
 def test_skill_parser() -> bool:
     """测试 Skill 解析器。"""
     try:
-        from forge.core.skill_parser import SkillParser
+        from jig.core.skill_parser import SkillParser
 
         # 有效 frontmatter
         valid_content = """---
@@ -84,8 +84,8 @@ name: "test-skill"
 def test_skill_registry() -> bool:
     """测试 Skill 注册表。"""
     try:
-        from forge.core.skill_registry import SkillRegistry
-        from forge.core.skill_parser import SkillParser
+        from jig.core.skill_registry import SkillRegistry
+        from jig.core.skill_parser import SkillParser
 
         registry = SkillRegistry()
         # 先清空（单例可能保留旧数据）
@@ -97,7 +97,7 @@ def test_skill_registry() -> bool:
             registry.register_skill_dir(str(test_dir))
 
         # 手动注册一个 skill
-        from forge.core.skill_def import SkillDef
+        from jig.core.skill_def import SkillDef
         fake_skill = SkillDef(name="self-test", description="自测 skill")
         registry._skills["self-test"] = fake_skill
 
@@ -119,8 +119,8 @@ def test_skill_registry() -> bool:
 def test_agent_factory() -> bool:
     """测试 Agent 工厂。"""
     try:
-        from forge.core.agent_factory import AgentFactory
-        from forge.core.skill_def import SkillDef
+        from jig.core.agent_factory import AgentFactory
+        from jig.core.skill_def import SkillDef
 
         skill = SkillDef(name="test-coding", description="编码 skill", model="flash")
         agent = AgentFactory.create_agent(skill)
@@ -155,7 +155,7 @@ def test_agent_factory() -> bool:
 def test_cache_engine() -> bool:
     """测试缓存引擎。"""
     try:
-        from forge.adapters.cache_engine import CacheEngine
+        from jig.adapters.cache_engine import CacheEngine
 
         engine = CacheEngine()
 
@@ -209,7 +209,7 @@ def test_cache_engine() -> bool:
 def test_deepseek_adapter() -> bool:
     """测试 DeepSeek 适配器。"""
     try:
-        from forge.adapters.deepseek_adapter import DeepSeekAdapter
+        from jig.adapters.deepseek_adapter import DeepSeekAdapter
 
         adapter = DeepSeekAdapter()
 
@@ -241,7 +241,7 @@ def test_deepseek_adapter() -> bool:
 def test_context_partitioner() -> bool:
     """测试三层 Context 分区。"""
     try:
-        from forge.adapters.context import ContextPartitioner
+        from jig.adapters.context import ContextPartitioner
 
         partitioner = ContextPartitioner(session_id="test-session")
 
@@ -278,8 +278,8 @@ def test_context_partitioner() -> bool:
 def test_orchestrator() -> bool:
     """测试 SOP 编排器。"""
     try:
-        from forge.orchestrator import SequentialOrchestrator
-        from forge.core.skill_def import SOPNode
+        from jig.orchestrator import SequentialOrchestrator
+        from jig.core.skill_def import SOPNode
 
         # 构造简单顺序 SOP
         sop = SOPNode(
