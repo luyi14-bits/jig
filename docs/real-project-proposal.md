@@ -64,6 +64,16 @@ Dispatcher ─→ PM ─→ Trinity ─→ Spec ─→ Coding ─→ Code-Review
 9. **Token budget** — Full pipeline may exceed session token limits
 10. **Cache invalidation** — Different agents need different prefixes, reducing cache efficiency
 
+## Out of Scope
+
+- External project review (this run only reviews Jig itself)
+- New feature development or refactoring execution
+- Performance benchmarking suite
+- Production deployment or CI/CD pipeline setup
+- Multi-model comparison or A/B testing
+- User-facing documentation updates
+- pip package publishing
+
 ## Success Criteria
 
 | Criterion | Target | Verification |
