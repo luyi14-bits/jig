@@ -63,28 +63,47 @@ print(result)
 
 That's it. The dispatcher routes your request through the SOP pipeline.
 
+## Agent Firewall in 30 seconds
+
+```python
+from jig.adapters.mcp_client import ToolGuard
+
+# PM agent tries to delete files — blocked at code level
+ToolGuard.check("pm", "Bash(rm -rf /)")        # → False (黑名单)
+ToolGuard.check("pm", "Write(/etc/passwd)")    # → False (黑名单)
+
+# PM agent tries to read — allowed
+ToolGuard.check("pm", "Read", "src/main.py")   # → True (白名单)
+
+# Coding agent tries to write code — allowed
+ToolGuard.check("coding", "Write", "src/app.py")  # → True (白名单)
+```
+
+> **deepagents says "trust the LLM". Jig says "verify before execute."**
+
 ---
 
 ## Comparison
 
-| Dimension | LangGraph | CrewAI | PydanticAI | **Jig** |
-|-----------|:---------:|:------:|:----------:|:-------:|
-| **Hard Constraint** | ❌ | ❌ | ❌ | ✅ **ToolGuard pre-execution** |
-| **DeepSeek Cache** | — | — | — | ✅ **SHA-256 prefix hashing** |
-| **Memory** | Checkpointer | Short-term | Context | ✅ **4-layer (Cache→Partition→Embedding→SQLite)** |
-| **Graph Engine** | ✅ Native | ❌ | ❌ | ✅ **GraphOrchestrator** |
-| **Streaming** | ✅ | ✅ | ✅ | ✅ **SSE chat_stream** |
-| **Multi-Model** | ✅ 20+ | ✅ 10+ | ✅ 20+ | ✅ **DS + OpenAI + extensible** |
-| **External Agent Gov.** | ❌ | ❌ | ❌ | ✅ **Meta-Harness adapters** |
-| **Cost Governance** | — | — | — | ✅ **CostAwareRouter + TokenBudget** |
-| **Loop Engineering** | ❌ | ❌ | ❌ | ✅ **LoopEngine (convergence + replay)** |
+| Dimension | deepagents | OpenAI SDK | LangGraph | CrewAI | PydanticAI | **Jig** |
+|-----------|:----------:|:----------:|:---------:|:------:|:----------:|:-------:|
+| **Hard Constraint** | ❌ prompt-only | ❌ prompt-only | ❌ | ❌ | ❌ | ✅ **ToolGuard pre-execution** |
+| **Pre-execution Intercept** | ❌ "trust LLM" | ❌ | ❌ | ❌ | ❌ | ✅ **Code-level block** |
+| **DeepSeek Cache** | — | — | — | — | — | ✅ **SHA-256 prefix hashing** |
+| **Memory** | Short-term | — | Checkpointer | Short-term | Context | ✅ **4-layer** |
+| **Graph Engine** | ❌ | ✅ | ✅ Native | ❌ | ❌ | ✅ **GraphOrchestrator** |
+| **Streaming** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ **SSE chat_stream** |
+| **Multi-Model** | ✅ 20+ | ❌ OpenAI only | ✅ 20+ | ✅ 10+ | ✅ 20+ | ✅ **DS + OpenAI + ext.** |
+| **External Agent Gov.** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ **Meta-Harness** |
+| **Cost Governance** | — | — | — | — | — | ✅ **CostAwareRouter** |
+| **Loop Engineering** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ **LoopEngine** |
 
 ---
 
 ## Architecture
 
 ```
-Control Plane (Harness): LOOP SOP · ToolGuard · GlobalConstraints · CircuitBreaker
+Agent Firewall (Control Plane): ToolGuard · LOOP SOP · GlobalConstraints · CircuitBreaker
 Agent Plane:             SkillParser → SkillRegistry → AgentFactory → Agents (via SKILL.md)
 Orchestration Plane:    Sequential · Parallel · Graph · LoopEngine · Checkpoint
 Tool Plane:             MCPClient·Server · RepoMap · EmbeddingIndex · ModelRouter
@@ -160,7 +179,7 @@ Full guide: [Building Agents with Jig](docs/guides/building-agents.md)
 | Resource | Description |
 |----------|-------------|
 | [Building Agents Guide](docs/guides/building-agents.md) | Step-by-step tutorial for creating custom agents |
-| [Technical Whitepaper v4](docs/technical-whitepaper-v4.md) | Framework architecture, Harness layer, memory, roadmap |
+| [Technical Whitepaper v3](docs/technical-whitepaper-v3.md) | Framework architecture, Agent Firewall, memory, roadmap |
 | [User Guide](docs/user-guide.md) | CLI usage, FastAPI server, Skill customization |
 | [Framework Comparison](docs/framework-comparison-report.md) | Jig vs 10+ competing frameworks |
 | [API Reference](docs/index.md) | MkDocs-generated API docs (GitHub Pages) |
@@ -179,8 +198,9 @@ Full guide: [Building Agents with Jig](docs/guides/building-agents.md)
 | 9 | Multi-model + Streaming | ✅ v0.5.0 |
 | 10 | Graph Engine + Durable | ✅ v0.6.0 |
 | 11 | Docs site + Building Agents guide | ✅ Current |
-| 12 | PyPI release + CI | 🚧 |
-| 13 | Plugin interface | 💡 Planned |
+| 12 | Meta-Harness (external agent governance) | 🚧 |
+| 13 | PyPI release + CI | 🚧 |
+| 14 | Plugin interface | 💡 Planned |
 
 ---
 
