@@ -24,9 +24,7 @@ env/
 .settings/
 
 # Trae / Cursor
-.trae/*
-!.trae/specs/
-!.trae/specs/**
+.trae/
 
 # 不上传
 .env
