@@ -408,14 +408,16 @@
 - **优先级**：P2
 - **状态**：等待 Spec
 
-### IDEA-063：Agent Runtime + 协作恢复机制
+### IDEA-063：Agent Runtime — State/Lifecycle + 协作恢复 Loop
 - **来源**：老板战略调整 — 框架重心从 prompt 转向 runtime
-- **描述**：Agent 不应只是"高级 Skill"，而应具备：状态机(idle/running/waiting/error/recovered/done)、生命周期(on_init/on_run/on_pause/on_resume/on_error/on_stop)、执行的上下文、Memory、工具集、周期
+- **描述**：Agent 具备三独立概念：State(状态机), Checkpoint(进度快照), Memory(长期知识)，三者不混合。Agent 应具备：状态机(idle/running/waiting/failed/retrying/recovered/done)、生命周期(on_init/on_run/on_pause/on_resume/on_error/on_stop)、绑定的 Memory 引用（不耦合）、工具白名单、执行周期
 - **核心技术点**：
-  - Agent Runtime 状态机 + 生命周期钩子
-  - Checkpoint→Rollback→Replay 闭环（自动保存、失败回滚、重放）
-  - 协作机制：失败 escalation、recovery chain、Agent 间协商
-  - 统一 CheckpointManager（合并 loop_engine 和 orchestrator 的两套实现）
+  - State 独立：Agent 运行时状态机，与 Checkpoint/Memory 分离
+  - Checkpoint 独立：执行进度快照，用于恢复进度，不是 State 也不是 Memory
+  - Memory 独立：长期可检索知识，Agent 只引用不拥有
+  - 失败 Loop：失败 → 总结(分析原因+提取教训+写入Memory) → 升级(模型/策略/角色三选一) → 重试
+  - 升级策略：模型升级(Flash→Pro) / 策略升级(放宽约束/换工具) / 角色升级(escalate给更强Agent)
+  - 统一现有两套 CheckpointManager
 - **优先级**：P0（框架核心方向）
 - **状态**：等待 Spec
 
