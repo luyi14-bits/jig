@@ -97,6 +97,20 @@
 
 **迭代范围**：IDEA-053 — 真实项目验证（自托管代码审查 + 安全审计）
 
+## 迭代 8 — Loop #4 收尾 (2026-07-22)
+
+| 阶段 | 状态 | 执行者 | 产出 | 缺陷数 | 门禁 |
+|------|:----:|--------|------|:------:|:----:|
+| 0 对齐 | ✅ | PM | docs/real-project-proposal.md + Out of Scope | — | PASS |
+| 1 规划 | ✅ | Spec-Pipeline | spec.md + tasks.md | — | PASS |
+| 2 执行 | ✅ | SOPRunner | Agent.execute()真LLM + SOPRunner + Checkpoint/Retry/Escalate | 0 | PASS |
+| 3 验证 | ✅ | Acceptance | run.py + Jig API 最小闭环验证通过 | 0 | PASS |
+| 4 收敛 | ✅ | Secretary | 迭代总结 — 最小闭环打通 | — | PASS |
+
+**迭代范围**：IDEA-053 — 真实项目验证（最小闭环打通）
+
+**迭代总结**：Dispatcher → SOPRunner → 4 Agent(PM/Spec/Coding/Accept) 全链路打通。SOPRunner 含 Checkpoint 保存/恢复 + Retry(最多3次) + Escalate(模型升级→角色升级→人工)。125 测试全绿。`python run.py` 终端入口可用。最小闭环交付完成。
+
 ---
 
 ## 迭代 6 (2026-07-15)
