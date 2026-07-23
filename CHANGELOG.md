@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.6.0] - 2026-07-23
+
+> 结构修复 — 模块导出规范化 + 测试补齐
+
+### Fixed
+- `adapters/__init__.py` 导出补齐：新增 `model_provider` / `streaming` / `cost_aware_router` / `external_agent` / `mcp_client` / `a2a_protocol`
+- `orchestrator/__init__.py` 导出补齐：新增 `SOPRunner` / `GraphOrchestrator` / `LoopEngine` / `Memory` / `IntentRouter` / `CircuitBreaker`
+- 空目录 `src/jig/tools/` 移除
+
+### Added
+- `tests/test_sop_runner.py` — SOPRunner 基础管道 + 多节点测试
+- `tests/test_dispatcher.py` — Dispatcher 路由测试
+
+### 验收
+- 127/127 测试全绿
+- `compileall` 零错误
+- `af7f195` 已推送
+
 ## [Alpha 0.2] - 2026-07-15
 
 > IDEA-028 ~ IDEA-030 批次交付 — 版本对齐 + Skills 补齐 + 端到端测试
