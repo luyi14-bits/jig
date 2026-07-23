@@ -8,6 +8,11 @@ from .orchestrator import (
     CheckpointManager,
     create_dev_workflow,
 )
+from .sop_runner import SOPRunner, SOPNode, SOPCheckpoint, AgentExecutionError
+from .graph_engine import GraphOrchestrator, GraphNode, GraphEdge
+from .loop_engine import LoopEngine, LoopConfig, LoopStatus
+from .circuit_breaker import CircuitBreaker, DriftDetector
+from .memory import MemoryRouter, Consolidator
 
 __all__ = [
     "OrchestratorBase",
@@ -17,4 +22,19 @@ __all__ = [
     "CheckpointManager",
     "create_dev_workflow",
     "Dispatcher",
+    "SOPRunner",
+    "SOPNode",
+    "SOPCheckpoint",
+    "AgentExecutionError",
+    "GraphOrchestrator",
+    "GraphNode",
+    "GraphEdge",
+    "LoopEngine",
+    "LoopConfig",
+    "LoopStatus",
+    "CircuitBreaker",
+    "DriftDetector",
+    "Memory",
+    "MemoryRouter",
+    "Consolidator",
 ]
