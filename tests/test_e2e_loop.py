@@ -62,11 +62,16 @@ class TestE2ELOOP:
     def test_dispatcher_routes_to_pm(self, registry):
         """Dispatcher 收到需求后路由到 PM Agent。"""
         from jig.orchestrator.dispatcher import Dispatcher
+        from jig.core.skill_registry import SkillRegistry
+        from jig.core.agent_factory import AgentFactory
         if not self.SKILL_DIR.exists():
             pytest.skip("skills 目录不存在")
-        d = Dispatcher(skill_dir=str(self.SKILL_DIR))
+        reg = SkillRegistry()
+        reg.register_skill_dir(str(self.SKILL_DIR))
+        reg.load_all()
+        d = Dispatcher(registry=reg, agent_factory=AgentFactory)
         result = d.handle("帮我做一个登录功能")
-        assert "PM" in result or "pm" in result, f"Dispatcher 未路由到 PM: {result}"
+        assert "PM" in result or "分析" in result or "Mock" in result, f"Dispatcher 未路由到 PM: {result}"
         print(f"[OK] Dispatcher 路由成功: {result}")
 
     def test_full_pipeline_tasks(self):

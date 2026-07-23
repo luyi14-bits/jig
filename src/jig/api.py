@@ -52,7 +52,10 @@ class Jig:
         else:
             logger.warning("skills 目录不存在: %s", skills_dir)
 
-        self._dispatcher = Dispatcher(skill_dir=str(self._skills_dir))
+        self._dispatcher = Dispatcher(
+            registry=self._registry,
+            agent_factory=AgentFactory,
+        )
 
     def list_agents(self) -> List[Dict[str, Any]]:
         """列出所有可用 Agent。"""
