@@ -7,7 +7,7 @@ updated: 2026-07-23
 tags: [Agent, Harness, ToolGuard, 安全, DeepSeek]
 ---
 
-# 当 OpenAI 和 LangChain 都在谈"Harness"，Jig 的 Harness 凭什么不一样？
+# 深挖 Jig Harness：唯一做事前代码拦截的 Agent 安全层
 
 > deepagents 说 "trust the LLM"。Jig 说 "verify before execute"。
 > 代码级事前拦截 vs prompt 级事后劝说——这就是差距。
