@@ -1,11 +1,11 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "jig"
-version = "0.2.0"
-description = "自研多 Agent 编排框架 — 13 个预设角色、4 层记忆、硬约束 Harness"
+version = "0.6.0"
+description = "Agent framework with pre-execution safety gates — ToolGuard. DeepSeek-optimized, multi-model, graph orchestration."
 readme = "README.md"
 authors = [{ name = "Jig Contributors" }]
 license = { text = "MIT" }
@@ -26,9 +26,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/luyi14-bits/agent-harness"
-Source = "https://github.com/luyi14-bits/agent-harness"
-BugReports = "https://github.com/luyi14-bits/agent-harness/issues"
+Homepage = "https://github.com/luyi14-bits/jig"
+Source = "https://github.com/luyi14-bits/jig"
+BugReports = "https://github.com/luyi14-bits/jig/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
