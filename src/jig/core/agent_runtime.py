@@ -1,10 +1,12 @@
-"""Agent Runtime — 真正的 Agent 运行时实体。
+"""Agent Runtime — State + Checkpoint + Memory 分离。
 
-核心设计:
-- 状态机: idle → running → waiting → error → recovered → done
-- 生命周期: on_init / on_run / on_pause / on_resume / on_error / on_stop
-- Checkpoint 自动保存 + rollback
-- Retry policy + recovery chain + escalation
+三核心概念互不耦合:
+
+- State:   Agent 运行时状态机 (idle→running→failed→retrying→recovered→done)
+- Checkpoint: 执行进度快照，用于恢复 (独立于 State 和 Memory)
+- Memory:  长期可检索知识，Agent 只引用不拥有
+
+失败恢复: fail → summarize → upgrade → retry
 """
 
 from __future__ import annotations
@@ -19,65 +21,79 @@ logger = logging.getLogger(__name__)
 
 
 class AgentState(Enum):
-    """Agent 运行时状态。"""
+    """Agent 运行时状态。独立于 Checkpoint 和 Memory。"""
     IDLE = "idle"
     RUNNING = "running"
-    WAITING = "waiting"       # 等待其他 Agent 或人工介入
-    PAUSED = "paused"         # 用户手动暂停
-    ERROR = "error"
-    RECOVERED = "recovered"   # 从错误中恢复
+    WAITING = "waiting"
+    FAILED = "failed"
+    RETRYING = "retrying"
+    PAUSED = "paused"
+    RECOVERED = "recovered"
     DONE = "done"
+
+
+class UpgradeStrategy(Enum):
+    """升级策略。"""
+    MODEL = "model"         # Flash → Pro
+    POLICY = "policy"       # 放宽约束 / 换工具
+    ROLE = "role"           # escalate 给更强 Agent
 
 
 @dataclass
 class Checkpoint:
-    """Agent 执行检查点。"""
+    """执行进度快照 — 只记录进度，不混入 State 或 Memory。"""
     id: str = ""
-    agent_name: str = ""
-    state: AgentState = AgentState.IDLE
-    context: Dict[str, Any] = field(default_factory=dict)
-    memory: Dict[str, Any] = field(default_factory=dict)
+    step: str = ""           # 当前执行到哪一步
+    context: Dict = field(default_factory=dict)
+    completed: List[str] = field(default_factory=list)  # 哪些已完成
     timestamp: float = 0.0
-    retry_count: int = 0
+
+
+@dataclass
+class Lesson:
+    """从失败中提取的教训。"""
+    cause: str = ""
+    action: str = ""
+    suggestion: str = ""
 
 
 @dataclass
 class AgentResult:
-    """Agent 执行结果。"""
     success: bool
     output: Any = None
     error: Optional[str] = None
-    checkpoints: int = 0
     retries: int = 0
-    recovery_chain: List[str] = field(default_factory=list)
+    lesson: Optional[Lesson] = None
+    upgrade_path: List[str] = field(default_factory=list)
 
 
 class AgentRuntime:
-    """Agent 运行时 — 状态机 + 生命周期 + 检查点。
+    """Agent 运行时 — State / Checkpoint / Memory 分离。
 
-    用法:
-        runtime = AgentRuntime("my-agent")
-        runtime.on_init({"goal": "审查代码"})
-        runtime.on_run(lambda ctx: do_something(ctx))
-        print(runtime.state)  # → AgentState.DONE
+    Core loop: fail → summarize → upgrade → retry
     """
 
     def __init__(self, name: str, max_retries: int = 3):
         self._name = name
         self._id = uuid.uuid4().hex[:12]
+        # State (session, volatile)
         self._state = AgentState.IDLE
         self._context: Dict[str, Any] = {}
-        self._memory: Dict[str, Any] = {}
+        # Checkpoint (persistent snapshots)
         self._checkpoints: List[Checkpoint] = []
-        self._max_retries = max_retries
+        # Memory (long-term knowledge) — 只引用，不拥有
+        self._memory_ref: Optional[Callable] = None
+        # Retry state
         self._retry_count = 0
-        self._recovery_chain: List[str] = []
-        self._timeline: List[Dict] = []  # 完整事件日志
-
-        # 生命周期钩子
+        self._max_retries = max_retries
+        self._lessons: List[Lesson] = []
+        self._upgrade_history: List[str] = []
+        # Timeline
+        self._timeline: List[Dict] = []
+        # Lifecycle hooks
         self._on_run: Optional[Callable] = None
-        self._on_error: Optional[Callable] = None
-        self._on_rollback: Optional[Callable] = None
+
+    # ---- Properties ----
 
     @property
     def name(self) -> str:
@@ -92,126 +108,145 @@ class AgentRuntime:
         return dict(self._context)
 
     @property
-    def retry_count(self) -> int:
+    def retries(self) -> int:
         return self._retry_count
 
-    # ---- 生命周期钩子注册 ----
+    @property
+    def checkpoints(self) -> List[Checkpoint]:
+        return list(self._checkpoints)
 
-    def register_hooks(self, on_run=None, on_error=None, on_rollback=None) -> None:
-        self._on_run = on_run
-        self._on_error = on_error
-        self._on_rollback = on_rollback
-
-    # ---- 生命周期执行 ----
+    # ---- Public API ----
 
     def run(self, task: Callable, context: Optional[Dict] = None) -> AgentResult:
-        """执行 Agent 任务，含自动 checkpoint + retry + rollback。"""
+        """执行 Agent 任务。失败自动走 fail→summarize→upgrade→retry 闭环。"""
         if context:
             self._context.update(context)
 
         self._transition_to(AgentState.RUNNING)
-        self._auto_checkpoint()
+        self._save_checkpoint("start")
 
         while self._retry_count <= self._max_retries:
             try:
-                self._timeline.append({"event": "run_start", "retry": self._retry_count, "time": time.time()})
-
-                # 调用自定义执行逻辑
-                if self._on_run:
-                    result = self._on_run(self._context)
-                else:
-                    result = task(self._context) if task else None
-
+                result = task(self._context) if self._on_run else task(self._context)
+                self._save_checkpoint("completed")
                 self._transition_to(AgentState.DONE)
-                self._auto_checkpoint()
-                self._timeline.append({"event": "run_success", "time": time.time()})
-
-                return AgentResult(success=True, output=result, checkpoints=len(self._checkpoints), retries=self._retry_count)
+                return AgentResult(
+                    success=True, output=result, retries=self._retry_count,
+                    upgrade_path=list(self._upgrade_history),
+                )
 
             except Exception as e:
                 self._retry_count += 1
-                self._timeline.append({"event": "run_error", "error": str(e), "retry": self._retry_count, "time": time.time()})
+                self._transition_to(AgentState.FAILED)
+                self._save_checkpoint("failed")
 
-                if self._retry_count <= self._max_retries:
-                    # Rollback + retry
-                    self._auto_rollback()
-                    logger.warning("%s: 重试 %d/%d — %s", self._name, self._retry_count, self._max_retries, e)
-                    self._transition_to(AgentState.RUNNING)
-                    continue
-                else:
-                    # 重试耗尽 → error
-                    self._transition_to(AgentState.ERROR)
-                    logger.error("%s: 重试耗尽 — %s", self._name, e)
+                # ----- Summarize -----
+                lesson = self._summarize_failure(e)
+                self._lessons.append(lesson)
+                logger.info("%s: 失败总结 — %s", self._name, lesson.cause)
 
-                    if self._on_error:
-                        self._on_error(e)
+                if self._retry_count > self._max_retries:
+                    self._transition_to(AgentState.DONE)
+                    return AgentResult(
+                        success=False, error=str(e), retries=self._retry_count,
+                        lesson=lesson, upgrade_path=list(self._upgrade_history),
+                    )
 
-                    return AgentResult(success=False, error=str(e), checkpoints=len(self._checkpoints), retries=self._retry_count)
+                # ----- Upgrade -----
+                strategy = self._choose_upgrade()
+                upgrade_msg = self._apply_upgrade(strategy)
+                self._upgrade_history.append(f"{strategy.value}:{upgrade_msg}")
+
+                # ----- Retry -----
+                self._transition_to(AgentState.RETRYING)
+                self._save_checkpoint(f"retry-{self._retry_count}")
+
+        return AgentResult(success=False, retries=self._retry_count)
 
     def pause(self) -> None:
         self._transition_to(AgentState.PAUSED)
-        self._auto_checkpoint()
+        self._save_checkpoint("paused")
 
-    def resume(self, checkpoint_id: Optional[str] = None) -> None:
-        if checkpoint_id:
-            self._rollback_to(checkpoint_id)
+    def resume(self) -> None:
         self._transition_to(AgentState.RUNNING)
 
-    # ---- Checkpoint / Rollback ----
-
-    def _auto_checkpoint(self) -> None:
-        cp = Checkpoint(
-            id=uuid.uuid4().hex[:8],
-            agent_name=self._name,
-            state=self._state,
-            context=dict(self._context),
-            memory=dict(self._memory),
-            timestamp=time.time(),
-            retry_count=self._retry_count,
-        )
-        self._checkpoints.append(cp)
-        logger.debug("%s: checkpoint %s (%s)", self._name, cp.id, self._state.value)
-
-    def _auto_rollback(self) -> None:
-        """回滚到最后一次成功 checkpoint。"""
-        # 找一个非 Error 的 checkpoint
-        for cp in reversed(self._checkpoints[:-1]):
-            if cp.state != AgentState.ERROR:
-                self._restore_checkpoint(cp)
-                if self._on_rollback:
-                    self._on_rollback(cp)
-                logger.info("%s: rollback 到 checkpoint %s", self._name, cp.id)
-                return
-
-        logger.warning("%s: 没有可回滚的 checkpoint", self._name)
-
-    def _rollback_to(self, cp_id: str) -> bool:
+    def restore_checkpoint(self, cp_id: str) -> bool:
+        """从指定检查点恢复进度（不恢复 State 和 Memory）。"""
         for cp in self._checkpoints:
             if cp.id == cp_id:
-                self._restore_checkpoint(cp)
+                self._context = dict(cp.context)
+                self._transition_to(AgentState.RECOVERED)
                 return True
         return False
 
-    def _restore_checkpoint(self, cp: Checkpoint) -> None:
-        self._context = dict(cp.context)
-        self._memory = dict(cp.memory)
-        self._retry_count = cp.retry_count
-        self._transition_to(AgentState.RECOVERED)
+    # ---- Internal: Summarize / Upgrade / Retry ----
 
-    # ---- 状态管理 ----
+    def _summarize_failure(self, error: Exception) -> Lesson:
+        """分析失败原因，提取教训。"""
+        error_str = str(error)
+        if "timeout" in error_str.lower():
+            return Lesson(cause="工具调用超时", action="增加超时时间或优化工具调用",
+                          suggestion=f"尝试升级到 Pro 模型或增加超时 {error_str}")
+        elif "401" in error_str or "unauthorized" in error_str.lower():
+            return Lesson(cause="认证失败", action="检查 API Key", suggestion="验证 API Key 配置")
+        elif "token" in error_str.lower() and "limit" in error_str.lower():
+            return Lesson(cause="Token 超限", action="截断上下文或加大 Token 限制",
+                          suggestion="尝试缩小上下文窗口")
+        else:
+            return Lesson(cause=error_str[:100], action="重试",
+                          suggestion="升级模型或策略后重试")
+
+    def _choose_upgrade(self) -> UpgradeStrategy:
+        """自动选择升级策略。"""
+        if self._retry_count <= 1:
+            return UpgradeStrategy.MODEL
+        elif self._retry_count <= 2:
+            return UpgradeStrategy.POLICY
+        else:
+            return UpgradeStrategy.ROLE
+
+    def _apply_upgrade(self, strategy: UpgradeStrategy) -> str:
+        """执行升级。"""
+        if strategy == UpgradeStrategy.MODEL:
+            self._context.setdefault("model", "pro")
+            return "deepseek-v4-pro"
+        elif strategy == UpgradeStrategy.POLICY:
+            self._context["timeout"] = self._context.get("timeout", 30) * 2
+            return f"timeout:{self._context['timeout']}s"
+        elif strategy == UpgradeStrategy.ROLE:
+            self._context["escalated"] = True
+            return "escalated"
+        return ""
+
+    # ---- State Management ----
 
     def _transition_to(self, new_state: AgentState) -> None:
         old = self._state
         self._state = new_state
-        self._timeline.append({"event": "state_change", "from": old.value, "to": new_state.value, "time": time.time()})
+        self._timeline.append({
+            "time": time.time(), "from": old.value, "to": new_state.value,
+            "retry": self._retry_count,
+        })
 
-    # ---- 查询 ----
+    # ---- Checkpoint (纯进度快照，不含 State/Memory) ----
+
+    def _save_checkpoint(self, step: str) -> None:
+        cp = Checkpoint(
+            id=uuid.uuid4().hex[:8],
+            step=step,
+            context=dict(self._context),
+            completed=[e["to"] for e in self._timeline[-5:] if e["to"] != "failed"],
+            timestamp=time.time(),
+        )
+        self._checkpoints.append(cp)
+
+    # ---- Queries ----
 
     def get_timeline(self) -> List[Dict]:
         return list(self._timeline)
 
-    def get_checkpoints(self) -> List[Checkpoint]:
-        return list(self._checkpoints)
+    def get_lessons(self) -> List[Lesson]:
+        return list(self._lessons)
 
     def get_debug_report(self) -> Dict:
         return {
@@ -219,7 +254,7 @@ class AgentRuntime:
             "state": self._state.value,
             "retries": self._retry_count,
             "max_retries": self._max_retries,
-            "checkpoints": len(self._checkpoints),
-            "checkpoint_ids": [c.id for c in self._checkpoints],
-            "timeline": self._timeline[-5:],
+            "checkpoints": [c.step for c in self._checkpoints],
+            "upgrades": self._upgrade_history,
+            "lessons": [{"cause": l.cause, "action": l.action} for l in self._lessons],
         }
