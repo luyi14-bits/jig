@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 14 项 | 8 项 | 0 项 | 0 项 | 29 项 | 3 项 |
+| 15 项 | 8 项 | 0 项 | 0 项 | 29 项 | 3 项 |
 
 ---
 
@@ -406,6 +406,17 @@
 - **描述**：系统化 Agent 精度评测，结合 LoopEngine QualityValidator 做自动化评估
 - **核心行动**：EvalRunner → 测试集定义 → 自动评分 → 回归报告
 - **优先级**：P2
+- **状态**：等待 Spec
+
+### IDEA-063：Agent Runtime + 协作恢复机制
+- **来源**：老板战略调整 — 框架重心从 prompt 转向 runtime
+- **描述**：Agent 不应只是"高级 Skill"，而应具备：状态机(idle/running/waiting/error/recovered/done)、生命周期(on_init/on_run/on_pause/on_resume/on_error/on_stop)、执行的上下文、Memory、工具集、周期
+- **核心技术点**：
+  - Agent Runtime 状态机 + 生命周期钩子
+  - Checkpoint→Rollback→Replay 闭环（自动保存、失败回滚、重放）
+  - 协作机制：失败 escalation、recovery chain、Agent 间协商
+  - 统一 CheckpointManager（合并 loop_engine 和 orchestrator 的两套实现）
+- **优先级**：P0（框架核心方向）
 - **状态**：等待 Spec
 
 ## 📝 规划中
