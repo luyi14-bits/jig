@@ -1,6 +1,6 @@
-"""Tree-SOP Agent 启动入口 — 纯终端 CLI 模式。
+"""Jig Agent 启动入口 — 纯终端 CLI 模式。
 
-双击或命令行执行 → 进入群聊模式，不上网页。
+双击或命令行执行 → 进入群聊模式，走真实 SOP 管道。
 """
 
 import sys
@@ -19,15 +19,15 @@ if not SKILL_DIR.exists():
     SKILL_DIR = Path(r"D:\Desktop\skill\skills")
 
 print("=" * 50)
-print("  Tree-SOP Agent — 纯终端群聊模式")
+print("  Jig Agent — 纯终端群聊模式")
 print(f"  Skills: {SKILL_DIR}")
 print("=" * 50)
 
-# ── 启动 Dispatcher ──
-from jig.orchestrator.dispatcher import Dispatcher
+# ── 初始化 ──
+from jig import Jig
 
-dispatcher = Dispatcher(skill_dir=str(SKILL_DIR))
-print(f"  已加载 {dispatcher.registry.count()} 个 Agent\n")
+app = Jig(skills_dir=str(SKILL_DIR))
+print(f"  已加载 {app.skill_count} 个 Agent\n")
 
 # ── 群聊循环 ──
 while True:
@@ -36,7 +36,7 @@ while True:
         if user_input.lower() in ("exit", "quit", "q"):
             print("Bye!")
             break
-        result = dispatcher.handle(user_input)
+        result = app.run(user_input)
         print(f"  {result}")
     except KeyboardInterrupt:
         print("\nBye!")
