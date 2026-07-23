@@ -2,7 +2,7 @@
 
 # ⚡ Jig
 
-**Agent orchestration, rethought. Hard-constraint Harness, DeepSeek-native.**
+**The first pre-execution Agent Firewall. Intercept before they act.**
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -14,7 +14,7 @@
 
 ---
 
-> ⚠️ **Alpha Status**: Jig is in active development (v0.5.0). Core framework is complete: Harness layer, 4-tier memory, multi-model support, graph orchestration. Production use is not yet recommended. Contributions welcome.
+> ⚠️ **Alpha Status**: Jig is in active development (v0.6.0). Core Agent Firewall + ToolGuard is complete. Production use is not yet recommended. Contributions welcome.
 
 ---
 
