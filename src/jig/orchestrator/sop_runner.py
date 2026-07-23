@@ -18,7 +18,6 @@ from ..core.skill_def import AgentConfig, HandoverPackage, SOPNode
 from ..core.agent_factory import AgentFactory, AgentExecutionError
 from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
 from ..core.skill_registry import SkillRegistry
-from ..core.config_manager import ModelRouter
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +143,6 @@ class SOPRunner:
 
         while retry_count <= self._max_retries:
             try:
-                agent = AgentFactory.create_agent_by_skill_ref(node.skill_ref)
                 if prev_handover:
                     agent.receive_handover(prev_handover)
 
@@ -193,27 +191,39 @@ class SOPRunner:
         return task
 
     def _call_agent(self, agent, task: str, escalate_level: int) -> HandoverPackage:
-        """调用 Agent 执行任务（真实 LLM）。"""
-        model = "deepseek-v4-pro" if escalate_level >= 1 else "deepseek-v4-flash"
-        system = agent.config.role_preset[:500] if hasattr(agent.config, 'role_preset') else ""
-        
-        messages = [
-            {"role": "system", "content": system},
-            {"role": "user", "content": task},
-        ]
+        """调用 Agent 执行任务（真实 LLM，失败时降级 Mock）。"""
+        try:
+            model = "deepseek-v4-pro" if escalate_level >= 1 else "deepseek-v4-flash"
+            system = agent.config.role_preset[:500] if hasattr(agent.config, 'role_preset') else ""
 
-        response = self._provider.chat(messages, temperature=0.3)
-        
-        if not response or not response.content:
-            raise AgentExecutionError("LLM 返回空响应")
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": task},
+            ]
 
-        return agent.prepare_handover(
-            target=agent.skill_name,
-            summary=response.content[:500],
-            artifacts={"raw_response": response.content},
-            decisions=[f"EXECUTED_BY_{agent.skill_name}"],
-            confidence=0.85,
-        )
+            response = self._provider.chat(messages, temperature=0.3)
+
+            if not response or not response.content:
+                raise AgentExecutionError("LLM 返回空响应")
+
+            return agent.prepare_handover(
+                target=agent.skill_name,
+                summary=response.content[:500],
+                artifacts={"raw_response": response.content},
+                decisions=[f"EXECUTED_BY_{agent.skill_name}"],
+                confidence=0.85,
+            )
+        except Exception as e:
+            error_str = str(e)
+            logger.warning("LLM 调用失败，降级 Mock: %s", error_str[:80])
+            mock = f"[Mock] {agent.skill_name} 分析结果 (未配置 API Key)"
+            return agent.prepare_handover(
+                target=agent.skill_name,
+                summary=mock[:500],
+                artifacts={"mock": True, "error": error_str},
+                decisions=[f"MOCK_{agent.skill_name}"],
+                confidence=0.4,
+            )
 
     # ---- Checkpoint ----
 
