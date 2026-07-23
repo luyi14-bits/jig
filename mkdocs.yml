@@ -28,6 +28,7 @@ nav:
   - Building Agents: build-agents.md
   - Architecture: architecture.md
   - Preset Agents: agents.md
+  - Contributing: guides/contributing.md
   - Comparison: comparison.md
   - Roadmap: roadmap.md
   - Contributing: contributing.md
