@@ -52,9 +52,16 @@ class Jig:
         else:
             logger.warning("skills 目录不存在: %s", skills_dir)
 
+        # 初始化 ModelRouter（用于 Dispatcher 的真实 LLM 调用）
+        self._router = ModelRouter()
+        if api_key:
+            self._router.register("deepseek", DeepSeekProvider(api_key=api_key), set_default=True)
+            logger.info("Jig 已配置 DeepSeek API Key")
+
         self._dispatcher = Dispatcher(
             registry=self._registry,
             agent_factory=AgentFactory,
+            model_router=self._router if self._router.available else None,
         )
 
     def list_agents(self) -> List[Dict[str, Any]]:

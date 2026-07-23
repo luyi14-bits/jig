@@ -72,7 +72,9 @@ class Dispatcher:
                     return self._mock_response(user_message)
                 provider = DeepSeekProvider(api_key=api_key)
 
-            system_prompt = f"""你是 {agent.skill_name}（{agent.role_description}）。
+            system_prompt = f"""你是 {agent.skill_name}。
+
+{agent.config.role_preset[:500]}
 
 你的职责：分析用户需求，产出需求分析报告。
 
