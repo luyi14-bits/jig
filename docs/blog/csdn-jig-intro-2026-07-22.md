@@ -3,7 +3,7 @@ copyright: true
 top: false
 author: luyi14-bits
 date: 2026-07-22
-updated: 2026-07-22
+updated: 2026-07-23
 ---
 
 # Jig — 唯一自带"事前拦截"安全门禁的多 Agent 编排框架
@@ -141,18 +141,18 @@ print(result)
 
 ## 六、与其他框架的对比
 
-| 维度 | LangGraph | CrewAI | PydanticAI | **Jig** |
-|------|:---------:|:------:|:----------:|:-------:|
-| 事前安全拦截 | ❌ | ❌ | ❌ | ✅ **ToolGuard** |
-| DeepSeek 缓存 | — | — | — | ✅ **SHA-256** |
-| 图编排 | ✅ 原生 | ❌ | ❌ | ✅ |
-| 流式 | ✅ | ✅ | ✅ | ✅ |
-| 记忆 | Checkpointer | 短期 | 上下文 | ✅ **4层** |
-| 成本治理 | — | — | — | ✅ **成本路由** |
-| 外部 Agent 管理 | ❌ | ❌ | ❌ | ✅ **Meta-Harness** |
-| 螺旋收敛 | ❌ | ❌ | ❌ | ✅ **LoopEngine** |
-| 多模型 | ✅ 20+ | ✅ 10+ | ✅ 20+ | ✅ DS+OpenAI |
-| 开源协议 | MIT | MIT | MIT | MIT |
+| 维度 | deepagents | OpenAI SDK | LangGraph | CrewAI | PydanticAI | **Jig** |
+|------|:----------:|:----------:|:---------:|:------:|:----------:|:-------:|
+| **事前安全拦截** | ❌ "trust LLM" | ❌ prompt-only | ❌ | ❌ | ❌ | ✅ **ToolGuard** |
+| **DeepSeek 缓存** | — | — | — | — | — | ✅ **SHA-256** |
+| **图编排** | ❌ | ✅ | ✅ 原生 | ❌ | ✅ | ✅ **GraphOrchestrator** |
+| **流式** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **记忆** | 短期 | — | Checkpointer | 短期 | 上下文 | ✅ **4层** |
+| **成本治理** | — | — | — | — | — | ✅ **成本路由** |
+| **外部 Agent 治理** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ **Meta-Harness** |
+| **螺旋收敛** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ **LoopEngine** |
+| **多模型** | ✅ 20+ | ❌ OpenAI only | ✅ 20+ | ✅ 10+ | ✅ 20+ | ✅ DS+OpenAI |
+| **开源协议** | MIT | MIT | MIT | MIT | MIT | MIT |
 
 ---
 
@@ -165,9 +165,9 @@ print(result)
 | 安全 | 断路器 + 漂移检测 + 风险模式 | ✅ vA.0.3 |
 | 多模型 | DeepSeek + OpenAI + 流式 | ✅ v0.5.0 |
 | 图编排 | GraphOrchestrator | ✅ v0.6.0 |
-| 文档 | MkDocs + 使用指南 | ✅ 当前 |
+| 文档 + Agent Firewall | MkDocs + 定位文章 + 对比博文 | ✅ 当前 |
+| Meta-Harness | 外部 Agent 治理层（Claude Code/Codex 适配） | 🚧 |
 | 包发布 | PyPI + CI | 🚧 |
-| 多语言 | TypeScript SDK + Rust Harness | 💡 规划中 |
 
 ---
 
