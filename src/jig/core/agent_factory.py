@@ -15,6 +15,13 @@ from .skill_def import AgentConfig, HandoverPackage, SessionConfig, SkillDef, SO
 logger = logging.getLogger(__name__)
 
 
+class AgentExecutionError(Exception):
+    """Agent 执行失败异常 — 包含失败信息供重试注入。"""
+    def __init__(self, message: str, raw_output: str = ""):
+        super().__init__(message)
+        self.raw_output = raw_output
+
+
 class Agent:
     """Agent 实例。
 
