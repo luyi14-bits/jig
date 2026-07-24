@@ -21,6 +21,7 @@ from ..core.skill_registry import SkillRegistry
 from .circuit_breaker import CircuitBreaker
 from .memory import MemoryRouter
 from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
+from ..adapters.mcp_client import MCPClient, ToolGuard
 from .loop_engine import LoopEngine, LoopConfig, ConvergenceDetector, QualityValidator
 
 logger = logging.getLogger(__name__)
@@ -64,6 +65,7 @@ class SOPRunner:
         self._convergence = ConvergenceDetector(threshold=0.9)
         self._quality_validator = QualityValidator()
         self._loop_engine = LoopEngine(config=LoopConfig(max_iterations=10))
+        self._mcp_client = MCPClient()
 
     def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
         """执行 SOP 管道。"""
@@ -239,6 +241,11 @@ class SOPRunner:
                 {"role": "system", "content": system},
                 {"role": "user", "content": task},
             ]
+
+            # ToolGuard 检查 — 识别并拦截危险工具调用
+            for tool_name in self._mcp_client.list_tools():
+                if not ToolGuard.check(agent.skill_name, tool_name):
+                    logger.warning("ToolGuard 拦截: %s 尝试调用 %s", agent.skill_name, tool_name)
 
             response = self._provider.chat(messages, temperature=0.3)
 

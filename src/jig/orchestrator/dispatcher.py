@@ -15,6 +15,7 @@ from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
 from ..core.skill_def import SOPNode
 from .intent_router import classify_query, hyde_rewrite
 from .graph_engine import GraphOrchestrator, GraphNode, GraphEdge
+from ..adapters.external_agent import MetaHarness
 from ..core.agent_factory import AgentFactory
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ class Dispatcher:
         self._agent_factory = agent_factory
         self._router = model_router
         self._provider = provider
+        self._meta_harness = MetaHarness()
 
     def handle(self, user_message: str) -> str:
         """处理用户输入：启动完整 SOP 管道，返回执行结果。"""
