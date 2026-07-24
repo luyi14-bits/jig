@@ -43,6 +43,16 @@
 - **补充**：Out of Scope 段已添加到 proposal.md
 - **下一阶段**：阶段 2 执行 — T2 全 SOP 管道自审
 
+## 2026-07-23
+
+### 调度：迭代 10 启动 — Spec 就位排期
+- **调度 Skill**：Luyi14-loop-sop
+- **触发者**：项目秘书
+- **门禁 G0→G1**：✅ PASS
+- **输入**：4 项 Spec 就位 (ds-ecosystem-pr / framework-core-apis / real-project-validation / examples-community)
+- **看板更新**：Loop 合并组重新排期，PR #310 已 OPEN，Loop #2 排队中
+- **执行状态**：PR #310 已提交上游仓库，等待 merge
+
 ---
 
 ### 完成：迭代 1 — 全五阶段交付 v0.1.0

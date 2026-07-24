@@ -425,28 +425,26 @@
 
 ### Loop 合并组
 
-| Loop | 合并 | 工时 | 包含 IDEA |
-|:----:|------|:---:|:---------:|
-| #1 | awesome PR | 1天 | 052 |
-| #2 | **多模型 + 流式** | 4天 | 058+059 |
-| #3 | **Durable + Graph** | 7天 | 060+061 |
-| #4 | 真实项目验证 | 3天 | 053 |
-| #5 | pip + 文档站点 | 2天 | 042 |
-| #6 | **OTel + Evals** | 4天 | 038+062 |
+| Loop | 合并 | 工时 | 包含 IDEA | Spec 状态 |
+|:----:|------|:---:|:---------:|:---------:|
+| #1 | awesome PR (ds-ecosystem-pr) | **1.5h** | 052+049 | ✅ **已就位** |
+| #2 | **框架核心 API 公开** | 4h | 036+044+049 | ✅ **已就位** |
+| #3 | 真实项目验证 | 10h+ | 053 | ✅ **已就位** |
+| #4 | 示例库 + 社区运营 | 17h | 055+056+057 | ✅ **已就位** |
+| #5 | ~~多模型 + 流式~~ | — | 058+059 | ❌ 待 Spec |
+| #6 | ~~Durable + Graph~~ | — | 060+061 | ❌ 待 Spec |
 
-> 已就位 Spec：IDEA-052 → `.trae/specs/ds-ecosystem-pr/`
-> IDEA-053 → `.trae/specs/real-project-validation/`
-> IDEA-055/056/057 → `.trae/specs/examples-community/`
+> ✅ PR #310 已 OPEN → 切换到 Loop #2
 
-> 优先级 P0 任务：058+059 多模型+流式 / 052 awesome PR / 053 真实项目 / 049 外部Agent / 044 MCP
+> 优先级 P0 任务：052 awesome PR / 036 SDK API / 053 真实项目 / 055-057 示例+运营
 
 ---
 
 ## 🔨 开发中
 
-> Loop #4 — IDEA-053 真实项目验证（狗食自审）
-
-> 执行：全 SOP 管道自审 AgentHarness 自身代码库
+> Loop #1 — ds-ecosystem-pr (IDEA-052+049)
+> 状态：PR #310 ✅ 已 OPEN → 等待 merge
+> 下一项：Loop #2 — 框架核心 API 公开
 
 ---
 
