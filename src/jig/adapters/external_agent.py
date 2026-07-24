@@ -61,10 +61,28 @@ class MetaHarness:
         self._adapters: Dict[str, ExternalAgentAdapter] = {}
 
     def register_adapter(self, name: str, adapter: ExternalAgentAdapter) -> None:
+        """注册外部 Agent 适配器。
+
+        Args:
+            name: 适配器名称（如 'claude-code', 'codex'）
+            adapter: ExternalAgentAdapter 实例
+        """
         self._adapters[name] = adapter
         adapter.start({})
 
     def route(self, source: str, prompt: str) -> str:
+        """路由请求到指定的外部 Agent 或默认 PM Agent。
+
+        优先走已注册的外部 Agent 适配器；
+        未注册则回退到 PM Agent。
+
+        Args:
+            source: 来源适配器名称
+            prompt: 用户输入
+
+        Returns:
+            外部 Agent 或 PM Agent 的响应字符串
+        """
         adapter = self._adapters.get(source)
         if adapter:
             return adapter.send(prompt)
