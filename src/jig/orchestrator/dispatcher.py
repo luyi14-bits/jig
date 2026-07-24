@@ -13,6 +13,7 @@ from typing import Optional
 
 from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
 from ..core.skill_def import SOPNode
+from .intent_router import classify_query, hyde_rewrite
 from ..core.agent_factory import AgentFactory
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,12 @@ class Dispatcher:
     def handle(self, user_message: str) -> str:
         """处理用户输入：启动完整 SOP 管道，返回执行结果。"""
         logger.info("Dispatcher 收到: %s", user_message[:80])
+
+        # 意图分类 — 短查询/长难句使用不同策略
+        query_type = classify_query(user_message)
+        if query_type in ("complex", "multi_turn"):
+            user_message = hyde_rewrite(user_message)
+            logger.info("HyDE 改写: %s", user_message[:60])
 
         provider = self._get_provider()
         runner = self._create_runner(provider)
