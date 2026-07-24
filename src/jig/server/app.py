@@ -1,6 +1,6 @@
-"""FastAPI 独立部署服务 — TASK-002 DEPLOY-001。
+"""FastAPI 独立部署服务。
 
-提供 REST API 执行 SOP 定义。
+提供 REST API + MCP 协议执行 SOP 管道。
 依赖（可选）：pip install fastapi uvicorn
 """
 
@@ -10,6 +10,7 @@ import json
 import logging
 import uuid
 from typing import Any, Dict, Optional
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,10 @@ try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
 
-    app = FastAPI(title="Tree-SOP Agent API", version="Alpha 0.2")
+    app = FastAPI(title="Jig Agent Firewall API", version="v0.6.0")
 
     class ExecuteRequest(BaseModel):
-        sop_definition: Dict[str, Any]
+        prompt: str = ""
         context: Dict[str, Any] = {}
 
     class StatusResponse(BaseModel):
@@ -34,18 +35,45 @@ try:
 
     @app.post("/execute")
     async def execute(request: ExecuteRequest) -> StatusResponse:
-        """接受 SOP 定义并异步执行。"""
+        """接受用户输入并执行 SOP 管道。"""
         session_id = f"sess_{uuid.uuid4().hex[:12]}"
-        _sessions[session_id] = {
-            "status": "queued",
-            "sop": request.sop_definition,
-            "context": request.context,
-        }
+        _sessions[session_id] = {"status": "running", "prompt": request.prompt, "context": request.context}
         logger.info("任务已入队: session=%s", session_id)
-        _sessions[session_id]["status"] = "running"
-        _sessions[session_id]["status"] = "completed"
-        _sessions[session_id]["result"] = {"summary": "执行完成", "session": session_id}
-        return StatusResponse(session_id=session_id, status="queued")
+        try:
+            from ..orchestrator.dispatcher import Dispatcher
+            from ..core.skill_registry import SkillRegistry
+            from ..core.agent_factory import AgentFactory
+            registry = SkillRegistry()
+            skills_dir = Path("skills")
+            if skills_dir.exists():
+                registry.register_skill_dir(str(skills_dir))
+                registry.load_all()
+            factory = AgentFactory(registry)
+            d = Dispatcher(registry, factory)
+            result = d.handle(request.prompt)
+            _sessions[session_id]["status"] = "completed"
+            _sessions[session_id]["result"] = {"summary": result, "session": session_id}
+        except Exception as e:
+            logger.error("执行失败: %s", e)
+            _sessions[session_id]["status"] = "failed"
+            _sessions[session_id]["result"] = {"error": str(e)}
+        return StatusResponse(session_id=session_id, status=_sessions[session_id]["status"], result=_sessions[session_id].get("result"))
+
+    @app.get("/mcp/tools")
+    async def list_mcp_tools():
+        """返回 MCP 协议格式的可用工具列表。"""
+        try:
+            from ..adapters.mcp_protocol import MCPServer
+            from ..core.skill_registry import SkillRegistry
+            registry = SkillRegistry()
+            skills_dir = Path("skills")
+            if skills_dir.exists():
+                registry.register_skill_dir(str(skills_dir))
+                registry.load_all()
+            server = MCPServer(registry)
+            return {"tools": server.list_tools()}
+        except Exception as e:
+            return {"tools": [], "error": str(e)}
 
     @app.get("/status/{session_id}")
     async def get_status(session_id: str) -> StatusResponse:

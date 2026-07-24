@@ -16,6 +16,7 @@ from ..core.skill_def import SOPNode
 from .intent_router import classify_query, hyde_rewrite
 from .graph_engine import GraphOrchestrator, GraphNode, GraphEdge
 from ..adapters.external_agent import MetaHarness
+from .orchestrator import create_dev_workflow
 from ..core.agent_factory import AgentFactory
 
 logger = logging.getLogger(__name__)

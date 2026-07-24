@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, Literal, Optional
+from typing import Dict, Literal, Optional, TYPE_CHECKING
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -51,6 +51,16 @@ class Settings(BaseSettings):
         default=0.3, ge=0.0, le=2.0,
         description="Flash 模型 temperature，略高以增加灵活性",
     )
+
+    # ── 用户配置管理 ──
+    _config_manager: Optional["ConfigManager"] = None
+
+    @property
+    def user_config(self) -> "ConfigManager":
+        if self._config_manager is None:
+            from .core.config_manager import ConfigManager
+            self._config_manager = ConfigManager()
+        return self._config_manager
 
     # ── 缓存配置 ──
     cache_prefix_order: str = Field(
