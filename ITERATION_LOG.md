@@ -120,6 +120,24 @@
 
 **迭代范围**：4 项 Spec 就位 — ds-ecosystem-pr / framework-core-apis / real-project-validation / examples-community
 
+## 迭代 11 — 假完成修复 + 归档 (2026-07-23)
+
+| 阶段 | 状态 | 执行者 | 产出 | 缺陷数 | 门禁 |
+|------|:----:|--------|------|:------:|:----:|
+| 0 审计 | ✅ | Secretary | 全量 IDEA 审计：23真/9假/19未 | — | PASS |
+| 1 修复 | ✅ | Coding | 6项假完成→真完成接入 | 0 | PASS |
+| 2 归档 | ✅ | Secretary | 看板+迭代日志更新 | — | PASS |
+
+**迭代范围**：9项假完成修复 — 6项完全接入 + 3项部分接入
+**接入清单**：
+- ✅ CircuitBreaker / CostAwareRouter / MemoryRouter → sop_runner
+- ✅ MCPClient+ToolGuard → sop_runner  
+- ✅ AgentRuntime → agent_factory
+- ✅ CacheDiagnostics → cli/main.py
+- ✅ ConfigManager → settings.py
+- 🟡 LoopEngine / GraphOrchestrator / MetaHarness → 部分接入
+
+
 ---
 
 ## 迭代 8 — Loop #4 收尾 (2026-07-22)
