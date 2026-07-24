@@ -14,6 +14,7 @@ from typing import Optional
 from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
 from ..core.skill_def import SOPNode
 from .intent_router import classify_query, hyde_rewrite
+from .graph_engine import GraphOrchestrator, GraphNode, GraphEdge
 from ..core.agent_factory import AgentFactory
 
 logger = logging.getLogger(__name__)
@@ -75,8 +76,23 @@ class Dispatcher:
         return summary
 
     def handle_stream(self, user_message: str):
-        """流式处理 — 逐步产出结果（预留接口）。"""
-        raise NotImplementedError("流式模式待实现")
+        """流式处理 — 逐步产出结果。"""
+        provider = self._get_provider()
+        runner = self._create_runner(provider)
+        query_type = classify_query(user_message)
+        if query_type in ("complex", "multi_turn"):
+            user_message = hyde_rewrite(user_message)
+        sop = SOPNode(
+            name="minimal-closed-loop", description="最小闭环",
+            mode="sequential", sub_steps=[
+                SOPNode(name="pm-analysis", description="需求分析", skill_ref="Luyi14-pm-mentor"),
+            ],
+        )
+        context = {"user_request": user_message, "skills_dir": str(Path("skills").resolve())}
+        yield {"event": "start", "data": "管道启动"}
+        result = runner.run(sop, context)
+        yield {"event": "node_complete", "data": result.summary[:200]}
+        yield {"event": "done", "data": result.summary}
 
     def _get_provider(self) -> BaseModelProvider:
         """获取 LLM Provider。无 Key 时返回 mock provider。"""
