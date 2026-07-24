@@ -442,9 +442,12 @@
 
 ## 🔨 开发中
 
-> Loop #1 — ds-ecosystem-pr (IDEA-052+049)
-> 状态：PR #310 ✅ 已 OPEN → 等待 merge
-> 下一项：Loop #2 — 框架核心 API 公开
+| Loop | 内容 | 工时 | IDEA | 进度 |
+|:----:|------|:---:|------|:----:|
+| #1 | ds-ecosystem-pr | 1天 | 052+049 | Task 1-3 DONE → PR #310 ✅ OPEN |
+| #2 | **framework-core-apis** | 2天 | 036+044+049 | ▶️ **当前** |
+
+> PR #310 等待上游 merge，不阻塞 Loop #2
 
 ---
 
