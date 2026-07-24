@@ -38,6 +38,10 @@ dist/
 .uploads/
 .pytest_cache/
 
+# Runtime databases
+*.db
+.jig_memory.db
+
 # Desktop build
 desktop/src-tauri/target/
 desktop/dist/
