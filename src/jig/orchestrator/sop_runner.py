@@ -18,6 +18,9 @@ from ..core.skill_def import AgentConfig, HandoverPackage, SOPNode
 from ..core.agent_factory import AgentFactory, AgentExecutionError
 from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
 from ..core.skill_registry import SkillRegistry
+from .circuit_breaker import CircuitBreaker
+from .memory import MemoryRouter
+from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +54,12 @@ class SOPRunner:
         self._checkpoint_dir = Path(checkpoint_dir or ".sop_checkpoints")
         self._checkpoint_dir.mkdir(parents=True, exist_ok=True)
         self._checkpoints: Dict[str, SOPCheckpoint] = {}
+        self._breaker = CircuitBreaker(failure_threshold=10, recovery_timeout=5)
+        from .memory import LocalStore
+        self._memory = MemoryRouter(store=LocalStore(db_path=".jig_memory.db"))
+        self._cost_router = CostAwareRouter(
+            budget=TokenBudget(session_budget=100_000, monthly_budget=10_000_000),
+        )
 
     def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
         """执行 SOP 管道。"""
@@ -101,6 +110,15 @@ class SOPRunner:
                 context=dict(context),
                 timestamp=time.time(),
             ))
+
+            # 保存执行记忆
+            try:
+                self._memory._store.save_session(session_id, {
+                    "agent": node.name, "content": node_result.summary[:500],
+                    "type": "execution_log", "timestamp": time.time(),
+                })
+            except Exception:
+                pass  # 记忆存储失败不阻塞管道
 
         # 清理 checkpoint
         self._cleanup_checkpoint(session_id)
@@ -192,8 +210,10 @@ class SOPRunner:
 
     def _call_agent(self, agent, task: str, escalate_level: int) -> HandoverPackage:
         """调用 Agent 执行任务（真实 LLM，失败时降级 Mock）。"""
+        if not self._breaker.can_call():
+            raise AgentExecutionError("熔断器 OPEN，拒绝调用")
         try:
-            model = "deepseek-v4-pro" if escalate_level >= 1 else "deepseek-v4-flash"
+            model = self._cost_router.route(task, forced_model="pro" if escalate_level >= 1 else "")
             system = agent.config.role_preset[:500] if hasattr(agent.config, 'role_preset') else ""
 
             messages = [
@@ -206,6 +226,7 @@ class SOPRunner:
             if not response or not response.content:
                 raise AgentExecutionError("LLM 返回空响应")
 
+            self._breaker.record_success()
             return agent.prepare_handover(
                 target=agent.skill_name,
                 summary=response.content[:500],
@@ -214,6 +235,7 @@ class SOPRunner:
                 confidence=0.85,
             )
         except Exception as e:
+            self._breaker.record_failure()
             error_str = str(e)
             logger.warning("LLM 调用失败，降级 Mock: %s", error_str[:80])
             mock = f"[Mock] {agent.skill_name} 分析结果 (未配置 API Key)"
