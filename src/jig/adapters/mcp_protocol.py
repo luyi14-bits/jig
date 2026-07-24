@@ -16,6 +16,11 @@ class MCPServer:
     """MCP Server — 让 Jig 的 Agent 作为工具被外部调用。"""
 
     def __init__(self, registry) -> None:
+        """初始化 MCP Server。
+
+        Args:
+            registry: SkillRegistry 实例，用于查询可用 Agent
+        """
         self._registry = registry
         self._tools: Dict[str, Any] = {}
 

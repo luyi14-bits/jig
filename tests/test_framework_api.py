@@ -42,25 +42,23 @@ def test_jig_run_with_empty_input():
 
 def test_mcp_server_list_tools():
     """MCPServer.list_tools() 应返回工具列表。"""
-    from jig.server.app import app as fastapi_app
+    from jig.adapters.mcp_protocol import MCPServer
     from jig.core.skill_registry import SkillRegistry
     registry = SkillRegistry()
     registry.register_skill_dir("./skills")
     registry.load_all()
-    from jig.adapters.mcp_protocol import MCPProtocol
-    mcp = MCPProtocol(registry)
+    mcp = MCPServer(registry)
     tools = mcp.list_tools()
     assert isinstance(tools, list)
-    # 至少返回一些工具（PM Agent 的 web_search / fetch_page 等）
     assert len(tools) >= 1
 
 
 def test_mcp_protocol_docstrings():
     """MCPServer 公开方法应有 docstring。"""
-    from jig.adapters.mcp_protocol import MCPProtocol
-    assert MCPProtocol.__init__.__doc__ is not None
-    assert MCPProtocol.list_tools.__doc__ is not None
-    assert MCPProtocol.call_tool.__doc__ is not None
+    from jig.adapters.mcp_protocol import MCPServer
+    assert MCPServer.__init__.__doc__ is not None
+    assert MCPServer.list_tools.__doc__ is not None
+    assert MCPServer.call_tool.__doc__ is not None
 
 
 def test_external_agent_adapter_docstrings():
