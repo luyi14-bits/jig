@@ -21,6 +21,7 @@ from ..core.skill_registry import SkillRegistry
 from .circuit_breaker import CircuitBreaker
 from .memory import MemoryRouter
 from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
+from .loop_engine import ConvergenceDetector, QualityValidator
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,8 @@ class SOPRunner:
         self._cost_router = CostAwareRouter(
             budget=TokenBudget(session_budget=100_000, monthly_budget=10_000_000),
         )
+        self._convergence = ConvergenceDetector(threshold=0.9)
+        self._quality_validator = QualityValidator()
 
     def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
         """执行 SOP 管道。"""
@@ -101,6 +104,19 @@ class SOPRunner:
 
             prev_handover = node_result
             completed.append(node.name)
+
+            # 收敛检测 — 连续相似输出时提前终止
+            self._convergence.add_score(0.9)  # placeholder score
+            if self._convergence.is_converged():
+                logger.warning("收敛检测触发: 节点 %s 连续高相似度", node.name)
+                break
+
+            # 质量验证
+            passed, score, msg = self._quality_validator.validate(
+                prev_handover.summary, {"node": node.name, "session": session_id}
+            )
+            if not passed:
+                logger.warning("质量验证不通过: 节点 %s score=%.2f %s", node.name, score, msg)
 
             # 保存 checkpoint
             self._save_checkpoint(SOPCheckpoint(
