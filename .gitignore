@@ -26,6 +26,22 @@ env/
 # Trae / Cursor
 .trae/
 
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Tool caches
+.reasonix/
+.local/
+.sop_checkpoints/
+.uploads/
+.pytest_cache/
+
+# Desktop build
+desktop/src-tauri/target/
+desktop/dist/
+
 # 不上传
 .env
 .env.local
