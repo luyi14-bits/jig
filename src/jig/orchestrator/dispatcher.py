@@ -97,23 +97,17 @@ class Dispatcher:
         return summary
 
     def handle_stream(self, user_message: str):
-        """流式处理 — 逐步产出结果。"""
+        """流式处理 — 逐步产出 SSE 事件。"""
         provider = self._get_provider()
         runner = self._create_runner(provider)
-        query_type = classify_query(user_message)
-        if query_type in ("complex", "multi_turn"):
-            user_message = hyde_rewrite(user_message)
-        sop = SOPNode(
-            name="minimal-closed-loop", description="最小闭环",
-            mode="sequential", sub_steps=[
-                SOPNode(name="pm-analysis", description="需求分析", skill_ref="Luyi14-pm-mentor"),
-            ],
-        )
-        context = {"user_request": user_message, "skills_dir": str(Path("skills").resolve())}
-        yield {"event": "start", "data": "管道启动"}
-        result = runner.run(sop, context)
-        yield {"event": "node_complete", "data": result.summary[:200]}
-        yield {"event": "done", "data": result.summary}
+        sop = SOPNode(name="stream", mode="sequential", sub_steps=[
+            SOPNode(name="pm", skill_ref="Luyi14-pm-mentor"),
+            SOPNode(name="spec", skill_ref="Luyi14-spec-pipeline"),
+            SOPNode(name="coding", skill_ref="Luyi14-coding-ethics"),
+            SOPNode(name="accept", skill_ref="Luyi14-acceptance-testing"),
+        ])
+        ctx = {"user_request": user_message, "skills_dir": str(Path("skills").resolve())}
+        yield from runner.run_stream(sop, ctx)
 
     def _get_provider(self) -> BaseModelProvider:
         """获取 LLM Provider。无 Key 时返回 mock provider。"""

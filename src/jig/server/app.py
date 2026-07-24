@@ -75,6 +75,27 @@ try:
         except Exception as e:
             return {"tools": [], "error": str(e)}
 
+    class MCPCallRequest(BaseModel):
+        name: str
+        arguments: Dict[str, Any] = {}
+
+    @app.post("/mcp/call")
+    async def mcp_call_tool(req: MCPCallRequest):
+        """调用指定 Agent 工具。"""
+        try:
+            from ..adapters.mcp_protocol import MCPServer
+            from ..core.skill_registry import SkillRegistry
+            registry = SkillRegistry()
+            skills_dir = Path("skills")
+            if skills_dir.exists():
+                registry.register_skill_dir(str(skills_dir))
+                registry.load_all()
+            server = MCPServer(registry)
+            result = server.call_tool(req.name, req.arguments)
+            return {"result": result}
+        except Exception as e:
+            return {"error": str(e)}
+
     @app.get("/status/{session_id}")
     async def get_status(session_id: str) -> StatusResponse:
         """查询执行状态。"""

@@ -12,7 +12,8 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional
+from ..adapters.streaming import StreamEvent
 
 from ..core.skill_def import AgentConfig, HandoverPackage, SOPNode
 from ..core.agent_factory import AgentFactory, AgentExecutionError
@@ -22,6 +23,7 @@ from .circuit_breaker import CircuitBreaker
 from .memory import MemoryRouter
 from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
 from ..adapters.mcp_client import MCPClient, ToolGuard
+from ..adapters.streaming import StreamManager
 from .loop_engine import LoopEngine, LoopConfig, ConvergenceDetector, QualityValidator
 
 logger = logging.getLogger(__name__)
@@ -319,3 +321,17 @@ class SOPRunner:
             return None
         context.update(cp.context)
         return self.run(sop, context)
+
+    def run_stream(self, sop: SOPNode, ctx: Dict) -> Generator:
+        """流式执行 SOP 管道，每节点完成 yield SSE 事件。"""
+        sid = uuid.uuid4().hex[:12]
+        ctx["_session_id"] = sid
+        for i, n in enumerate(sop.sub_steps):
+            r = self._execute_with_retry(n, ctx, None, sid, i)
+            if r:
+                event = StreamEvent("node_done", {
+                    "node": n.name, "idx": i,
+                    "total": len(sop.sub_steps),
+                    "summary": r.summary[:200],
+                })
+                yield str(event)
