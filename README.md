@@ -208,15 +208,26 @@ Full guide: [Building Agents with Jig](docs/guides/building-agents.md)
 
 ```
 jig/
-├── src/jig/           # Framework core
-├── tests/             # 117 pytest tests
-├── skills/            # Agent SKILL.md definitions
-├── docs/              # Whitepapers · Guides · PRDs · Comparison
-├── versions/          # Version snapshots (v0.1.0–v0.5.0)
-├── .trae/specs/       # Spec documents
-├── mkdocs.yml         # Documentation config
-├── pyproject.toml     # Build config
-└── CHANGELOG.md       # Release history
+├── src/jig/              # Framework core (adapters/core/orchestrator/cli/server)
+├── tests/                # 127 pytest tests
+├── skills/               # Agent SKILL.md definitions (12 skills)
+├── scripts/              # Utility scripts (auto_test, PyInstaller spec)
+├── docs/
+│   ├── guides/           # User guides (installation, building agents, contributing)
+│   ├── reports/          # Reports (comparison, gap analysis, security audit, proposals)
+│   ├── whitepapers/      # Technical whitepapers v1–v4
+│   ├── blog/             # CSDN blog posts
+│   ├── awesome-deepseek/ # DeepSeek ecosystem guides
+│   └── prd/              # Product requirement docs
+├── .github/              # Issue templates, PR template, workflows
+├── versions/             # Version snapshots (v0.1.0–v0.6.0)
+├── mkdocs.yml            # Documentation config
+├── pyproject.toml        # Build config
+├── .editorconfig         # Editor settings
+├── CHANGELOG.md          # Release history
+├── CONTRIBUTING.md       # Contribution guide
+├── SECURITY.md           # Security policy
+└── CODE_OF_CONDUCT.md    # Code of conduct
 ```
 
 ---
