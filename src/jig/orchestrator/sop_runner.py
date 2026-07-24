@@ -21,7 +21,7 @@ from ..core.skill_registry import SkillRegistry
 from .circuit_breaker import CircuitBreaker
 from .memory import MemoryRouter
 from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
-from .loop_engine import ConvergenceDetector, QualityValidator
+from .loop_engine import LoopEngine, LoopConfig, ConvergenceDetector, QualityValidator
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +63,7 @@ class SOPRunner:
         )
         self._convergence = ConvergenceDetector(threshold=0.9)
         self._quality_validator = QualityValidator()
+        self._loop_engine = LoopEngine(config=LoopConfig(max_iterations=10))
 
     def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
         """执行 SOP 管道。"""
@@ -81,6 +82,8 @@ class SOPRunner:
 
         prev_handover: Optional[HandoverPackage] = None
         completed = checkpoint.completed_nodes if checkpoint else []
+
+        self._loop_engine._log_event("pipeline_start", "sop", {"session": session_id, "steps": len(sop.sub_steps)})
 
         for idx in range(start_idx, len(sop.sub_steps)):
             node = sop.sub_steps[idx]

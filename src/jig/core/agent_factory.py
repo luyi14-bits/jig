@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 from ..settings import settings
 from .global_constraints import GLOBAL_CONSTRAINTS
 from .skill_def import AgentConfig, HandoverPackage, SessionConfig, SkillDef, SOPNode, ToolDecl
+from .agent_runtime import AgentRuntime, AgentState
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +172,10 @@ class AgentFactory:
             tags=set(skill_def.tags),
         )
 
-        return Agent(config=agent_config)
+        agent = Agent(config=agent_config)
+        agent._runtime = AgentRuntime(name=skill_def.name)
+        agent._runtime._transition_to(AgentState.IDLE)
+        return agent
 
     @classmethod
     def _resolve_model_grade(cls, skill_def: SkillDef) -> str:
