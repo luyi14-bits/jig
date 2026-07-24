@@ -88,6 +88,10 @@ class SOPRunner:
         self._loop_engine._log_event("pipeline_start", "sop", {"session": session_id, "steps": len(sop.sub_steps)})
 
         for idx in range(start_idx, len(sop.sub_steps)):
+            # LoopEngine 迭代上限检查
+            if self._loop_engine.iteration >= self._loop_engine.config.max_iterations:
+                logger.warning("LoopEngine 达到最大迭代次数: %d", self._loop_engine.config.max_iterations)
+                break
             node = sop.sub_steps[idx]
             logger.info("执行节点 %d/%d: %s", idx + 1, len(sop.sub_steps), node.name)
 

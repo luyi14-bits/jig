@@ -46,6 +46,24 @@ class Dispatcher:
             user_message = hyde_rewrite(user_message)
             logger.info("HyDE 改写: %s", user_message[:60])
 
+        # MetaHarness — 外部 Agent 请求路由
+        if query_type == "external":
+            return self._meta_harness.route("claude", user_message)
+
+        # GraphOrchestrator — 复杂查询使用图模式
+        graph_mode = query_type == "complex"
+        if graph_mode:
+            g = GraphOrchestrator()
+            for nick, agent in [("pm","Luyi14-pm-mentor"),("spec","Luyi14-spec-pipeline"),
+                                 ("coding","Luyi14-coding-ethics"),("accept","Luyi14-acceptance-testing")]:
+                g.add_node(GraphNode(name=nick, agent=agent))
+            for a, b in [("pm","spec"),("spec","coding"),("coding","accept")]:
+                g.add_edge(GraphEdge(a, b))
+            provider = self._get_provider()
+            ctx = {"user_request": user_message, "skills_dir": str(Path("skills").resolve())}
+            result = g.run("pm", ctx)
+            return f"✅ Graph管道完成: {result.get('accept','')[:200] if isinstance(result, dict) else str(result)[:200]}"
+
         provider = self._get_provider()
         runner = self._create_runner(provider)
 
