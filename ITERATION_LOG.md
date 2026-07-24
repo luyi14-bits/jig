@@ -90,7 +90,7 @@
 | 阶段 | 状态 | 执行者 | 产出 | 缺陷数 | 门禁 |
 |------|:----:|--------|------|:------:|:----:|
 | 0 对齐 | ✅ | PM | docs/real-project-proposal.md + Out of Scope | — | 条件 PASS |
-| 1 规划 | 🔄 | Spec-Pipeline | spec.md + tasks.md 待增强 | — | 条件 PASS |
+| 1 规划 | ✅ | Spec-Pipeline | spec.md + tasks.md 已增强 | — | PASS |
 | 2 执行 | ⏳ | — | — | — | — |
 | 3 验证 | ⏳ | — | — | — | — |
 | 4 收敛 | ⏳ | — | — | — | — |

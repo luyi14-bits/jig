@@ -6,9 +6,9 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-112%2F117-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-127%2F127-brightgreen)](tests/)
 [![Multi-Model](https://img.shields.io/badge/Models-DeepSeek+OpenAI-4B32C3)](https://platform.deepseek.com)
-[![Status](https://img.shields.io/badge/Status-Alpha_v0.5.0-orange)](CHANGELOG.md)
+[![Status](https://img.shields.io/badge/Status-Alpha_v0.6.0-orange)](CHANGELOG.md)
 
 </div>
 
