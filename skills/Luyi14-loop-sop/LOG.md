@@ -63,6 +63,17 @@
 - **当前状态**：Now批次(LoopEngine/GraphOrch/MetaHarness/StreamManager/MCPServer)已完成
 - **看板统计**：💡 8项 | 📝 8项 | 🔨 0项 | ✅ 0项 | 🚀 33项 | ❌ 3项
 
+## 2026-07-24
+
+### Loop #2 framework-core-apis — 全部完成
+- **调度 Skill**：Luyi14-loop-sop
+- **T1-T3**：✅ DONE (code exists + docstrings)
+- **T4**：✅ DONE (tests/test_framework_api.py — 7 tests)
+- **T5**：✅ DONE (README SDK API section)
+- **验证**：135/135 pytest 全绿
+- **看板更新**：📝 8→6 🚀 33→34
+- **下一项**：Loop #3 real-project-validation
+
 ---
 
 ### 完成：迭代 1 — 全五阶段交付 v0.1.0
