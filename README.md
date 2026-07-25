@@ -81,6 +81,39 @@ ToolGuard.check("coding", "Write", "src/app.py")  # → True (白名单)
 
 > **deepagents says "trust the LLM". Jig says "verify before execute."**
 
+## SDK API
+
+```python
+from jig import Jig
+
+# Create an app with custom skills
+app = Jig(skills_dir="./skills")
+
+# List loaded agents
+agents = app.list_agents()
+for a in agents:
+    print(a["name"], a["description"][:60])
+
+# Run a pipeline
+result = app.run("Review src/ for security issues")
+print(result)
+```
+
+For MCP protocol access:
+
+```python
+from jig.adapters.mcp_protocol import MCPServer
+from jig.core.skill_registry import SkillRegistry
+
+registry = SkillRegistry()
+registry.register_skill_dir("./skills")
+registry.load_all()
+
+server = MCPServer(registry)
+tools = server.list_tools()        # List available agents
+result = server.call_tool("pm", {"prompt": "Analyze this"})  # Call an agent
+```
+
 ---
 
 ## Comparison
