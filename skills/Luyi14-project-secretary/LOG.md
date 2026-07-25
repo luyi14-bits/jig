@@ -160,3 +160,11 @@
 - **变更类型**：审计 + 归档
 - **变更摘要**：52 IDEA 逐项审计 — 23真完成/9假完成/19未开始/3废弃。6项假完成已接入为真。看板+迭代日志已同步。看板统计：12项想法池/4项规划中/33项已发布/3项废弃。
 - **验证**：所有接入模块 import 可用，无循环依赖
+
+## 2026-07-24
+
+### 归档：Loop #2 framework-core-apis 交付 + NEXT 批次推进
+- **触发者**：项目秘书
+- **Loop #2**：framework-core-apis (IDEA-036/044/049) — T1-T5 全部 DONE
+- **看板更新**：📝 8→6 🚀 33→34
+- **NEXT 批次**：Loop #3 real-project-validation + Loop #4 examples-community 推进中
