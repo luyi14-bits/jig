@@ -50,37 +50,3 @@ def hyde_rewrite(query: str) -> str:
     return expanded
 
 
-def decomp_intent(query: str, context: List[str]) -> List[Dict[str, str]]:
-    """Decomp 意图分解 — 将多轮复杂需求拆为子意图。
-
-    Args:
-        query: 当前用户输入
-        context: 历史对话（最近几轮）
-
-    Returns:
-        子意图列表：[{"agent": "pm", "task": "..."}, ...]
-    """
-    sub_intents = []
-
-    # 关键词匹配拆解
-    if "登录" in query or "注册" in query:
-        sub_intents.append({"agent": "pm", "task": f"需求分析: {query}"})
-        sub_intents.append({"agent": "spec", "task": f"任务拆分: 登录/注册模块"})
-        sub_intents.append({"agent": "security", "task": "安全审计: 身份验证流程"})
-
-    if "管理" in query or "后台" in query:
-        sub_intents.append({"agent": "pm", "task": f"管理后台需求: {query}"})
-        sub_intents.append({"agent": "coding", "task": "实现管理后台功能"})
-
-    if "数据库" in query or "存储" in query:
-        sub_intents.append({"agent": "spec", "task": "数据库设计"})
-        sub_intents.append({"agent": "coding", "task": "实现数据持久化"})
-
-    if "部署" in query or "发布" in query:
-        sub_intents.append({"agent": "devops", "task": "构建部署流程"})
-        sub_intents.append({"agent": "security", "task": "部署安全审查"})
-
-    if not sub_intents:
-        sub_intents.append({"agent": "pm", "task": f"需求分析: {query}"})
-
-    return sub_intents
