@@ -31,6 +31,11 @@ nav:
   - Contributing: guides/contributing.md
   - Comparison: comparison.md
   - Roadmap: roadmap.md
+  - Agent Firewall: agent-firewall.md
+  - Examples:
+    - Web Tool: examples/web-tool/README.md
+    - Data Processing: examples/data-processing/README.md
+    - Code Review: examples/code-review/README.md
   - Contributing: contributing.md
 
 markdown_extensions:
