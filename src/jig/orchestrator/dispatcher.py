@@ -40,6 +40,12 @@ class Dispatcher:
         """处理用户输入：启动完整 SOP 管道，返回执行结果。"""
         logger.info("Dispatcher 收到: %s", user_message[:80])
 
+        # 输入校验
+        if not user_message:
+            return "错误: 输入为空"
+        if len(user_message) > 102400:
+            return "错误: 输入超过最大长度(100KB)"
+
         # 意图分类 — 短查询/长难句使用不同策略
         query_type = classify_query(user_message)
         if query_type in ("complex", "multi_turn"):
