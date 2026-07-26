@@ -68,6 +68,9 @@ class SOPRunner:
         self._quality_validator = QualityValidator()
         self._loop_engine = LoopEngine(config=LoopConfig(max_iterations=10))
         self._mcp_client = MCPClient()
+        from ..settings import settings as _jig_settings
+        self._settings = _jig_settings
+        self._skill_registry: Optional[SkillRegistry] = None
 
     def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
         """执行 SOP 管道。"""
@@ -168,7 +171,7 @@ class SOPRunner:
 
         # 创建 Agent
         reg = SkillRegistry()
-        skill_dir = Path("skills")
+        skill_dir = Path(self._settings.skills_dir) if hasattr(self, '_settings') and self._settings else Path("skills")
         if skill_dir.exists():
             reg.register_skill_dir(str(skill_dir))
             reg.load_all()
