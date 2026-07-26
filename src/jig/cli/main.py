@@ -9,7 +9,7 @@ from pathlib import Path
 
 from ..core.skill_registry import SkillRegistry
 from ..core.agent_factory import AgentFactory
-from ..adapters.model_router import ModelRouter
+from ..adapters.model_provider import ModelRouter, DeepSeekProvider
 from ..adapters.cache_engine import CacheEngine
 from ..adapters.cache_diagnostics import CacheDiagnosticResult
 from ..adapters.context import ContextPartitioner

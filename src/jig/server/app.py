@@ -96,6 +96,41 @@ try:
         except Exception as e:
             return {"error": str(e)}
 
+    from fastapi.responses import StreamingResponse
+
+    @app.post("/stream")
+    async def stream_endpoint(prompt: str = ""):
+        """SSE 流式端点 — 逐节点返回执行事件。"""
+        from ..orchestrator.dispatcher import Dispatcher
+        from ..core.skill_registry import SkillRegistry
+        from ..core.agent_factory import AgentFactory
+        from ..adapters.streaming import StreamManager, StreamEvent
+        registry = SkillRegistry()
+        sd = Path("skills")
+        if sd.exists():
+            registry.register_skill_dir(str(sd))
+            registry.load_all()
+        factory = AgentFactory(registry)
+        d = Dispatcher(registry, factory)
+        stream = StreamManager()
+        queue = []
+
+        async def event_generator():
+            def subscribe():
+                q: list = []
+                stream._subscribers.append(q)
+                return q
+            q = subscribe()
+            import asyncio
+            for event in d.handle_stream(prompt):
+                stream.publish(event.get("event", "node"), event)
+                while q:
+                    yield str(q.pop(0))
+                await asyncio.sleep(0.01)
+            yield "event: done\ndata: {}\n\n"
+
+        return StreamingResponse(event_generator(), media_type="text/event-stream")
+
     @app.get("/status/{session_id}")
     async def get_status(session_id: str) -> StatusResponse:
         """查询执行状态。"""
