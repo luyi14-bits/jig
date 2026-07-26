@@ -1,5 +1,5 @@
 """Adapters — DeepSeek API 适配层 + 上下文压缩体系。"""
-from .model_router import ModelRouter, ModelRoute
+from .model_provider import ModelRouter, DeepSeekProvider, ModelResponse, StreamChunk
 from .deepseek_adapter import DeepSeekAdapter
 from .cache_engine import CacheEngine, CacheDiagnostic, CacheStats, PrefixSnapshot
 from .context import ContextPartitioner, PartitionedContext
@@ -15,7 +15,6 @@ from .a2a_protocol import A2AMessage, A2ARouter
 
 __all__ = [
     "ModelRouter",
-    "ModelRoute",
     "DeepSeekAdapter",
     "CacheEngine",
     "CacheDiagnostic",

@@ -206,11 +206,14 @@ class OpenAIProvider(BaseModelProvider):
 
 
 class ModelRouter:
-    """模型路由器 — 管理多个 Provider，按需路由。"""
+    """模型路由器 — 管理 Provider 注册 + Pro/Flash session 路由。"""
 
     def __init__(self):
         self._providers: Dict[str, BaseModelProvider] = {}
         self._default_provider: str = ""
+        # Pro/Flash session 管理（从 model_router 合并）
+        self._sessions: Dict[str, str] = {}
+        self._prefix_snapshots: Dict[str, str] = {}
 
     def register(self, name: str, provider: BaseModelProvider, set_default: bool = False) -> None:
         self._providers[name] = provider
@@ -232,6 +235,27 @@ class ModelRouter:
     async def chat_stream(self, messages: List[Dict], provider: str = "", **kwargs) -> AsyncIterator[StreamChunk]:
         async for chunk in self.get(provider).chat_stream(messages, **kwargs):
             yield chunk
+
+    def route(self, model_grade: str) -> Dict[str, Any]:
+        """路由到指定模型等级的 session（Pro/Flash 兼容）。"""
+        is_pro = model_grade == "pro"
+        from ..settings import settings
+        model_name = settings.pro_model if is_pro else settings.flash_model
+        temperature = settings.pro_temperature if is_pro else settings.flash_temperature
+        if model_grade not in self._sessions:
+            import uuid
+            session_id = f"session_{model_grade}_{uuid.uuid4().hex[:8]}"
+            self._sessions[model_grade] = session_id
+        return {"model_name": model_name, "model_grade": model_grade, "temperature": temperature,
+                "session_id": self._sessions[model_grade]}
+
+    def reset_session(self, model_grade: str) -> None:
+        old_id = self._sessions.pop(model_grade, None)
+        if old_id:
+            logger.info("session 已重置: %s (model=%s)", old_id, model_grade)
+
+    def get_session_id(self, model_grade: str) -> Optional[str]:
+        return self._sessions.get(model_grade)
 
     @property
     def available(self) -> List[str]:
