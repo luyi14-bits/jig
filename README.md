@@ -133,7 +133,7 @@ Tool Plane:             MCP · ModelRouter · CacheEngine · CostAwareRouter · 
 | 3–4 | Orchestrator + Checkpoint + Context | ✅ v0.2.0 |
 | 5 | Full SOP pipeline + self-test | ✅ v0.4.0 |
 | 6–8 | Memory + Config + HyDE + CircuitBreaker | ✅ vA.0.2–3 |
-| 9 | Multi-model + Streaming | ✅ v0.5.0 |
+| 9 | Multi-model + Streaming | ✅ v0.5.0 (integrated: ModelRouter unified, /stream SSE, 7 tests) |
 | 10 | Graph Engine + Durable | ✅ v0.6.0 |
 | 11 | Docs + Building Agents guide | ✅ Current |
 | 12 | Meta-Harness (external governance) | 🚧 |
