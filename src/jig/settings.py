@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     # ── 用户配置管理 ──
     _config_manager: Optional["ConfigManager"] = None
 
+    # ── 路径配置 ──
+    skills_dir: str = Field(
+        default="skills",
+        description="SKILL.md 所在目录路径",
+    )
+
     @property
     def user_config(self) -> "ConfigManager":
         if self._config_manager is None:
