@@ -11,6 +11,7 @@ from ..core.skill_registry import SkillRegistry
 from ..core.agent_factory import AgentFactory
 from ..adapters.model_router import ModelRouter
 from ..adapters.cache_engine import CacheEngine
+from ..adapters.cache_diagnostics import CacheDiagnosticResult
 from ..adapters.context import ContextPartitioner
 from ..adapters.deepseek_adapter import DeepSeekAdapter
 
@@ -21,8 +22,8 @@ def main() -> None:
     """CLI 主入口。"""
     # 缓存诊断摘要
     try:
-        engine = CacheEngine()
-        print(f"  [cache] cache engine ready (prefix order: {engine.PREFIX_ORDER})")
+        diag = CacheDiagnostic()
+        print(diag.summary())
     except Exception:
         pass
 
