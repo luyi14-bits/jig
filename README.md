@@ -7,7 +7,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-135%2F135-brightgreen)](tests/)
-[![PyPI](https://img.shields.io/badge/PyPI-jig--toolguard-blue)](https://pypi.org/project/jig-toolguard/)
+[![PyPI](https://img.shields.io/badge/PyPI-jig-blue)](https://github.com/luyi14-bits/jig)
 [![Status](https://img.shields.io/badge/Status-Alpha_v0.6.0-orange)](CHANGELOG.md)
 
 </div>
@@ -33,7 +33,7 @@
 ### 1. Install
 
 ```bash
-pip install jig-toolguard
+pip install jig
 ```
 
 Or from source:
