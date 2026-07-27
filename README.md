@@ -6,17 +6,41 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-135%2F135-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-124%2F124-brightgreen)](tests/)
 [![PyPI](https://img.shields.io/badge/PyPI-jig--toolguard-blue)](https://pypi.org/project/jig-toolguard/)
 [![Status](https://img.shields.io/badge/Status-Alpha_v0.6.0-orange)](CHANGELOG.md)
 
-</div>
+---
+
+**Jig-ToolGuard** is a Python multi-agent orchestration framework with a unique differentiator: **pre-execution safety gates**. While other frameworks rely on prompt-level guardrails that agents can bypass, Jig intercepts tool calls at the code level before execution.
+
+Key capabilities:
+
+- **ToolGuard** — Code-level whitelist/denylist for every tool call. No other framework does this.
+- **11 preset agents** — PM, Spec, Coding, Code-Review, TDD, Acceptance, Security, DevOps, Secretary, Trinity, LOOP SOP
+- **DeepSeek-native** — SHA-256 prefix caching, Flash-first cost routing, automatic FC repair
+- **Multi-model** — DeepSeek + OpenAI extensible
+- **SSE Streaming** — Real-time event stream via POST /stream
+- **Graph Orchestration** — DAG-based pipeline with conditional routing
+- **Memory** — 4-layer: Cache → Partition → Embedding → SQLite
+- **CircuitBreaker** — 3-state (CLOSED/OPEN/HALF_OPEN) fault isolation
+- **Convergence detection** — Automatic loop termination via LoopEngine
+- **124 test suite** — Fully covered
+
+```bash
+pip install jig-toolguard
+```
+
+```python
+from jig import Jig
+app = Jig(skills_dir="./skills")
+result = app.run("Review this code for security issues")
+print(result)
+```
 
 ---
 
-> ⚠️ **Alpha Status**: Jig-ToolGuard is in active development (v0.6.0). Core Agent Firewall + ToolGuard is complete. Production use is not yet recommended. Contributions welcome.
-
----
+> ⚠️ **Alpha Status**: v0.6.0. Core Agent Firewall is complete. Production use not yet recommended.
 
 ## Why Jig-ToolGuard?
 
