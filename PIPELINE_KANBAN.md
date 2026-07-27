@@ -1,6 +1,6 @@
 # 管线看板
 
-> 最后更新：2026-07-20（最终轮：自查修正 + 全量交付） | 维护人：项目秘书
+> 最后更新：2026-07-26（最终轮：自查修正 + 全量交付） | 维护人：项目秘书
 > 数据来源：需求对话 + 调研报告 + Reasonix 源码分析 + DeepSeek API 文档 + 2026 框架技术路线调研
 
 ---
@@ -9,7 +9,7 @@
 
 | 💡 想法池 | 📝 规划中 | 🔨 开发中 | ✅ 验收中 | 🚀 已发布 | ❌ 废弃 |
 |-----------|-----------|-----------|-----------|-----------|---------|
-| 8 项 | 3 项 | 0 项 | 0 项 | 37 项 | 3 项 |
+| 6 项 | 3 项 | 0 项 | 0 项 | 39 项 | 3 项 |
 
 ---
 
@@ -183,17 +183,7 @@
 > 调研报告：`docs/framework-tech-routes-2026.html`
 > 核心壁垒：Harness 硬约束 + 四层记忆 + DeepSeek 缓存优化 + Skill→Agent 映射
 
-### IDEA-036：公开 SDK API 设计
-- **来源**：2026 框架技术路线调研 — 对标 PydanticAI
-- **描述**：设计面向外部开发者的公开 API（Agent / Tool / Harness / Memory 四层接口），让其他开发者能基于 Tree-SOP 构建自己的 Agent
-- **对标**：PydanticAI 的 `Agent / Tool / Dependencies` 三层抽象
-- **核心技术点**：
-  - Agent 定义接口：role + goal + tools + model + harness_config
-  - Tool 注册接口：类型安全的函数注册 + 白名单/黑名单
-  - Harness 配置接口：ToolGuard 级别 + LOOP SOP 门禁级别
-  - Memory 配置接口：四层记忆可独立开关 + 后端选择
-- **优先级**：P0（框架化基石）
-- **状态**：✅ 已有代码（`api.py` + `.trae/specs/framework-core-apis/`）
+### - **状态**：✅ **已交付**（`api.py` + 7 test_framework_api tests，Loop #2 已完成）
 
 ### IDEA-037：DeepSeek 深度优化包
 - **来源**：awesome-deepseek-agent 对标 — 目标进入官方推荐列表
@@ -425,14 +415,11 @@
 
 ### Loop 合并组
 
-| Loop | 合并 | 工时 | 包含 IDEA | Spec 状态 |
-|:----:|------|:---:|:---------:|:---------:|
-| #1 | awesome PR (ds-ecosystem-pr) | **1.5h** | 052+049 | ✅ **已就位** |
-| #2 | **框架核心 API 公开** | 4h | 036+044+049 | ✅ **已就位** |
-| #3 | 真实项目验证 | 10h+ | 053 | ✅ **已就位** |
-| #4 | 示例库 + 社区运营 | 17h | 055+056+057 | ✅ **已就位** |
-| #5 | ~~多模型 + 流式~~ | — | 058+059 | ❌ 待 Spec |
-| #6 | ~~Durable + Graph~~ | — | 060+061 | ❌ 待 Spec |
+| Loop | 合并 | 包含 IDEA | 状态 |
+|:----:|------|:---------:|:----:|
+| #1 | awesome PR (ds-ecosystem-pr) | 052 | ✅ T1-T4 DONE, T5-T6 WAITING |
+| #4 | 示例库 + 社区运营 | 055+056+057 | ✅ T1-T3 DONE, T4 PENDING (GitHub UI) |
+| Next | Durable + Graph | 060+061 | 📝 等待 Spec |
 
 > ✅ PR #310 已 OPEN → 切换到 Loop #2
 
@@ -442,12 +429,9 @@
 
 ## 🔨 开发中
 
-| Loop | 内容 | 工时 | IDEA | 进度 |
-|:----:|------|:---:|------|:----:|
-| #1 | ds-ecosystem-pr | 1天 | 052+049 | Task 1-3 DONE → PR #310 ✅ OPEN |
-| #2 | **framework-core-apis** | 2天 | 036+044+049 | ▶️ **当前** |
-
-> PR #310 等待上游 merge，不阻塞 Loop #2
+> 当前无活跃开发任务。全部 37 项已交付。
+> PR #310 等待上游 merge。
+> 下一项：P0 多模型+流式 端到端集成验证
 
 ---
 
@@ -498,6 +482,26 @@
 |------|------|------|
 | Alpha 0.2 | 2026-07-15 | IDEA-028~030 版本对齐 + Skills 补齐(5→12) + E2E 集成测试 |
 | vA.0.3 | 2026-07-15 | IDEA-025~027 配置+权限+风险模式 + IDEA-020 HyDE + IDEA-021 熔断，**想法池归零** |
+| **v0.5.0** | 2026-07-23 | **Loop #2**: 框架核心 API 公开 — `api.py` + MCPServer + MetaHarness + 7 集成测试 |
+| **v0.6.0** | 2026-07-24 | **多模型 + 流式**: ModelRouter 合并 + OpenAIProvider + POST /stream SSE 端点 + 7 集成测试 |
+| **v0.6.0** | 2026-07-24 | **Graph 工作流**: GraphOrchestrator + `dispatcher` 图模式分支 + 条件路由 |
+| **v0.6.0** | 2026-07-24 | **Agent Runtime**: `agent_runtime.py` 状态机 + `create_agent()` 集成 |
+| **v0.6.0** | 2026-07-24 | **Loop #3**: 真实项目验证 — 12 痛点 + 5 修复 + `case-study-self-review.md` |
+| **v0.5.0** | 2026-07-23 | **外部 Agent 层**: MetaHarness + ClaudeCodeAdapter + dispatcher 集成 |
+| **vA.0.2** | 2026-07-15 | **MCP 协议**: `mcp_protocol.py` + `mcp_client.py` + ToolGuard |
+| **vA.0.2** | 2026-07-15 | **A2A 协议**: `a2a_protocol.py` — Agent-to-Agent 通信框架 |
+
+> ⚠️ 上述版本号基于 CHANGELOG.md 记录。部分功能在 v0.6.0 开发周期内增补。
+| **v0.5.0** | 2026-07-23 | **Loop #2**: 框架核心 API 公开 — `api.py` + MCPServer + MetaHarness + 7 集成测试 |
+| **v0.6.0** | 2026-07-24 | **多模型 + 流式**: ModelRouter 合并 + OpenAIProvider + POST /stream SSE 端点 + 7 集成测试 |
+| **v0.6.0** | 2026-07-24 | **Graph 工作流**: GraphOrchestrator + `dispatcher` 图模式分支 + 条件路由 |
+| **v0.6.0** | 2026-07-24 | **Agent Runtime**: `agent_runtime.py` 状态机 + `create_agent()` 集成 |
+| **v0.6.0** | 2026-07-24 | **Loop #3**: 真实项目验证 — 12 痛点 + 5 修复 + `case-study-self-review.md` |
+| **v0.5.0** | 2026-07-23 | **外部 Agent 层**: MetaHarness + ClaudeCodeAdapter + dispatcher 集成 |
+| **vA.0.2** | 2026-07-15 | **MCP 协议**: `mcp_protocol.py` + `mcp_client.py` + ToolGuard |
+| **vA.0.2** | 2026-07-15 | **A2A 协议**: `a2a_protocol.py` — Agent-to-Agent 通信框架 |
+
+> ⚠️ 上述版本号基于 CHANGELOG.md 记录。部分功能在 v0.6.0 开发周期内增补。
 | vA.0.2 | 2026-07-15 | IDEA-022 Memory 体系重构（SQLite + MemoryRouter + Consolidator） |
 | vA.0.1 | 2026-07-15 | IDEA-018 真·Tauri 原生桌面（Rust 8.4MB exe + React invoke IPC） |
 | Alpha 0.1 | 2026-07-14 | 首个公开发布 — Tauri桌面壳 + 11 Agent + 完整SOP管道 |
