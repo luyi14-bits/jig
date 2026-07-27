@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jig-toolguard"
-version = "0.6.1"
+version = "0.6.3"
 description = "Agent framework with pre-execution safety gates — ToolGuard. DeepSeek-optimized, multi-model, graph orchestration."
 readme = "README.md"
 authors = [{ name = "Jig Contributors" }]
