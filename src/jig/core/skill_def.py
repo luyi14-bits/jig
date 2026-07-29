@@ -43,6 +43,7 @@ class SOPNode(BaseModel):
     sub_steps: List[SOPNode] = Field(default_factory=list, description="子 SOP 节点列表（树形结构）")
     max_retries: int = Field(default=3, description="子节点执行失败时的最大重试次数")
     timeout_seconds: Optional[int] = Field(default=None, description="节点执行超时秒数")
+    requires_approval: bool = Field(default=False, description="设为 True 时执行前暂停，等待 approve/reject")
 
 
 class SkillDef(BaseModel):
