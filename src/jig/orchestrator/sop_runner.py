@@ -70,6 +70,7 @@ class SOPRunner:
         self._quality_validator = QualityValidator()
         self._loop_engine = LoopEngine(config=LoopConfig(max_iterations=10))
         self._mcp_client = MCPClient()
+        self._hitl_pending: Dict[str, str] = {}  # session_id → node_name
         from ..settings import settings as _jig_settings
         self._settings = _jig_settings
         self._skill_registry: Optional[SkillRegistry] = None
@@ -106,6 +107,20 @@ class SOPRunner:
             if node.name in completed:
                 logger.info("跳过已完成节点: %s", node.name)
                 continue
+
+            # HITL — 需人工审批的节点暂停
+            if node.requires_approval:
+                self._hitl_pending[session_id] = node.name
+                self._save_checkpoint(cp)
+                logger.warning("HITL 暂停: session=%s node=%s, 等待 approve/reject", session_id, node.name)
+                return HandoverPackage(
+                    source_agent="SOPRunner",
+                    target_agent="",
+                    summary=f"HITL 暂停: {node.name}",
+                    artifacts={"session_id": session_id, "pending_node": node.name, "hitl": True},
+                    decisions=["HITL_PENDING"],
+                    confidence=1.0,
+                )
 
             node_result = self._execute_with_retry(node, context, prev_handover, session_id, idx)
             if node_result is None:
@@ -388,6 +403,26 @@ class SOPRunner:
             return None
         context.update(cp.context)
         return self.run(sop, context)
+
+    # ---- HITL ----
+
+    def approve(self, session_id: str) -> Optional[str]:
+        """批准 HITL 暂停的节点继续执行。返回节点名称。"""
+        node_name = self._hitl_pending.pop(session_id, None)
+        if node_name:
+            logger.info("HITL 批准: session=%s node=%s", session_id, node_name)
+        return node_name
+
+    def reject(self, session_id: str) -> Optional[str]:
+        """拒绝 HITL 暂停的节点，跳过执行。返回节点名称。"""
+        node_name = self._hitl_pending.pop(session_id, None)
+        if node_name:
+            logger.warning("HITL 拒绝: session=%s node=%s", session_id, node_name)
+        return node_name
+
+    def hitl_status(self) -> Dict[str, str]:
+        """查看所有待审批的 HITL 暂停。"""
+        return dict(self._hitl_pending)
 
     def run_stream(self, sop: SOPNode, ctx: Dict) -> Generator:
         """流式执行 SOP 管道，每节点完成 yield SSE 事件。"""
