@@ -181,14 +181,14 @@ class SOPRunner:
             logger.info("恢复 checkpoint: session=%s idx=%d", session_id, start_idx)
         else:
             start_idx = 0
-            completed = set()
+            done = set()
 
         prev_handover = None
         for idx in range(start_idx, len(sop.sub_steps)):
             node = sop.sub_steps[idx]
             logger.info("执行节点 %d/%d: %s", idx + 1, len(sop.sub_steps), node.name)
 
-            if node.name in completed:
+            if node.name in done:
                 continue
 
             import asyncio
@@ -206,12 +206,12 @@ class SOPRunner:
                 )
 
             prev_handover = node_result
-            completed.add(node.name)
+            done.add(node.name)
 
             # 保存 checkpoint
             self._db_store.save(session_id, {
                 "current_node_idx": idx + 1,
-                "completed_nodes": list(completed),
+                "completed_nodes": list(done),
                 "context": {k: v for k, v in context.items() if not k.startswith("_")},
                 "retry_count": 0,
                 "escalate_level": 0,
