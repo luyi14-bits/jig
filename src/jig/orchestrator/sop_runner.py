@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, Generator, List, Optional
 from ..adapters.streaming import StreamEvent
 
+from .checkpoint_store import SQLiteCheckpointStore
 from ..core.skill_def import AgentConfig, HandoverPackage, SOPNode
 from ..core.agent_factory import AgentFactory, AgentExecutionError
 from ..adapters.model_provider import BaseModelProvider, DeepSeekProvider
@@ -58,6 +59,7 @@ class SOPRunner:
         self._checkpoint_dir = Path(checkpoint_dir or ".sop_checkpoints")
         self._checkpoint_dir.mkdir(parents=True, exist_ok=True)
         self._checkpoints: Dict[str, SOPCheckpoint] = {}
+        self._db_store = SQLiteCheckpointStore(".sop_checkpoints.db")
         self._breaker = CircuitBreaker(failure_threshold=10, recovery_timeout=5)
         from .memory import LocalStore
         self._memory = MemoryRouter(store=LocalStore(db_path=".jig_memory.db"))
@@ -158,6 +160,68 @@ class SOPRunner:
             target_agent="",
             summary=f"SOP 管道完成: {len(completed)}/{len(sop.sub_steps)} 个节点",
             artifacts={"session_id": session_id, "completed_steps": completed, "context": context},
+            decisions=["PIPELINE_COMPLETED"],
+            confidence=0.9,
+        )
+
+    async def arun(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
+        """异步执行 SOP 管道 — Durable Execution 入口。
+
+        与 run() 行为一致，但使用 SQLite checkpoint store 替代文件。
+        """
+        session_id = uuid.uuid4().hex[:12]
+        logger.info("SOPRunner.arun: session=%s, steps=%d", session_id, len(sop.sub_steps))
+
+        # 从 checkpoint 恢复
+        stored = self._db_store.load(session_id)
+        if stored:
+            start_idx = stored["current_node_idx"]
+            completed = set(stored["completed_nodes"])
+            context.update(stored["context"])
+            logger.info("恢复 checkpoint: session=%s idx=%d", session_id, start_idx)
+        else:
+            start_idx = 0
+            completed = set()
+
+        prev_handover = None
+        for idx in range(start_idx, len(sop.sub_steps)):
+            node = sop.sub_steps[idx]
+            logger.info("执行节点 %d/%d: %s", idx + 1, len(sop.sub_steps), node.name)
+
+            if node.name in completed:
+                continue
+
+            import asyncio
+            node_result = await asyncio.to_thread(
+                self._execute_with_retry, node, context, prev_handover, session_id, idx
+            )
+            if node_result is None:
+                return HandoverPackage(
+                    source_agent="SOPRunner",
+                    target_agent="",
+                    summary=f"管道在节点 {node.name} 失败",
+                    artifacts={"session_id": session_id, "failed_at": node.name},
+                    decisions=["ESCLATED"],
+                    confidence=0.0,
+                )
+
+            prev_handover = node_result
+            completed.add(node.name)
+
+            # 保存 checkpoint
+            self._db_store.save(session_id, {
+                "current_node_idx": idx + 1,
+                "completed_nodes": list(completed),
+                "context": {k: v for k, v in context.items() if not k.startswith("_")},
+                "retry_count": 0,
+                "escalate_level": 0,
+            })
+
+        return HandoverPackage(
+            source_agent="SOPRunner",
+            target_agent="",
+            summary=f"SOP 管道完成: {len(completed)}/{len(sop.sub_steps)} 个节点",
+            artifacts={"session_id": session_id, "completed_steps": list(completed)},
             decisions=["PIPELINE_COMPLETED"],
             confidence=0.9,
         )
