@@ -143,6 +143,44 @@ try:
             result=session.get("result"),
         )
 
+    # ---- FastAPI 增强端点 (IDEA-035) ----
+
+    @app.get("/health")
+    async def health():
+        """健康检查 + 版本信息。"""
+        return {
+            "status": "ok",
+            "version": "v0.6.3",
+            "sessions_active": len(_sessions),
+        }
+
+    @app.post("/approve")
+    async def approve(session_id: str):
+        """HITL 批准节点继续执行。"""
+        from ..orchestrator.sop_runner import SOPRunner
+        runner = SOPRunner()
+        node = runner.approve(session_id)
+        if node:
+            return {"status": "approved", "node": node}
+        raise HTTPException(status_code=404, detail="No pending HITL session")
+
+    @app.post("/reject")
+    async def reject(session_id: str):
+        """HITL 拒绝节点，跳过执行。"""
+        from ..orchestrator.sop_runner import SOPRunner
+        runner = SOPRunner()
+        node = runner.reject(session_id)
+        if node:
+            return {"status": "rejected", "node": node}
+        raise HTTPException(status_code=404, detail="No pending HITL session")
+
+    @app.get("/sessions")
+    async def list_sessions():
+        """查看所有活跃 session。"""
+        return {"sessions": [{"id": k, "status": v.get("status")} for k, v in _sessions.items()]}
+
+    # ---- End FastAPI 增强 ----
+
     def run_server(host: str = "0.0.0.0", port: int = 8000) -> None:
         """启动 FastAPI 服务。"""
         import uvicorn
