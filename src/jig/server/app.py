@@ -61,7 +61,7 @@ try:
 
     @app.get("/mcp/tools")
     async def list_mcp_tools():
-        """返回 MCP 协议格式的可用工具列表。"""
+        """返回 MCP 协议格式的可用工具列表（含视觉/图像工具）。"""
         try:
             from ..adapters.mcp_protocol import MCPServer
             from ..core.skill_registry import SkillRegistry
@@ -71,7 +71,13 @@ try:
                 registry.register_skill_dir(str(skills_dir))
                 registry.load_all()
             server = MCPServer(registry)
-            return {"tools": server.list_tools()}
+            tools = server.list_tools()
+            # 附加内置工具（接线 VisionTool / ImageReader）
+            tools.extend([
+                {"name": "vision.describe_image", "description": "描述图片内容（本地视觉引擎）"},
+                {"name": "image.read", "description": "读取图片并返回描述（OpenAI视觉）"},
+            ])
+            return {"tools": tools}
         except Exception as e:
             return {"tools": [], "error": str(e)}
 
@@ -92,6 +98,15 @@ try:
                 registry.load_all()
             server = MCPServer(registry)
             result = server.call_tool(req.name, req.arguments)
+            # 内置视觉/图像工具（接线 VisionTool + ImageReader）
+            if req.name == "vision.describe_image":
+                from ..contrib.vision_tool import VisionTool
+                vt = VisionTool()
+                result = vt.run(req.arguments.get("path", ""))
+            elif req.name == "image.read":
+                from ..contrib.image_reader import ImageReader
+                ir = ImageReader()
+                result = ir.read(req.arguments.get("path", ""), req.arguments.get("prompt", "请详细描述这张图片的内容"))
             return {"result": result}
         except Exception as e:
             return {"error": str(e)}

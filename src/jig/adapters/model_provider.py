@@ -20,6 +20,7 @@ class ModelResponse:
     model: str
     usage: Dict[str, int]  # prompt_tokens, completion_tokens
     finish_reason: str = "stop"
+    cache_hit: bool = False
 
 
 @dataclass
@@ -214,6 +215,9 @@ class ModelRouter:
         # Pro/Flash session 管理（从 model_router 合并）
         self._sessions: Dict[str, str] = {}
         self._prefix_snapshots: Dict[str, str] = {}
+        # 响应缓存（接线 ResponseCache）
+        from .response_cache import ResponseCache
+        self._cache = ResponseCache(ttl_seconds=300)
 
     def register(self, name: str, provider: BaseModelProvider, set_default: bool = False) -> None:
         self._providers[name] = provider
@@ -230,6 +234,21 @@ class ModelRouter:
         return provider
 
     def chat(self, messages: List[Dict], provider: str = "", **kwargs) -> ModelResponse:
+        # 缓存命中（仅对非流式、无 tools 的请求）
+        if not kwargs.get("tools"):
+            prompt_key = str(messages)[-200:]
+            cached = self._cache.get(prompt_key)
+            if cached:
+                return ModelResponse(
+                    content=cached,
+                    model=self.get(provider).model_name,
+                    usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                    cache_hit=True,
+                )
+            response = self.get(provider).chat(messages, **kwargs)
+            if response.content:
+                self._cache.set(prompt_key, response.content)
+            return response
         return self.get(provider).chat(messages, **kwargs)
 
     async def chat_stream(self, messages: List[Dict], provider: str = "", **kwargs) -> AsyncIterator[StreamChunk]:

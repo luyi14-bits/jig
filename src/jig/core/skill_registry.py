@@ -114,6 +114,30 @@ class SkillRegistry:
         """
         return [s for s in self._skills.values() if s.model == model]
 
+    def install_market_package(self, package_name: str) -> str:
+        """从 Skill 插件市场安装 skill 包（接线 PluginMarket）。
+
+        Args:
+            package_name: pip 包名
+
+        Returns:
+            安装日志输出。
+        """
+        from ..contrib.plugin_market import PluginMarket
+        market = PluginMarket(install_dir=str(self._skill_dirs[0]) if self._skill_dirs else "./skills")
+        output = market.install_package(package_name)
+        # 安装后刷新
+        if self._skill_dirs:
+            self._skills.clear()
+            self.load_all()
+        return output
+
+    def list_market_installed(self) -> List[str]:
+        """列出已通过市场安装的 skill 包。"""
+        from ..contrib.plugin_market import PluginMarket
+        market = PluginMarket()
+        return market.list_installed()
+
     def list_by_tag(self, tag: str) -> List[SkillDef]:
         """按标签过滤。"""
         return [s for s in self._skills.values() if tag in s.tags]
