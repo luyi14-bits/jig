@@ -1,8 +1,8 @@
 # 集成 Jig
 
-[English](./awesome-deepseek-agent-guide.md) | [简体中文](./awesome-deepseek-agent-guide.zh-CN.md) · [← Back](../README.md)
+[English](./agent-guide.md) | [简体中文](./agent-guide.zh-CN.md) · [← Back](../README.md)
 
-Jig 是一个 Python 多 Agent 编排框架，内置 12 个预设角色、4 层记忆架构和硬约束 Harness 层。针对 DeepSeek V4 API 做了缓存优先前缀哈希、Flash 优先成本路由和自动 Tool-Call Repair 优化。
+Jig 是一个 Python 多 Agent 编排框架，内置 11 个预设角色、4 层记忆架构和硬约束 Harness 层。针对 DeepSeek V4 API 做了缓存优先前缀哈希、Flash 优先成本路由和自动 Tool-Call Repair 优化。
 
 #### 1. 前置条件
 
@@ -12,9 +12,12 @@ Jig 是一个 Python 多 Agent 编排框架，内置 12 个预设角色、4 层�
 #### 2. 安装
 
 ```bash
-# 克隆仓库
-git clone https://github.com/luyi14-bits/agent-harness.git
-cd agent-harness
+# 从 PyPI 安装
+pip install jig-toolguard
+
+# 或克隆仓库
+git clone https://github.com/luyi14-bits/jig.git
+cd jig
 
 # 安装依赖
 pip install pydantic>=2.0 pydantic-settings>=2.0 pyyaml>=6.0

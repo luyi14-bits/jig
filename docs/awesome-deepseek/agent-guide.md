@@ -1,8 +1,8 @@
 # Integrate with Jig
 
-[English](./awesome-deepseek-agent-guide.md) | [简体中文](./awesome-deepseek-agent-guide.zh-CN.md) · [← Back](../README.md)
+[English](./agent-guide.md) | [简体中文](./agent-guide.zh-CN.md) · [← Back](../README.md)
 
-Jig is a Python multi-agent orchestration framework with 12 preset roles, 4-layer memory architecture, and a hard-constraint Harness layer. It's optimized for DeepSeek V4's API — cache-first prefix hashing, flash-first cost routing, and automatic tool-call repair.
+Jig is a Python multi-agent orchestration framework with 11 preset roles, 4-layer memory architecture, and a hard-constraint Harness layer. It's optimized for DeepSeek V4's API — cache-first prefix hashing, flash-first cost routing, and automatic tool-call repair.
 
 #### 1. Prerequisites
 
@@ -12,9 +12,12 @@ Jig is a Python multi-agent orchestration framework with 12 preset roles, 4-laye
 #### 2. Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/luyi14-bits/agent-harness.git
-cd agent-harness
+# Install from PyPI
+pip install jig-toolguard
+
+# Or clone the repository
+git clone https://github.com/luyi14-bits/jig.git
+cd jig
 
 # Install dependencies
 pip install pydantic>=2.0 pydantic-settings>=2.0 pyyaml>=6.0
