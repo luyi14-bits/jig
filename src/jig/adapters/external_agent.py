@@ -59,6 +59,9 @@ class MetaHarness:
         self._registry.load_all()
         self._mcp = MCPServer(self._registry)
         self._adapters: Dict[str, ExternalAgentAdapter] = {}
+        # 接线 A2A 跨框架路由
+        from .a2a_protocol import A2ARouter
+        self._a2a = A2ARouter()
 
     def register_adapter(self, name: str, adapter: ExternalAgentAdapter) -> None:
         """注册外部 Agent 适配器。

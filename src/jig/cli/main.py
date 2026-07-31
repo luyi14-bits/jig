@@ -71,6 +71,16 @@ def main() -> None:
         action="store_true",
         help="群聊模式（Dispatcher 入口）",
     )
+    parser.add_argument(
+        "--server",
+        action="store_true",
+        help="启动 FastAPI 服务（同步模式）",
+    )
+    parser.add_argument(
+        "--server-async",
+        action="store_true",
+        help="启动 FastAPI 服务（异步+队列模式）",
+    )
 
     args = parser.parse_args()
 
@@ -157,6 +167,21 @@ def main() -> None:
             except KeyboardInterrupt:
                 print("\nBye!")
                 break
+        return
+
+    # --server: 启动 FastAPI 服务
+    if args.server:
+        from ..server.app import app, run_server
+        print("启动 FastAPI 服务（同步模式）: http://localhost:8000")
+        run_server(host="0.0.0.0", port=8000)
+        return
+
+    # --server-async: 启动异步 FastAPI 服务
+    if args.server_async:
+        import uvicorn
+        from ..server.async_app import app as async_app
+        print("启动 FastAPI 服务（异步+队列模式）: http://localhost:8001")
+        uvicorn.run(async_app, host="0.0.0.0", port=8001)
         return
 
     # 默认模式：输出系统概览

@@ -29,12 +29,34 @@ class Dispatcher:
     使用 SOPRunner 确保 Checkpoint 保存、失败恢复、重试和 escalate。
     """
 
-    def __init__(self, registry, agent_factory, model_router=None, provider=None):
+    def __init__(self, registry=None, agent_factory=None, model_router=None, provider=None, skill_dir: str = ""):
+        """群聊入口 Dispatcher。
+
+        支持两种构造方式：
+        1. 显式传入 registry + agent_factory（框架内使用）
+        2. 仅传 skill_dir（CLI 便捷模式，自动构建）
+        """
+        if registry is None or agent_factory is None:
+            from ..core.skill_registry import SkillRegistry
+            registry = SkillRegistry()
+            if skill_dir:
+                registry.register_skill_dir(skill_dir)
+                registry.load_all()
+            agent_factory = None  # AgentFactory 为纯 classmethod 工厂
         self._registry = registry
         self._agent_factory = agent_factory
         self._router = model_router
         self._provider = provider
         self._meta_harness = MetaHarness()
+        # 接线 ConversationCompressor — 长上下文压缩
+        from ..adapters.conversation_compressor import ConversationCompressor
+        self._compressor = ConversationCompressor(mode="hybrid", max_history_tokens=8000)
+        # 接线 EmbeddingIndex — 意图语义检索
+        from ..adapters.embedding_index import EmbeddingIndex
+        self._embedding = EmbeddingIndex()
+        # 接线 RepoMapBuilder — 代码库上下文增强
+        from ..adapters.repo_map import RepoMapBuilder
+        self._repo_map = RepoMapBuilder()
 
     def handle(self, user_message: str) -> str:
         """处理用户输入：启动完整 SOP 管道，返回执行结果。"""
@@ -45,6 +67,17 @@ class Dispatcher:
             return "错误: 输入为空"
         if len(user_message) > 102400:
             return "错误: 输入超过最大长度(100KB)"
+
+        # 长上下文压缩 — 超过阈值时压缩输入
+        if len(user_message) > 4000:
+            compressed = self._compressor.compress(
+                [{"role": "user", "content": user_message}]
+            )
+            if compressed:
+                new_len = len(compressed[0].get("content", ""))
+                if new_len < len(user_message):
+                    logger.info("输入压缩: %d → %d 字符", len(user_message), new_len)
+                    user_message = compressed[0]["content"]
 
         # 意图分类 — 短查询/长难句使用不同策略
         query_type = classify_query(user_message)
@@ -90,6 +123,14 @@ class Dispatcher:
             "user_request": user_message,
             "skills_dir": str(Path("skills").resolve()),
         }
+
+        # 代码相关查询 — 附加 Repo Map 上下文
+        code_keywords = ("代码", "实现", "重构", "函数", "bug", "修复", "优化", "refactor", "implement")
+        if any(k in user_message.lower() for k in code_keywords):
+            repo_map = self._repo_map.build(Path.cwd(), token_budget=1024)
+            if repo_map and not repo_map.startswith("[Repo Map] 目录不存在"):
+                context["repo_map"] = repo_map[:1500]
+                logger.info("已附加 Repo Map 上下文 (%d 字符)", len(repo_map[:1500]))
 
         result = runner.run(sop, context)
 
