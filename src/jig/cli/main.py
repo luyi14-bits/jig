@@ -81,6 +81,37 @@ def main() -> None:
         action="store_true",
         help="启动 FastAPI 服务（异步+队列模式）",
     )
+    parser.add_argument(
+        "--eval",
+        type=str,
+        default=None,
+        metavar="DATASET.json",
+        help="运行评测集并生成报告",
+    )
+    parser.add_argument(
+        "--report",
+        type=str,
+        default=None,
+        metavar="REPORT.md",
+        help="评测报告输出路径（配合 --eval）",
+    )
+    parser.add_argument(
+        "--market-install",
+        type=str,
+        default=None,
+        metavar="PACKAGE",
+        help="从插件市场安装 skill 包",
+    )
+    parser.add_argument(
+        "--market-list",
+        action="store_true",
+        help="列出已安装的市场 skill 包",
+    )
+    parser.add_argument(
+        "--hitl-status",
+        action="store_true",
+        help="查看待审批的 HITL 暂停",
+    )
 
     args = parser.parse_args()
 
@@ -182,6 +213,54 @@ def main() -> None:
         from ..server.async_app import app as async_app
         print("启动 FastAPI 服务（异步+队列模式）: http://localhost:8001")
         uvicorn.run(async_app, host="0.0.0.0", port=8001)
+        return
+
+    # --eval: 运行评测集
+    if args.eval:
+        from ..core.eval_runner import EvalRunner
+        import json
+        dataset_path = args.eval
+        report_path = args.report or dataset_path.replace(".json", "-report.md")
+        examples = EvalRunner.load_dataset(dataset_path)
+        print(f"评测集: {len(examples)} 条")
+        runner = EvalRunner()
+        # 简单 echo judge（无 LLM key 时可用）
+        report = runner.run(dataset_path, examples, lambda x: x)
+        EvalRunner.save_report(report, report_path)
+        print(report.summary_text)
+        print(f"报告已保存: {report_path}")
+        return
+
+    # --market-install: 从插件市场安装 skill 包
+    if args.market_install:
+        from ..contrib.plugin_market import PluginMarket
+        market = PluginMarket(install_dir=str(skill_dir))
+        output = market.install_package(args.market_install)
+        print(output)
+        # 刷新注册表
+        registry.register_skill_dir(str(skill_dir))
+        registry.load_all()
+        print(f"已刷新，当前 {registry.count()} 个 skill")
+        return
+
+    # --market-list: 列出已安装的市场包
+    if args.market_list:
+        from ..contrib.plugin_market import PluginMarket
+        market = PluginMarket()
+        for pkg in market.list_installed():
+            print(f"  📦 {pkg}")
+        return
+
+    # --hitl-status: 查看待审批 HITL 暂停
+    if args.hitl_status:
+        from ..orchestrator.sop_runner import SOPRunner
+        runner = SOPRunner()
+        pending = runner.hitl_status()
+        if pending:
+            for sid, node in pending.items():
+                print(f"  ⏸ {sid}: {node}")
+        else:
+            print("无待审批的 HITL 暂停")
         return
 
     # 默认模式：输出系统概览
