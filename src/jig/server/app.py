@@ -169,6 +169,13 @@ try:
             "sessions_active": len(_sessions),
         }
 
+    @app.get("/metrics")
+    async def metrics():
+        """Prometheus 格式运行时指标（接线 MetricsCollector）。"""
+        from fastapi.responses import PlainTextResponse
+        from ..adapters.metrics import get_collector
+        return PlainTextResponse(get_collector().metrics_text())
+
     @app.post("/approve")
     async def approve(session_id: str):
         """HITL 批准节点继续执行。"""
