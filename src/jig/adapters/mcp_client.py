@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -84,13 +85,22 @@ class ToolGuard:
 
     # 全局黑名单（所有 Agent 禁止）
     DENYLIST: List[str] = [
-        "Bash(rm -rf /)",
-        "Bash(drop table)",
-        "Bash(shutdown)",
-        "Write(/etc/)",
-        "Write(~/.ssh/)",
-        "Git(push --force)",
+        "rm -rf", "drop table", "shutdown", "/etc/", "~/.ssh/", "push --force",
     ]
+
+    # Skill 全名 → 角色短名归一化（WHITELIST 的 key 用短名）
+    ROLE_ALIASES: Dict[str, str] = {
+        "Luyi14-pm-mentor": "pm",
+        "Luyi14-spec-pipeline": "spec",
+        "Luyi14-coding-ethics": "coding",
+        "Luyi14-code-review": "code-review",
+        "Luyi14-test-driven-development": "tdd",
+        "Luyi14-acceptance-testing": "acceptance",
+        "Luyi14-security-academy": "security",
+        "Luyi14-devops": "devops",
+        "Luyi14-project-secretary": "secretary",
+        "Luyi14-trinity-mentors": "mentor",
+    }
 
     @classmethod
     def check(cls, agent_role: str, tool_name: str, tool_args: str = "") -> bool:
@@ -104,21 +114,32 @@ class ToolGuard:
         2. 白名单有定义且不匹配 → 拦截
         3. 白名单无定义（宽松模式）→ 放行
         """
-        # 1. 黑名单
+        # 0. 角色名归一化：Luyi14-pm-mentor → pm
+        agent_role = cls.ROLE_ALIASES.get(agent_role, agent_role)
+
+        # 1. 黑名单 — 危险核心词包含匹配（空白折叠后，保守拒绝，拦变体）
+        combined = re.sub(r'\s+', ' ', f"{tool_name} {tool_args}").lower()
         for denied in cls.DENYLIST:
-            if tool_name in denied or (tool_args and tool_args in denied):
+            if denied.lower() in combined:
                 logger.warning(
                     "ToolGuard 拦截: %s 尝试调用黑名单工具 %s(%s)",
                     agent_role, tool_name, tool_args,
                 )
                 return False
 
-        # 2. 白名单
+        # 2. 白名单 — 精确匹配 tool_name 或 tool_name(tool_args)
         allowed = cls.WHITELIST.get(agent_role)
         if allowed is not None:
+            full = f"{tool_name}({tool_args})" if tool_args else tool_name
             for allowed_tool in allowed:
-                if tool_name in allowed_tool:
-                    return True
+                if "(" in allowed_tool:
+                    # 带参数条目：要求 tool_name(tool_args) 完整匹配
+                    if full == allowed_tool:
+                        return True
+                else:
+                    # 纯工具名：tool_name 精确匹配
+                    if tool_name == allowed_tool:
+                        return True
             logger.warning(
                 "ToolGuard 拦截: %s 尝试调用未授权工具 %s（白名单: %s）",
                 agent_role, tool_name, allowed,

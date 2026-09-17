@@ -103,17 +103,3 @@ class TestE2ELOOP:
             state = mgr.load("test-loop-e2e")
             assert state["phase"] == 4
         print(f"[OK] 检查点持久化正常")
-
-    def test_all_tests_pass(self):
-        """全量测试确保通过。"""
-        import subprocess, sys
-        result = subprocess.run(
-            [sys.executable, "-m", "pytest", "tests/", "-q", "--tb=no"],
-            capture_output=True, text=True, cwd=Path(__file__).parent.parent,
-        )
-        output = result.stdout + result.stderr
-        assert result.returncode == 0, f"测试失败:\n{output}"
-        # 提取通过数
-        for line in output.splitlines():
-            if "passed" in line and "failed" not in line:
-                print(f"[OK] 全量测试: {line.strip()}")

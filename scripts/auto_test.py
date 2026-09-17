@@ -217,11 +217,11 @@ def test_deepseek_adapter() -> bool:
         request = adapter.prepare_request(
             messages=[{"role": "user", "content": "hello"}],
             tools=[{"type": "function", "function": {"name": "test"}}],
-            model="deepseek-reasoner",
+            model="deepseek-v4-pro",
         )
-        assert request["model"] == "deepseek-chat"
+        assert request["model"] == "deepseek-flash"
         assert adapter.fc_fallback_triggered
-        print("[OK] DeepSeek 适配器: reasoner -> chat 降级正确")
+        print("[OK] DeepSeek 适配器: pro -> flash 降级正确")
 
         # reasoning_content 保留（带 tool_calls）
         adapter2 = DeepSeekAdapter()

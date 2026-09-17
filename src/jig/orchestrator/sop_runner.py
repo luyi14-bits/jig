@@ -23,7 +23,7 @@ from ..core.skill_registry import SkillRegistry
 from .circuit_breaker import CircuitBreaker
 from .memory import MemoryRouter
 from ..adapters.cost_aware_router import CostAwareRouter, TokenBudget
-from ..adapters.mcp_client import MCPClient, ToolGuard
+from ..adapters.mcp_client import ToolGuard
 from ..adapters.streaming import StreamManager
 from .loop_engine import LoopEngine, LoopConfig, ConvergenceDetector, QualityValidator
 
@@ -69,15 +69,14 @@ class SOPRunner:
         self._convergence = ConvergenceDetector(threshold=0.9)
         self._quality_validator = QualityValidator()
         self._loop_engine = LoopEngine(config=LoopConfig(max_iterations=10))
-        self._mcp_client = MCPClient()
         self._hitl_pending: Dict[str, str] = {}  # session_id → node_name
         from ..settings import settings as _jig_settings
         self._settings = _jig_settings
         self._skill_registry: Optional[SkillRegistry] = None
 
-    def run(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
+    def run(self, sop: SOPNode, context: Dict[str, Any], session_id: Optional[str] = None) -> HandoverPackage:
         """执行 SOP 管道。"""
-        session_id = uuid.uuid4().hex[:12]
+        session_id = session_id or uuid.uuid4().hex[:12]
         logger.info("SOPRunner 启动: session=%s, steps=%d", session_id, len(sop.sub_steps))
 
         # 尝试从 checkpoint 恢复
@@ -111,7 +110,13 @@ class SOPRunner:
             # HITL — 需人工审批的节点暂停
             if node.requires_approval:
                 self._hitl_pending[session_id] = node.name
-                self._save_checkpoint(cp)
+                self._save_checkpoint(SOPCheckpoint(
+                    session_id=session_id,
+                    current_node_idx=idx,
+                    completed_nodes=list(completed),
+                    context=dict(context),
+                    timestamp=time.time(),
+                ))
                 logger.warning("HITL 暂停: session=%s node=%s, 等待 approve/reject", session_id, node.name)
                 return HandoverPackage(
                     source_agent="SOPRunner",
@@ -135,6 +140,8 @@ class SOPRunner:
 
             prev_handover = node_result
             completed.append(node.name)
+            # 写回节点输出到 context，供图模式/调用方读取真实结果
+            context[f"_node_output_{node.name}"] = node_result.summary
 
             # 收敛检测 — 连续相似输出时提前终止
             self._convergence.add_score(0.9)  # placeholder score
@@ -179,12 +186,12 @@ class SOPRunner:
             confidence=0.9,
         )
 
-    async def arun(self, sop: SOPNode, context: Dict[str, Any]) -> HandoverPackage:
+    async def arun(self, sop: SOPNode, context: Dict[str, Any], session_id: Optional[str] = None) -> HandoverPackage:
         """异步执行 SOP 管道 — Durable Execution 入口。
 
         与 run() 行为一致，但使用 SQLite checkpoint store 替代文件。
         """
-        session_id = uuid.uuid4().hex[:12]
+        session_id = session_id or uuid.uuid4().hex[:12]
         logger.info("SOPRunner.arun: session=%s, steps=%d", session_id, len(sop.sub_steps))
 
         # 从 checkpoint 恢复
@@ -196,14 +203,14 @@ class SOPRunner:
             logger.info("恢复 checkpoint: session=%s idx=%d", session_id, start_idx)
         else:
             start_idx = 0
-            done = set()
+            completed = set()
 
         prev_handover = None
         for idx in range(start_idx, len(sop.sub_steps)):
             node = sop.sub_steps[idx]
             logger.info("执行节点 %d/%d: %s", idx + 1, len(sop.sub_steps), node.name)
 
-            if node.name in done:
+            if node.name in completed:
                 continue
 
             import asyncio
@@ -221,12 +228,14 @@ class SOPRunner:
                 )
 
             prev_handover = node_result
-            done.add(node.name)
+            completed.add(node.name)
+            # 写回节点输出到 context（与 run() 保持一致）
+            context[f"_node_output_{node.name}"] = node_result.summary
 
             # 保存 checkpoint
             self._db_store.save(session_id, {
                 "current_node_idx": idx + 1,
-                "completed_nodes": list(done),
+                "completed_nodes": list(completed),
                 "context": {k: v for k, v in context.items() if not k.startswith("_")},
                 "retry_count": 0,
                 "escalate_level": 0,
@@ -284,8 +293,12 @@ class SOPRunner:
                 return result
 
             except (AgentExecutionError, Exception) as e:
-                retry_count += 1
                 failure_reason = str(e)
+                # ToolGuard 拦截是确定性失败，不重试，立即失败
+                if "ToolGuard 拦截" in failure_reason:
+                    logger.warning("节点 %s ToolGuard 拦截，立即失败: %s", node.name, failure_reason)
+                    return None
+                retry_count += 1
                 logger.warning("节点 %s 失败 (retry=%d/%d): %s", node.name, retry_count, self._max_retries, failure_reason)
 
                 # 失败原因注入上下文
@@ -306,8 +319,23 @@ class SOPRunner:
                     prev_handover: Optional[HandoverPackage]) -> str:
         """构造 Agent 的输入任务。"""
         task = context.get("user_request", "")
+
+        # 前置节点输出（优先内部 handover，其次图模式 context 传递）
         if prev_handover:
             task += f"\n\n前置节点输出:\n{prev_handover.summary}"
+        elif context.get("_prev_summary"):
+            task += f"\n\n前置节点输出:\n{context['_prev_summary']}"
+
+        # 注入相关 skill 提示（语义检索结果）
+        related = context.get("related_skills")
+        if related:
+            names = [r if isinstance(r, str) else str(r) for r in related]
+            task += f"\n\n[相关能力参考]: {', '.join(names)}"
+
+        # 注入 Repo Map 上下文
+        repo_map = context.get("repo_map")
+        if repo_map:
+            task += f"\n\n[代码库上下文]:\n{repo_map}"
 
         # 注入失败原因
         for key, value in context.items():
@@ -317,12 +345,44 @@ class SOPRunner:
 
         return task
 
+    def _check_toolguard(self, agent) -> None:
+        """ToolGuard 静态校验 — 黑名单硬阻断 + 白名单告警。
+
+        黑名单（危险核心词）命中 → raise（硬阻断）；
+        白名单外工具 → logger.warning（告警，不阻断，因 skill 声明与白名单粒度可能不一致）。
+        """
+        agent_tools = getattr(agent.config, 'tools', []) if hasattr(agent, 'config') else []
+        role = ToolGuard.ROLE_ALIASES.get(agent.skill_name, agent.skill_name)
+        allowed_names = {a.split("(")[0] for a in ToolGuard.WHITELIST.get(role, [])}
+        for tool in agent_tools:
+            tool_name = getattr(tool, 'name', str(tool))
+            # 黑名单：危险核心词（硬阻断，安全底线）
+            name_lower = tool_name.lower()
+            if any(d.lower() in name_lower for d in ToolGuard.DENYLIST):
+                raise AgentExecutionError(
+                    f"ToolGuard 拦截: {agent.skill_name} 声明了危险工具 {tool_name}"
+                )
+            # 白名单：工具名类别（告警，不阻断）
+            if allowed_names and tool_name not in allowed_names:
+                logger.warning(
+                    "ToolGuard 告警: %s 声明了白名单外工具 %s（白名单: %s）",
+                    agent.skill_name, tool_name, sorted(allowed_names),
+                )
+
     def _call_agent(self, agent, task: str, escalate_level: int) -> HandoverPackage:
         """调用 Agent 执行任务（真实 LLM，失败时降级 Mock）。"""
         if not self._breaker.can_call():
             raise AgentExecutionError("熔断器 OPEN，拒绝调用")
+        # 前置校验 — 直接传播（不被 Mock 降级吞掉）
+        model = self._cost_router.route(task, forced_model="pro" if escalate_level >= 1 else "")
+        if not model:
+            raise AgentExecutionError("Token 预算超限，拒绝调用")
+        model_name = self._settings.pro_model if model == "pro" else self._settings.flash_model
+
+        # ToolGuard 检查 — 黑名单硬阻断 + 白名单告警
+        self._check_toolguard(agent)
+
         try:
-            model = self._cost_router.route(task, forced_model="pro" if escalate_level >= 1 else "")
             system = agent.config.role_preset[:500] if hasattr(agent.config, 'role_preset') else ""
 
             messages = [
@@ -330,12 +390,7 @@ class SOPRunner:
                 {"role": "user", "content": task},
             ]
 
-            # ToolGuard 检查 — 识别并拦截危险工具调用
-            for tool_name in self._mcp_client.list_tools():
-                if not ToolGuard.check(agent.skill_name, tool_name):
-                    logger.warning("ToolGuard 拦截: %s 尝试调用 %s", agent.skill_name, tool_name)
-
-            response = self._provider.chat(messages, temperature=0.3)
+            response = self._provider.chat(messages, temperature=0.3, model=model_name)
 
             if not response or not response.content:
                 raise AgentExecutionError("LLM 返回空响应")
@@ -402,7 +457,7 @@ class SOPRunner:
             logger.warning("无 checkpoint 可恢复: %s", session_id)
             return None
         context.update(cp.context)
-        return self.run(sop, context)
+        return self.run(sop, context, session_id=session_id)
 
     # ---- HITL ----
 

@@ -40,7 +40,7 @@ class Settings(BaseSettings):
         description="Pro 模型名称（复杂推理场景）",
     )
     flash_model: str = Field(
-        default="deepseek-v4-flash",
+        default="deepseek-flash",
         description="Flash 模型名称（快速执行场景）",
     )
     pro_temperature: float = Field(

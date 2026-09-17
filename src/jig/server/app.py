@@ -19,7 +19,7 @@ try:
     from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
 
-    app = FastAPI(title="Jig Agent Firewall API", version="v0.6.0")
+    app = FastAPI(title="Jig Agent Firewall API", version="v0.6.4")
 
     class ExecuteRequest(BaseModel):
         prompt: str = ""
@@ -165,7 +165,7 @@ try:
         """健康检查 + 版本信息。"""
         return {
             "status": "ok",
-            "version": "v0.6.3",
+            "version": "v0.6.4",
             "sessions_active": len(_sessions),
         }
 

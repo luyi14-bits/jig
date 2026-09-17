@@ -16,7 +16,6 @@ from ..core.skill_def import SOPNode
 from .intent_router import classify_query, hyde_rewrite
 from .graph_engine import GraphOrchestrator, GraphNode, GraphEdge
 from ..adapters.external_agent import MetaHarness
-from .orchestrator import create_dev_workflow
 from ..core.agent_factory import AgentFactory
 
 logger = logging.getLogger(__name__)
@@ -51,9 +50,15 @@ class Dispatcher:
         # 接线 ConversationCompressor — 长上下文压缩
         from ..adapters.conversation_compressor import ConversationCompressor
         self._compressor = ConversationCompressor(mode="hybrid", max_history_tokens=8000)
-        # 接线 EmbeddingIndex — 意图语义检索
+        # 接线 EmbeddingIndex — 意图语义检索（用已加载 skills 建索引）
         from ..adapters.embedding_index import EmbeddingIndex
         self._embedding = EmbeddingIndex()
+        try:
+            skills = self._registry.list_all()
+            if skills:
+                self._embedding.add_skills(skills)
+        except Exception:
+            pass
         # 接线 RepoMapBuilder — 代码库上下文增强
         from ..adapters.repo_map import RepoMapBuilder
         self._repo_map = RepoMapBuilder()
@@ -92,13 +97,14 @@ class Dispatcher:
         # GraphOrchestrator — 复杂查询使用图模式
         graph_mode = query_type == "complex"
         if graph_mode:
-            g = GraphOrchestrator()
-            for nick, agent in [("pm","Luyi14-pm-mentor"),("spec","Luyi14-spec-pipeline"),
+            provider = self._get_provider()
+            runner = self._create_runner(provider)
+            g = GraphOrchestrator(runner=runner)
+            for nick, skill in [("pm","Luyi14-pm-mentor"),("spec","Luyi14-spec-pipeline"),
                                  ("coding","Luyi14-coding-ethics"),("accept","Luyi14-acceptance-testing")]:
-                g.add_node(GraphNode(name=nick, agent=agent))
+                g.add_node(GraphNode(name=nick, skill_ref=skill))
             for a, b in [("pm","spec"),("spec","coding"),("coding","accept")]:
                 g.add_edge(GraphEdge(a, b))
-            provider = self._get_provider()
             ctx = {"user_request": user_message, "skills_dir": str(Path("skills").resolve())}
             result = g.run("pm", ctx)
             return f"✅ Graph管道完成: {result.get('accept','')[:200] if isinstance(result, dict) else str(result)[:200]}"
@@ -123,6 +129,15 @@ class Dispatcher:
             "user_request": user_message,
             "skills_dir": str(Path("skills").resolve()),
         }
+
+        # 语义检索增强 — 注入最相关的 skill 作为上下文提示
+        try:
+            related = self._embedding.search(user_message, top_k=3)
+            if related:
+                context["related_skills"] = [r["name"] for r in related]
+                logger.info("语义检索命中相关 skill: %s", context["related_skills"])
+        except Exception:
+            pass
 
         # 代码相关查询 — 附加 Repo Map 上下文
         code_keywords = ("代码", "实现", "重构", "函数", "bug", "修复", "优化", "refactor", "implement")

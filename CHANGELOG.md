@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.6.4] - 2026-09-17
+
+> 闭环修复 + 孤儿串起 + 鲁棒性优化
+
+### Fixed
+- DeepSeek 模型名更新：`deepseek-v4-flash` → `deepseek-flash`（官方已退役旧名）
+- 核心闭环断点修复：SOPRunner HITL `cp` NameError、arun 变量冲突、ToolGuard 角色名失配、CostAwareRouter model 丢弃、CacheDiagnostic NameError、GraphNode TypeError、图引擎空壳
+- 断点恢复链路失效（每次生成新 session_id 导致 checkpoint 永不命中）
+- ToolGuard 黑名单子串误伤（`"Bash" in "Bash(rm -rf /)"`）改为精确匹配
+- `datetime.utcnow()` 弃用全部迁移 timezone-aware
+
+### Added
+- 孤儿模块串起：EmbeddingIndex 语义检索接入、图节点 `_prev_summary` 串联
+- `ModelRouter.all_session_ids()` 补回
+- 新增 9 个闭环修复测试（206/206 全绿）
+
+### Removed
+- `adapters/model_router.py` 死代码（功能已并入 `model_provider.ModelRouter`）
+
 ## [v0.6.0] - 2026-07-23
 
 > 结构修复 — 模块导出规范化 + 测试补齐

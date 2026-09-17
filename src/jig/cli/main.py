@@ -11,8 +11,6 @@ from ..core.skill_registry import SkillRegistry
 from ..core.agent_factory import AgentFactory
 from ..adapters.model_provider import ModelRouter, DeepSeekProvider
 from ..adapters.cache_engine import CacheEngine
-from ..adapters.cache_diagnostics import CacheDiagnosticResult
-from ..adapters.context import ContextPartitioner
 from ..adapters.deepseek_adapter import DeepSeekAdapter
 
 logger = logging.getLogger(__name__)
@@ -20,10 +18,9 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     """CLI 主入口。"""
-    # 缓存诊断摘要
+    # 缓存引擎配置摘要
     try:
-        diag = CacheDiagnostic()
-        print(diag.summary())
+        print(f"[缓存引擎] 前缀顺序: {' → '.join(CacheEngine.PREFIX_ORDER)}")
     except Exception:
         pass
 
@@ -273,7 +270,7 @@ def main() -> None:
     print(f"  Pro skill: {len(registry.list_by_model('pro'))}")
     print(f"  Flash skill: {len(registry.list_by_model('flash'))}")
     print(f"  Model Router session: {router.all_session_ids()}")
-    print(f"  Cache 前缀变更检测: {'启用' if cache.diagnostic else '未启用'}")
+    print(f"  Cache 前缀顺序: {' → '.join(cache.PREFIX_ORDER)}")
     print(f"  FC 适配器: {'已就绪' if not adapter.fc_fallback_triggered else '已降级'}")
 
 

@@ -209,7 +209,8 @@ class AgentRuntime:
         """执行升级。"""
         if strategy == UpgradeStrategy.MODEL:
             self._context.setdefault("model", "pro")
-            return "deepseek-v4-pro"
+            from ..settings import settings
+            return settings.pro_model
         elif strategy == UpgradeStrategy.POLICY:
             self._context["timeout"] = self._context.get("timeout", 30) * 2
             return f"timeout:{self._context['timeout']}s"

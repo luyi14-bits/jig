@@ -6,7 +6,7 @@
 from __future__ import annotations
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional
 from pathlib import Path
 
@@ -85,7 +85,7 @@ class EvalRunner:
     def run(self, name: str, examples: List[EvalExample],
             execute_fn: Callable[[str], str]) -> EvalReport:
         """执行评测集。"""
-        report = EvalReport(name=name, timestamp=datetime.utcnow().isoformat())
+        report = EvalReport(name=name, timestamp=datetime.now(timezone.utc).isoformat())
         for idx, ex in enumerate(examples):
             try:
                 output = execute_fn(ex.input)

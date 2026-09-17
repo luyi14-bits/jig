@@ -6,9 +6,9 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)](https://python.org)
 [![PyPI](https://img.shields.io/badge/pypi-jig--toolguard-blue?logo=pypi)](https://pypi.org/project/jig-toolguard/)
-[![Tests](https://img.shields.io/badge/tests-124%2F124-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-206%2F206-brightgreen)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Status](https://img.shields.io/badge/status-alpha_v0.6.3-orange)](CHANGELOG.md)
+[![Status](https://img.shields.io/badge/status-alpha_v0.6.4-orange)](CHANGELOG.md)
 [![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
 ---
@@ -102,7 +102,7 @@ No other agent framework implements code-level pre-execution interception.
 | Spec | `Luyi14-spec-pipeline` | Specifications, task breakdown, checklist |
 | Coding | `Luyi14-coding-ethics` | Code implementation with 24 self-checks |
 | Review | `Luyi14-code-review` | 4-dimensional code audit |
-| TDD | `Luyi14-tdd` | Test-driven development |
+| TDD | `Luyi14-test-driven-development` | Test-driven development |
 | Acceptance | `Luyi14-acceptance-testing` | Acceptance testing |
 | Security | `Luyi14-security-academy` | 5-stage security audit |
 | DevOps | `Luyi14-devops` | Deployment, build, CI/CD |
@@ -190,8 +190,8 @@ Tool Plane:
 | 6–8 | Memory + Config + CircuitBreaker + RiskMode | ✅ vA.0.2–3 |
 | 9 | Multi-model + Streaming | ✅ v0.5.0 |
 | 10 | Graph Engine + LoopEngine | ✅ v0.6.0 |
-| 11–12 | Meta-Harness + PyPI release | 🚧 |
-| 13+ | Durable Execution, OTel, Evals | 💡 Planned |
+| 11–12 | Meta-Harness + PyPI release | ✅ v0.6.3 |
+| 13+ | Durable Execution, OTel, Evals | ✅ v0.6.4 |
 
 ## Contributing
 

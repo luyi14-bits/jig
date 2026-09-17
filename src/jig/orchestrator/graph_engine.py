@@ -24,6 +24,7 @@ class GraphNode:
     """图节点 — 一个 Agent 或子管道。"""
     name: str
     description: str = ""
+    skill_ref: str = ""          # 关联的 skill（叶子节点，如 Luyi14-pm-mentor）
     config: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -52,10 +53,11 @@ class GraphOrchestrator:
     - 自环（A → A，带收敛检测）
     """
 
-    def __init__(self):
+    def __init__(self, runner=None):
         self._nodes: Dict[str, GraphNode] = {}
         self._edges: List[GraphEdge] = []
         self._context: Dict[str, Any] = {}
+        self._runner = runner
 
     def add_node(self, node: GraphNode) -> None:
         self._nodes[node.name] = node
@@ -95,6 +97,29 @@ class GraphOrchestrator:
         visited.add(node_name)
         node = self._nodes[node_name]
         logger.info("执行节点: %s", node_name)
+
+        # 执行节点关联的 skill（真正调用 Agent）
+        if node.skill_ref:
+            if self._runner:
+                from ..core.skill_def import SOPNode as _SOPNode
+                sub = _SOPNode(
+                    name=f"graph-{node.name}",
+                    description=node.description,
+                    mode="sequential",
+                    sub_steps=[_SOPNode(name=node.name, description=node.description, skill_ref=node.skill_ref)],
+                )
+                try:
+                    result = self._runner.run(sub, self._context)
+                    # 从 context 提取真实节点输出（而非 pipeline 级摘要）
+                    summary = self._context.get(f"_node_output_{node.name}", "")
+                    self._context[node.name] = summary
+                    # 串联：当前节点输出作为下一节点的前置上下文
+                    self._context["_prev_summary"] = summary
+                except Exception as e:
+                    logger.warning("图节点 %s 执行失败: %s", node.name, e)
+                    self._context[node.name] = f"[error] {e}"
+            else:
+                self._context[node.name] = f"[pending] {node.skill_ref}"
 
         # 找到从当前节点出发的所有边
         outgoing = [e for e in self._edges if e.source == node_name]

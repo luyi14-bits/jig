@@ -9,7 +9,7 @@ import json
 import sqlite3
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -52,7 +52,7 @@ class SQLiteCheckpointStore:
         self._conn.commit()
 
     def save(self, session_id: str, checkpoint: dict) -> None:
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         self._conn.execute("""
             INSERT INTO checkpoints (session_id, current_node_idx, completed_nodes,
                                      context, retry_count, escalate_level, created_at, updated_at)
@@ -109,7 +109,7 @@ class SQLiteCheckpointStore:
                                       duration_ms, timestamp)
             VALUES (?, ?, ?, ?, ?, ?)
         """, (session_id, node_name, output, error, duration_ms,
-              datetime.utcnow().isoformat()))
+              datetime.now(timezone.utc).isoformat()))
         self._conn.commit()
 
     def get_node_results(self, session_id: str) -> List[dict]:

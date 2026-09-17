@@ -23,7 +23,7 @@ class DeepSeekAdapter:
     - FC 格式错误自愈
     """
 
-    REASONER_MODELS = {"deepseek-reasoner", "deepseek-reasoner-v4", "deepseek-v4-pro"}
+    REASONER_MODELS = {"deepseek-v4-pro"}
 
     def __init__(self, reasoning_effort: str = "medium") -> None:
         self._last_reasoning_content: Optional[str] = None
@@ -46,12 +46,12 @@ class DeepSeekAdapter:
         messages: List[Dict[str, Any]],
         tools: Optional[List[Dict[str, Any]]] = None,
         tool_choice: Any = None,
-        model: str = "deepseek-v4-flash",
+        model: str = "deepseek-flash",
     ) -> Dict[str, Any]:
         """准备 API 请求参数（含 reasoning_effort 注入）。"""
         if tools and model in self.REASONER_MODELS:
-            logger.warning("模型 %s 不支持 FC，自动降级到 deepseek-v4-flash", model)
-            model = "deepseek-v4-flash"
+            logger.warning("模型 %s 不支持 FC，自动降级到 deepseek-flash", model)
+            model = "deepseek-flash"
             self._fc_fallback_triggered = True
 
         processed_messages = self._process_messages(messages)
@@ -68,7 +68,7 @@ class DeepSeekAdapter:
             request["tool_choice"] = processed_tool_choice
 
         # 注入 reasoning_effort（仅 Pro 模型）
-        if model != "flash" and self._reasoning_effort != "medium":
+        if model in self.REASONER_MODELS and self._reasoning_effort != "medium":
             request["reasoning_effort"] = self._reasoning_effort
 
         return request

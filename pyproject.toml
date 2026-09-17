@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jig-toolguard"
-version = "0.6.3"
+version = "0.6.4"
 description = "Agent framework with pre-execution safety gates — ToolGuard. DeepSeek-optimized, multi-model, graph orchestration."
 readme = "README.md"
 authors = [{ name = "Jig Contributors" }]
@@ -31,3 +31,8 @@ BugReports = "https://github.com/luyi14-bits/jig/issues"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["jig*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "network: 需要真实网络访问的测试（无 API key 时自动跳过）",
+]

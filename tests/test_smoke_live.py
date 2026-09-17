@@ -20,7 +20,7 @@ def _get_api_key() -> Optional[str]:
     return os.environ.get("JIG_API_KEY") or os.environ.get("DEEPSEEK_API_KEY")
 
 
-def _build_request(messages: list, model: str = "deepseek-v4-flash") -> dict:
+def _build_request(messages: list, model: str = "deepseek-flash") -> dict:
     return {
         "model": model,
         "messages": messages,
@@ -75,7 +75,7 @@ class TestDeepSeekReachability:
         }
         payload = _build_request(
             [{"role": "user", "content": "Say hello in one word"}],
-            model="deepseek-v4-flash",
+            model="deepseek-flash",
         )
 
         with httpx.Client(timeout=15) as client:

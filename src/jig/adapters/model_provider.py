@@ -61,7 +61,7 @@ class DeepSeekProvider(BaseModelProvider):
 
     API_BASE = "https://api.deepseek.com/v1"
 
-    def __init__(self, api_key: str = "", model: str = "deepseek-v4-flash"):
+    def __init__(self, api_key: str = "", model: str = "deepseek-flash"):
         self._api_key = api_key
         self._model = model
 
@@ -275,6 +275,10 @@ class ModelRouter:
 
     def get_session_id(self, model_grade: str) -> Optional[str]:
         return self._sessions.get(model_grade)
+
+    def all_session_ids(self) -> Dict[str, str]:
+        """返回所有活跃 session: {model_grade: session_id}。"""
+        return dict(self._sessions)
 
     @property
     def available(self) -> List[str]:
