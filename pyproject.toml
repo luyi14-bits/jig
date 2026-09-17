@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,7 @@ name = "jig-toolguard"
 version = "0.6.4"
 description = "Agent framework with pre-execution safety gates — ToolGuard. DeepSeek-optimized, multi-model, graph orchestration."
 readme = "README.md"
+license = "MIT"
 authors = [{ name = "Jig Contributors" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
